@@ -1,0 +1,22 @@
+[project]
+name = "mcadams-app"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Alison Aristizabal", email = "a.aristizabalg@uniandes.edu.co" }
+]
+requires-python = ">=3.11"
+dependencies = [
+    "mcadams-core"
+]
+
+[tool.uv.sources]
+mcadams-core = { workspace = true }
+
+[project.scripts]
+mcadams-app = "mcadams_app:main"
+
+[build-system]
+requires = ["uv_build>=0.12.8,<0.13.0"]
+build-backend = "uv_build"
