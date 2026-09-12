@@ -22,10 +22,34 @@ def test_full_pipeline_identity():
     windowed_frames = apply_window(frames, window)
 
     reconstructed_frames = np.array([
-        process_frame(windowed_frames[i], order) for i in range(n_frames)
+        process_frame(windowed_frames[i], order, 1.0) for i in range(n_frames)
     ])
 
     reconstructed = overlap_add(reconstructed_frames, hop_length)
 
     edge = frame_length - hop_length
     assert np.allclose(original[edge:-edge], reconstructed[edge:-edge], atol=1e-6)
+
+
+def test_full_pipeline_anonymizes():
+    sample_rate = 16000
+    frame_length, hop_length = compute_frame_params(sample_rate)
+    order = compute_lpc_order(sample_rate)
+    n_frames = 10
+    signal_length = (n_frames - 1) * hop_length + frame_length
+    
+    t = np.arange(signal_length)
+    original = np.sin(2 * np.pi * t / 50)
+    
+    frames = frame_signal(original, frame_length, hop_length)
+    window = hann_window(frame_length)
+    windowed_frames = apply_window(frames, window)
+    
+    reconstructed_frames = np.array([
+        process_frame(windowed_frames[i], order, 0.8) for i in range(n_frames)
+    ])
+    
+    reconstructed = overlap_add(reconstructed_frames, hop_length)
+    
+    edge = frame_length - hop_length
+    assert not np.allclose(original[edge:-edge], reconstructed[edge:-edge], atol=1e-6)
