@@ -60,3 +60,47 @@ class AnonymizerStream:
             return np.concatenate(left_overlap)
         else: 
             return np.array([])
+
+    def flush(self):
+        """Cierra el stream y libera todo el audio que quedó pendiente sin
+        llegar a completar un frame ni a recibir su contribución faltante.
+
+        Si no queda audio crudo sin procesar (buffer_original_audio vacío),
+        devuelve directamente el contenido de buffer_overlap, que ya
+        representa el tramo final cerrado.
+
+        Si queda audio crudo sin llegar a frame_length, lo completa con
+        ceros hasta ese tamaño y lo procesa como un frame final — a
+        diferencia de process_chunk, acá no se guarda ninguna porción como
+        pendiente, porque no va a llegar un frame siguiente que la
+        complete: tanto la mitad combinada con buffer_overlap como la
+        mitad restante del frame final se devuelven juntas.
+
+        En ambos casos, deja el stream en su estado inicial (buffers
+        vacíos/en cero) — el objeto no debe usarse para procesar más audio
+        después de llamar a este método."""
+        
+        original_length = self.buffer_original_audio.size
+
+        if original_length == 0:
+            output = self.buffer_overlap
+            self.buffer_overlap = np.zeros(self.frame_length - self.hop_length)
+            return output
+        else:
+            pad = np.zeros(self.frame_length-original_length)
+            padded_frame = np.concatenate([self.buffer_original_audio, pad])
+            windowed_frame = apply_window(padded_frame, self.window)
+            reconstructed_frame = process_frame(windowed_frame, self.order, self.mcadams_coefficient)
+
+            left_edge = reconstructed_frame[:self.hop_length]
+            right_edge = reconstructed_frame[self.hop_length:]
+
+            ready_output = self.buffer_overlap + left_edge
+
+            output = np.concatenate([ready_output, right_edge])
+
+            self.buffer_original_audio = np.array([])
+            self.buffer_overlap = np.zeros(self.frame_length - self.hop_length)
+            
+            return output
+
