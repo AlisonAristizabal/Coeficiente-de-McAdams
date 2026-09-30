@@ -28,6 +28,23 @@ def test_frame_signal():
     assert np.array_equal(frames[2], np.array([4, 5, 6, 7]))
     assert np.array_equal(frames[3], np.array([6, 7, 8, 9]))
 
+def test_frame_signal_matches_manual_slicing():
+
+    # Mismo ejemplo que test_frame_signal, comparado contra un
+    # enventanado hecho a mano con cortes explícitos
+    audio = np.arange(10)
+    frame_length = 4
+    hop_length = 2
+
+    frames = frame_signal(audio, frame_length=frame_length, hop_length=hop_length)
+
+    n_frames = 1 + (len(audio) - frame_length) // hop_length
+    expected = np.array([
+        audio[i * hop_length : i * hop_length + frame_length] for i in range(n_frames)
+    ])
+    assert frames.shape == (n_frames, frame_length)
+    assert np.array_equal(frames, expected)
+
 def test_hann_window():
 
     frame_length = 320

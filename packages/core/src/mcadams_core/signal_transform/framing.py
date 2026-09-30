@@ -1,6 +1,5 @@
 import scipy.signal.windows as windows
 import numpy as np
-import librosa.util as librosa_util
 
 def compute_frame_params(sample_rate, win_length_ms=20, hop_length_ms=10):
     """
@@ -24,10 +23,13 @@ def compute_frame_params(sample_rate, win_length_ms=20, hop_length_ms=10):
 def frame_signal(audio_float, frame_length, hop_length):
 
     """Divide audio_float (1D) en fragmentos superpuestos usando
-    librosa.util.frame con axis=0. Devuelve un arreglo de forma
-    (numero_fragmentos, longitud_frame)."""
+    np.lib.stride_tricks.sliding_window_view: se generan todas las
+    ventanas de longitud frame_length (una por cada muestra inicial) y
+    luego se toma una de cada hop_length. Devuelve un arreglo de forma
+    (numero_fragmentos, longitud_frame), que es una vista de solo
+    lectura sobre audio_float (no copia los datos)."""
 
-    frames = librosa_util.frame(audio_float, frame_length=frame_length, hop_length=hop_length, axis=0)
+    frames = np.lib.stride_tricks.sliding_window_view(audio_float, frame_length)[::hop_length]
 
     return frames
 
