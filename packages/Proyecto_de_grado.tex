@@ -1,0 +1,423 @@
+% ===================================================================
+% BIBLIOGRAFÍA (se escribe como referencias.bib al compilar)
+% Edita las referencias aquí; el archivo se sobrescribe en cada corrida.
+% ===================================================================
+\begin{filecontents}[overwrite,noheader]{referencias.bib}
+@inproceedings{patino2021,
+  author    = {Patino, Jose and Tomashenko, Natalia and Todisco, Massimiliano and Nautsch, Andreas and Evans, Nicholas},
+  title     = {Speaker anonymisation using the {McAdams} coefficient},
+  booktitle = {Proceedings of Interspeech 2021},
+  date      = {2021},
+  pages     = {1099--1103},
+  doi       = {10.21437/Interspeech.2021-1070}
+}
+
+% needs verification: páginas de la versión USENIX (tomadas de la propuesta)
+@inproceedings{deng2023,
+  author     = {Deng, Jiangyi and Teng, Fei and Chen, Yanjiao and Chen, Xiaofu and Wang, Zhaohui and Xu, Wenyuan},
+  title      = {{V-Cloak}: Intelligibility-, naturalness- \& timbre-preserving real-time voice anonymization},
+  booktitle  = {32nd {USENIX} Security Symposium},
+  date       = {2023},
+  pages      = {5181--5198},
+  eprint     = {2210.15140},
+  eprinttype = {arxiv},
+  url        = {https://arxiv.org/abs/2210.15140}
+}
+
+% needs verification: páginas (tomadas de la cita en Kuzmin et al., 2026)
+@inproceedings{quamer2024,
+  author     = {Quamer, Waris and Gutierrez-Osuna, Ricardo},
+  title      = {End-to-end streaming model for low-latency speech anonymization},
+  booktitle  = {2024 {IEEE} Spoken Language Technology Workshop ({SLT})},
+  date       = {2024},
+  pages      = {727--734},
+  eprint     = {2406.09277},
+  eprinttype = {arxiv},
+  url        = {https://arxiv.org/abs/2406.09277}
+}
+
+% needs verification: enlace del evaluation plan formal del VPC2024
+@misc{tomashenko2024,
+  author     = {Tomashenko, Natalia and Miao, Xiaoxiao and Champion, Pierre and Meyer, Sarina and Wang, Xin and Vincent, Emmanuel and Panariello, Michele and Evans, Nicholas and Yamagishi, Junichi and Todisco, Massimiliano},
+  title      = {The {VoicePrivacy} 2024 Challenge},
+  type       = {Presentación},
+  eventtitle = {4th Symposium on Security and Privacy in Speech Communication},
+  venue      = {Kos, Grecia},
+  date       = {2024-09-06},
+  url        = {https://www.voiceprivacychallenge.org}
+}
+
+% needs verification: venue de publicación (ICASSP 2026 sin confirmar)
+@online{kuzmin2026,
+  author      = {Kuzmin, Nikita and Liu, Songting and Lee, Kong Aik and Chng, Eng Siong},
+  title       = {{Stream-Voice-Anon}: Enhancing utility of real-time speaker anonymization via neural audio codec and language models},
+  date        = {2026},
+  eprint      = {2601.13948},
+  eprinttype  = {arxiv},
+  eprintclass = {eess.AS},
+  url         = {https://arxiv.org/abs/2601.13948}
+}
+
+@book{markel1976linear,
+  author    = {Markel, John D. and Gray, Jr., Augustine H.},
+  title     = {Linear Prediction of Speech},
+  series    = {Communication and Cybernetics},
+  number    = {12},
+  publisher = {Springer},
+  location  = {Berlin, Heidelberg},
+  date      = {1976},
+  isbn      = {978-3-642-66288-1},
+  doi       = {10.1007/978-3-642-66286-7}
+}
+
+% needs verification: autores completos, datos tomados de la propuesta
+@article{tayebi2024,
+  author       = {Tayebi Arasteh, Soroosh and others},
+  title        = {Addressing challenges in speaker anonymization to maintain utility while ensuring privacy of pathological speech},
+  journaltitle = {Communications Medicine},
+  volume       = {4},
+  eid          = {182},
+  date         = {2024},
+  doi          = {10.1038/s43856-024-00609-5}
+}
+\end{filecontents}
+
+\documentclass[10pt,twocolumn]{article}
+
+% ================= Idioma, codificación y fuentes =================
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-noshorthands]{babel}
+\addto\captionsspanish{\renewcommand{\tablename}{Tabla}}
+\usepackage{amsmath}                 % antes de newtxmath
+\usepackage{newtxtext,newtxmath}
+\usepackage{microtype}
+\usepackage{csquotes}
+
+% ================= Página y formato =================
+\usepackage[letterpaper,margin=2.2cm,columnsep=0.8cm]{geometry}
+\usepackage{titlesec}
+\usepackage{booktabs,tabularx,array}
+\usepackage{xcolor}
+\usepackage{enumitem}
+
+\setlist[itemize]{leftmargin=1.2em,itemsep=2pt,topsep=3pt}
+\setlength{\parindent}{1.2em}
+
+\titleformat{\section}{\Large\bfseries}{\thesection}{0.6em}{}
+\titleformat{\subsection}{\large\bfseries\itshape}{\thesubsection}{0.6em}{}
+\titlespacing*{\section}{0pt}{1.6ex plus .5ex}{1ex}
+\titlespacing*{\subsection}{0pt}{1.3ex plus .4ex}{0.8ex}
+
+% ================= Bibliografía (APA 7) =================
+\usepackage[style=apa,backend=biber]{biblatex}
+\DeclareLanguageMapping{spanish}{spanish-apa}
+\addbibresource{referencias.bib}      % lo genera el bloque filecontents de arriba
+
+\usepackage[hidelinks]{hyperref}
+
+% Marca en rojo lo pendiente de verificar.
+% Para ocultar todas las marcas: \renewcommand{\nv}[1]{}
+\newcommand{\nv}[1]{\textcolor{red}{[needs verification: #1]}}
+
+% ================= Portada y resúmenes =================
+\begin{document}
+
+\twocolumn[
+  \raggedright
+  {\LARGE\bfseries Diseño de un sistema de anonimización de voz en tiempo real para proteger la identidad vocal en telefonía móvil en Colombia\par}
+  \vspace{10pt}
+  {\large Alison Daiana Aristizabal Garcia$^{1,2}$\par}
+  \vspace{2pt}
+  {\large Asesores: Juan Fernando Pérez$^{1}$ y Yezid Donoso$^{2}$\par}
+  \vspace{8pt}
+  {\small $^{1}$ Departamento de Ingeniería Industrial, Universidad de los Andes\par}
+  {\small $^{2}$ Departamento de Ingeniería de Sistemas y Computación, Universidad de los Andes\par}
+  \vspace{8pt}
+  \rule{\textwidth}{0.4pt}
+  \vspace{6pt}
+
+  \noindent\textbf{Abstract}\par
+  % PENDIENTE
+  \vspace{6pt}
+  \noindent\textbf{Index Terms:}
+  % PENDIENTE
+  \vspace{10pt}
+
+  \noindent\textbf{Resumen}\par
+  % PENDIENTE
+  \vspace{6pt}
+  \noindent\textbf{Palabras clave:}
+  % PENDIENTE
+  \vspace{6pt}
+  \rule{\textwidth}{0.4pt}
+  \vspace{8pt}
+]
+
+% ================= 1. Introducción =================
+\section{Introducción}
+% PENDIENTE
+
+% ================= 2. Marco teórico =================
+\section{Marco teórico}
+
+\subsection{Voz, identidad vocal y datos biométricos}
+La señal de voz transporta el contenido lingüístico (qué se dice) 
+y rasgos fonéticos sobre cómo se dice. Entre ellos está la huella 
+vocal (\textit{voiceprint}), que permite distinguir a un hablante 
+de otro \parencite{deng2023}. Por eso la literatura de privacidad 
+de voz trata la voz como un dato biométrico y, en consecuencia, 
+como información personalmente identificable \parencite{patino2021}. 
+En Colombia, el tratamiento de estos datos se rige por la Ley 1581 
+de 2012 y el Decreto 1377 de 2013. 
+
+\subsection{Anonimización y seudonimización de voz}
+Anonimizar voz consiste en manipular la señal para degradar 
+la fiabilidad de los sistemas automáticos de reconocimiento 
+de hablante, preservando aspectos como la inteligibilidad y 
+la naturalidad \parencite{patino2021}. El VoicePrivacy Challenge 
+exige que el sistema produzca una forma de onda, suprima la 
+información del hablante y preserve la inteligibilidad, la naturalidad 
+y la distintividad de la voz. Como cada hablante conserva una 
+voz distinta pero anonimizada, \textcite{patino2021} señalan que 
+la tarea se describe con más propiedad como seudonimización. 
+
+
+\subsection{Verificación automática de locutor (ASV) y EER}
+Un sistema de verificación automática de locutor (ASV, \textit{Automatic Speaker Verification}) 
+decide si dos grabaciones pertenecen a la misma persona. Primero se inscribe (\textit{enrollment}) 
+con audios del hablante y luego evalúa nuevas grabaciones (\textit{trials}) \parencite{deng2023}. 
+Su desempeño se resume con la \textit{Equal Error Rate} (EER), el punto donde la tasa de falso 
+rechazo iguala la de falsa aceptación. Aquí el ASV actúa como atacante, así que una EER más alta 
+significa mejor privacidad.
+
+\subsection{Reconocimiento automático de habla (ASR) y WER}
+Un sistema ASR (\textit{Automatic Speech Recognition}) transcribe 
+el contenido de una grabación sin importar quién habla. La inteligibilidad 
+se mide con la \textit{Word Error Rate} (WER):
+
+\begin{equation}
+  \mathrm{WER} = \frac{N_{\mathrm{sust}} + N_{\mathrm{elim}} + N_{\mathrm{ins}}}{N_{\mathrm{ref}}}
+  \label{eq:wer}
+\end{equation}
+donde $N_{\mathrm{sust}}$, $N_{\mathrm{elim}}$ y $N_{\mathrm{ins}}$ 
+son el número de sustituciones, eliminaciones e inserciones de palabras, 
+y $N_{\mathrm{ref}}$ es el número de palabras de la transcripción de 
+referencia \parencite{deng2023}. Una WER más baja significa mejor inteligibilidad.
+
+\subsection{Modelos de atacante}
+El VoicePrivacy distingue los modelos de atacante según su conocimiento del sistema 
+\parencite{patino2021,tomashenko2024}:
+\begin{itemize}
+  \item El atacante \textit{ignorante} no sabe que el audio fue anonimizado 
+  y lo compara contra grabaciones originales (escenario o-a).
+
+  \item El atacante \textit{semi-informado} conoce el sistema, pero no su 
+  configuración, y anonimiza los datos de inscripción con una configuración 
+  propia (escenario a-a). En el VPC2024 esto se hace a nivel de \textit{utterance}.
+
+  \item El atacante \textit{informado} conoce el algoritmo y su configuración; 
+  \textcite{patino2021} no lo consideran.
+
+  \item \textcite{quamer2024} usan el término \textit{lazy-informed} para el 
+  caso en que se anonimizan tanto los datos de inscripción como los de prueba, 
+  con hablantes objetivo distintos.
+\end{itemize}
+
+\subsection{Modelo fuente--filtro y predicción lineal (LPC)}
+La predicción lineal (LPC, \textit{Linear Predictive Coding}) modela el tracto vocal 
+como un filtro todo-polo de orden $p$. Sus polos complejos se asocian a las resonancias 
+del tracto (formantes), y el residuo de predicción (excitación) conserva la información 
+de la fuente. El orden suele fijarse con la heurística de \textcite{markel1976linear}:
+\begin{equation}
+  p = f_s + 4
+  \label{eq:lpc-order}
+\end{equation}
+donde $f_s$ es la frecuencia de muestreo expresada en kHz, lo que da $p = 20$ a 16~kHz. 
+
+\subsection{Coeficiente de McAdams}
+\textcite{patino2021} transforman la envolvente espectral contrayendo o expandiendo la 
+posición angular de los polos LPC con un coeficiente $\alpha < 1$. 
+El efecto es un desplazamiento de formantes sin entrenamiento previo. 
+La línea base original (B2) usa $\alpha$ fijo $= 0.8$, es determinista y fácilmente reversible. 
+La versión estocástica sortea $\alpha \in \mathcal{U}(\alpha_{\min}, \alpha_{\max})$, 
+de modo que un adversario necesitaría conocer el valor exacto para revertir la transformación. 
+Un $\alpha_{\min}$ más bajo mejora la anonimización a costa de la inteligibilidad. El método 
+no logra anonimización perfecta: ninguna configuración alcanza la categoría 
+ZEBRA \enquote{0} \parencite{patino2021}.
+
+\subsubsection{ZEBRA: evaluación de evidencia biométrica}
+
+ZEBRA (\textit{Zero Evidence Biometric Recognition Assessment}) es un
+marco de evaluación que cuantifica la evidencia biométrica residual que
+un sistema de reconocimiento puede obtener a partir de una señal
+anonimizada. A diferencia de la EER, que resume el desempeño global de
+verificación, ZEBRA analiza cuánta evidencia permanece para relacionar
+una muestra con la identidad del hablante. La categoría \enquote{0}
+representa el nivel más favorable de privacidad dentro de este marco,
+aunque no implica anonimización absoluta ni irreversibilidad. En los
+experimentos de \textcite{patino2021}, ninguna de las configuraciones
+basadas en el coeficiente de McAdams alcanza dicha categoría.
+
+
+\subsection{Tiempo real: latencia y factor de tiempo real}
+El factor de tiempo real (RTF, o RTC en \textcite{deng2023}) es la razón entre el 
+tiempo de procesamiento y la duración del audio, y es adimensional. La latencia es 
+el retardo entre la entrada y la salida: en \textcite{quamer2024} es el tamaño del 
+fragmento más el tiempo de cómputo, y el sistema es de tiempo real si la latencia 
+es menor que el doble del fragmento. Para telefonía, la referencia habitual es la 
+Recomendación ITU-T G.114, con un retardo unidireccional de hasta 150~ms.
+
+% ================= 3. Metodología =================
+\section{Metodología}
+
+\subsection{Criterios y alternativas}
+El método se eligió con cinco criterios: 
+operar en tiempo real en CPU de un computador personal, 
+no requerir entrenamiento con corpus grandes, 
+ser alcanzable en un pregrado, 
+contar con evidencia bajo métricas del VoicePrivacy y 
+tener una implementación de referencia. 
+Se compararon cuatro enfoques con la evidencia de sus propios artículos 
+(Tabla~\ref{tab:alternativas}).
+
+Ninguno de los cuatro fue evaluado en español sobre telefonía, 
+y ninguno midió resistencia a clonación de voz: 
+solo miden contra sistemas ASV. Las cifras tampoco son comparables, 
+porque cambian el atacante, el ASV, el ASR y el protocolo. 
+Por ejemplo, el McAdams de \textcite{deng2023} obtiene una WER de 26.54\% con sus ASR, 
+frente a 13.7\% en \textcite{patino2021}.
+
+\begin{table*}[t]
+  \centering
+  \caption{Alternativas evaluadas (cifras reportadas por cada artículo; no son comparables entre sí).}
+  \label{tab:alternativas}
+  \small
+  \renewcommand{\arraystretch}{1.2}
+  \begin{tabularx}{\textwidth}{%
+      >{\raggedright\arraybackslash}p{3.6cm}
+      >{\raggedright\arraybackslash}p{3.0cm}
+      >{\raggedright\arraybackslash}X
+      >{\raggedright\arraybackslash}X
+      >{\raggedright\arraybackslash}p{2.4cm}}
+    \toprule
+    Enfoque & Entrenamiento / hardware & Tiempo real reportado & Privacidad y utilidad reportadas & Idioma evaluado \\
+    \midrule
+    McAdams estocástico \parencite{patino2021}
+      & Ninguno
+      & RTC 0.030 (medido por \textcite{deng2023}, con $\alpha = 0.8$)
+      & EER 33.8\% (semi-informado, $\mathcal{U}(0.7,0.9)$); WER 13.7\% para $\mathcal{U}(0.8,0.9)$
+      & Inglés \\
+    Streaming \textit{end-to-end} \parencite{quamer2024}
+      & LibriTTS, 2 GPU V100
+      & Latencia de 230~ms (base) y 66~ms (lite) en CPU
+      & EER a-a 39.2--42.0\%; WER 5.1--6.5\%
+      & Inglés \\
+    Códec neuronal y modelo de lenguaje \parencite{kuzmin2026}
+      & 8 GPU H100
+      & 180~ms y RTF 0.93 en GPU portátil; sin tiempo real en CPU
+      & EER 46.5--47.7\% (\textit{lazy-informed}) y 18.6--19.0\% (semi-informado); WER 4.7--6.6\%
+      & Inglés \\
+    Ejemplos adversariales \parencite{deng2023}
+      & VoxCeleb1, 2 GPU RTX 3090
+      & RTC 0.011
+      & EER 46.10\% (ignorante); WER 7.65\%
+      & Inglés (ASV); ASR en otros idiomas \\
+    \bottomrule
+  \end{tabularx}
+\end{table*}
+
+\subsection{Decisión}
+Se seleccionó el coeficiente de McAdams con $\alpha$ estocástico, 
+sin componentes de aprendizaje profundo, por tres razones: no requiere 
+entrenamiento, corre en CPU y tiene una implementación de referencia abierta 
+(\textit{baseline} B2 del VPC2024). El rango $\mathcal{U}(0.7,0.9)$ es un 
+punto de partida basado en \textcite{patino2021} y en Tayebi Arasteh et~al.\ (2024), 
+que usan $\mathcal{U}(0.75,0.90)$. exploran cuatro rangos y muestran un compromiso 
+entre privacidad e inteligibilidad. Por eso el rango de $\alpha$ será un factor del 
+Diseño de Experimentos.
+
+La decisión tiene costos que se declaran. Las conclusiones del VPC2024 indican que los 
+métodos basados en conversión de voz superan a los de procesamiento de señal 
+\parencite{tomashenko2024}. \textcite{quamer2024} y \textcite{kuzmin2026} señalan además 
+que las transformaciones globales no eliminan por completo los rasgos del hablante 
+y ofrecen privacidad limitada. En contrapartida, ningún método neuronal revisado 
+reúne a la vez ejecución en CPU, ausencia de entrenamiento y evidencia en español.
+
+\subsection{Datos, métricas y criterios}
+La evaluación usa Mozilla Common Voice Scripted Speech 26.0 en español 
+(clips MP3 a 48~kHz, convertidos a WAV de 16~kHz). 
+La privacidad se mide con la EER de un ASV preentrenado (ECAPA-TDNN), la 
+inteligibilidad con la WER de un ASR en español preentrenado con datos originales 
+(Whisper, como en el protocolo del VPC2024) y la eficiencia con el RTF.
+
+Los criterios del proyecto son $\mathrm{EER} > 30$\%, $\mathrm{WER} < 15$\% y $\mathrm{RTF} < 0.1$. 
+El primero corresponde a una de las cuatro condiciones de privacidad mínima del VPC2024 
+($\mathrm{EER} \geq 10$, 20, 30 y 40\%) \parencite{tomashenko2024}. 
+Los otros dos son criterios propios, sin umbral oficial. Los factores y niveles del Diseño de 
+Experimentos quedan por definir.
+
+\subsection{Datos y ética}
+El proyecto no recolecta voces nuevas: usa un corpus público y, en las pruebas de captura en vivo, 
+solo la voz de la autora.
+
+% ================= 4. Implementación =================
+\section{Implementación}
+
+\subsection{Arquitectura}
+
+
+\subsection{Núcleo de procesamiento}
+El audio se divide en tramas de 20~ms con salto de 10~ms y ventana de Hann periódica, 
+con reconstrucción por \textit{overlap-add}. En cada trama se estiman los coeficientes 
+LPC y sus polos, se aplica la transformación de McAdams a los polos complejos y se resintetiza 
+con la excitación calculada con los coeficientes originales. La relación de ventana y salto es 
+siempre 2:1 y se calcula dinámicamente según la frecuencia de muestreo. El orden LPC sigue la 
+Ecuación~\eqref{eq:lpc-order}, que da 20 a 16~kHz. El soporte de 8~kHz existe 
+por diseño, pero no está validado de extremo a extremo.
+
+\subsection{Coeficiente \texorpdfstring{$\alpha$}{alfa}}
+El $\alpha$ se mantiene fijo durante toda una sesión y cambia entre sesiones. 
+Se obtiene con el hash SHA-256 del identificador de sesión como semilla de un generador PCG64, 
+con muestreo uniforme en $\mathcal{U}(0.7,0.9)$. Se descartó fijarlo por contacto: permitiría 
+a quien controla un número correlacionar llamadas sucesivas por su patrón de anonimización. 
+También se descartó variarlo por fragmento, porque no reduce la superficie de ataque 
+(el ASV no necesita conocer $\alpha$) y un fragmento con $\alpha$ alto dejaría un punto débil de entrada. 
+El par (coeficiente, semilla) no se registra en el uso normal; en la evaluación por lotes sí se guarda en 
+un manifiesto, lo que es aceptable solo porque los datos son públicos.
+
+\subsection{Procesamiento en \textit{streaming}}
+La clase \texttt{AnonymizerStream} procesa audio de forma incremental con dos \textit{buffers} de estado: 
+el audio crudo que no completa una trama y la cola de \textit{overlap-add} pendiente. El método \texttt{flush()} 
+cierra la sesión y libera el audio restante. La latencia algorítmica estimada es de unos 20~ms, sin incluir 
+captura ni reproducción (estimación de diseño; la medición real está pendiente). Las pruebas confirman que 
+procesar el audio de una vez o por fragmentos produce el mismo resultado.
+
+\subsection{Pipeline por lotes}
+Los clips MP3 de Common Voice se convierten a WAV de 16~kHz en un paso previo, 
+con \texttt{soundfile} y \texttt{scipy.signal.resample\_poly}. Esta conversión 
+simula telefonía de banda ancha, no banda angosta ni efectos de códec. La función 
+\texttt{anonymize\_utterance} reutiliza el \textit{stream} y recibe como identificador 
+de sesión el nombre del clip, lo que hace reproducible el $\alpha$ de cada clip. 
+Falta el bucle a nivel de corpus.
+
+\subsection{Validación del núcleo}
+El núcleo se validó por capas con pruebas de identidad: con el coeficiente forzado a 1.0, 
+la salida debe reconstruir la entrada. Las pruebas recortan unos 10~ms en los extremos de 
+cada \textit{utterance}, donde la ventana atenúa el audio por falta de tramas vecinas.
+
+\subsection{Decisiones y desviaciones}
+La implementación de LPC usa autocorrelación con Levinson--Durbin (\texttt{scipy.linalg.solve\_toeplitz}) 
+en lugar del método de Burg de \texttt{librosa.lpc}. Se tomó porque librosa y numba no corren en el equipo 
+de desarrollo (Windows con Smart App Control). Los coeficientes y polos resultantes no son idénticos a los 
+de la referencia, así que no se afirma paridad numérica con la \textit{baseline} B2; el efecto sobre la EER 
+y la WER no está cuantificado.
+
+% ================= 5. Resultados =================
+\section{Resultados}
+% PENDIENTE
+
+% ================= Referencias =================
+\printbibliography[title={Referencias}]
+
+\end{document}

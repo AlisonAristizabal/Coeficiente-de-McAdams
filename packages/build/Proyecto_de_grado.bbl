@@ -1,0 +1,777 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.3 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{apa/apasortcite//global/global/global}
+    \entry{deng2023}{article}{}{}
+      \name{author}{6}{}{%
+        {{un=0,uniquepart=base,hash=2c7e81728b967c6314fca2f29fd8e388}{%
+           family={Deng},
+           familyi={D\bibinitperiod},
+           given={Jiangyi},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=a1df1e3a0b8bb49611dae09bca253d64}{%
+           family={Teng},
+           familyi={T\bibinitperiod},
+           given={Fei},
+           giveni={F\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=cd727269daf54d24d4c909361fa56bbd}{%
+           family={Chen},
+           familyi={C\bibinitperiod},
+           given={Yanjiao},
+           giveni={Y\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=77427426e4dcaa1ff54412acd494a005}{%
+           family={Chen},
+           familyi={C\bibinitperiod},
+           given={Xiaofu},
+           giveni={X\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=a38a25993ef9a206164dfb02c729091c}{%
+           family={Wang},
+           familyi={W\bibinitperiod},
+           given={Zhaohui},
+           giveni={Z\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=cbfca178c9b24694c91e26dd876e8283}{%
+           family={Xu},
+           familyi={X\bibinitperiod},
+           given={Wenyuan},
+           giveni={W\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{55902dcbe808ae54b5ab28b40831895a}
+      \strng{fullhash}{da21c5d78e9634e8d7d418a243e65f4c}
+      \strng{fullhashraw}{da21c5d78e9634e8d7d418a243e65f4c}
+      \strng{bibnamehash}{da21c5d78e9634e8d7d418a243e65f4c}
+      \strng{authorbibnamehash}{da21c5d78e9634e8d7d418a243e65f4c}
+      \strng{authornamehash}{55902dcbe808ae54b5ab28b40831895a}
+      \strng{authorfullhash}{da21c5d78e9634e8d7d418a243e65f4c}
+      \strng{authorfullhashraw}{da21c5d78e9634e8d7d418a243e65f4c}
+      \field{sortinit}{D}
+      \field{sortinithash}{6f385f66841fb5e82009dc833c761848}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{eprinttype}{arxiv}
+      \field{journaltitle}{32nd {USENIX} Security Symposium}
+      \field{title}{{V-Cloak}: Intelligibility-, naturalness- \& timbre-preserving real-time voice anonymization}
+      \field{year}{2023}
+      \field{dateera}{ce}
+      \field{pages}{5181\bibrangedash 5198}
+      \range{pages}{18}
+      \verb{eprint}
+      \verb 2210.15140
+      \endverb
+      \verb{urlraw}
+      \verb https://arxiv.org/abs/2210.15140
+      \endverb
+      \verb{url}
+      \verb https://arxiv.org/abs/2210.15140
+      \endverb
+    \endentry
+    \entry{kuzmin2026}{online}{}{}
+      \name{author}{4}{}{%
+        {{un=0,uniquepart=base,hash=6c18e2dfd589e08efc3063ee37ee6bdf}{%
+           family={Kuzmin},
+           familyi={K\bibinitperiod},
+           given={Nikita},
+           giveni={N\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=4ec68b787101000cc07520571596cd21}{%
+           family={Liu},
+           familyi={L\bibinitperiod},
+           given={Songting},
+           giveni={S\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=4b1c8475d6ba863aeabd315d2f10c9cf}{%
+           family={Lee},
+           familyi={L\bibinitperiod},
+           given={Kong\bibnamedelima Aik},
+           giveni={K\bibinitperiod\bibinitdelim A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=53d4f35e2541041fac8947cc15d26853}{%
+           family={Chng},
+           familyi={C\bibinitperiod},
+           given={Eng\bibnamedelima Siong},
+           giveni={E\bibinitperiod\bibinitdelim S\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{140151c63d3ee1077e1bf0657db4b0ad}
+      \strng{fullhash}{e4d55d42f1a61f0c22ad2d01ef1ea561}
+      \strng{fullhashraw}{e4d55d42f1a61f0c22ad2d01ef1ea561}
+      \strng{bibnamehash}{e4d55d42f1a61f0c22ad2d01ef1ea561}
+      \strng{authorbibnamehash}{e4d55d42f1a61f0c22ad2d01ef1ea561}
+      \strng{authornamehash}{140151c63d3ee1077e1bf0657db4b0ad}
+      \strng{authorfullhash}{e4d55d42f1a61f0c22ad2d01ef1ea561}
+      \strng{authorfullhashraw}{e4d55d42f1a61f0c22ad2d01ef1ea561}
+      \field{sortinit}{K}
+      \field{sortinithash}{c02bf6bff1c488450c352b40f5d853ab}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{eprintclass}{eess.AS}
+      \field{eprinttype}{arxiv}
+      \field{title}{{Stream-Voice-Anon}: Enhancing utility of real-time speaker anonymization via neural audio codec and language models}
+      \field{year}{2026}
+      \field{dateera}{ce}
+      \verb{eprint}
+      \verb 2601.13948
+      \endverb
+      \verb{urlraw}
+      \verb https://arxiv.org/abs/2601.13948
+      \endverb
+      \verb{url}
+      \verb https://arxiv.org/abs/2601.13948
+      \endverb
+    \endentry
+    \entry{markel1976linear}{book}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=4e3dba77944fa7df425641e466af2bdc}{%
+           family={Markel},
+           familyi={M\bibinitperiod},
+           given={John\bibnamedelima D.},
+           giveni={J\bibinitperiod\bibinitdelim D\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=0241d1ac3526d624b30c6c1c5ae8d6b0}{%
+           family={Gray},
+           familyi={G\bibinitperiod},
+           given={Augustine\bibnamedelima H.},
+           giveni={A\bibinitperiod\bibinitdelim H\bibinitperiod},
+           givenun=0,
+           suffix={Jr.},
+           suffixi={J\bibinitperiod},
+           suffixun=0}}%
+      }
+      \list{location}{1}{%
+        {Berlin, Heidelberg}%
+      }
+      \list{publisher}{1}{%
+        {Springer}%
+      }
+      \strng{namehash}{e6386c4089918ef70a55680ca975db53}
+      \strng{fullhash}{e6386c4089918ef70a55680ca975db53}
+      \strng{fullhashraw}{e6386c4089918ef70a55680ca975db53}
+      \strng{bibnamehash}{e6386c4089918ef70a55680ca975db53}
+      \strng{authorbibnamehash}{e6386c4089918ef70a55680ca975db53}
+      \strng{authornamehash}{e6386c4089918ef70a55680ca975db53}
+      \strng{authorfullhash}{e6386c4089918ef70a55680ca975db53}
+      \strng{authorfullhashraw}{e6386c4089918ef70a55680ca975db53}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{isbn}{978-3-642-66288-1}
+      \field{number}{12}
+      \field{series}{Communication and Cybernetics}
+      \field{title}{Linear Prediction of Speech}
+      \field{year}{1976}
+      \field{dateera}{ce}
+      \verb{doi}
+      \verb 10.1007/978-3-642-66286-7
+      \endverb
+    \endentry
+    \entry{patino2021}{article}{}{}
+      \name{author}{5}{}{%
+        {{un=0,uniquepart=base,hash=defbfe996a7c96e54a0fafcbc696e57a}{%
+           family={Patino},
+           familyi={P\bibinitperiod},
+           given={Jose},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=1bc1a9b4f40ca9ea97057b7c51916560}{%
+           family={Tomashenko},
+           familyi={T\bibinitperiod},
+           given={Natalia},
+           giveni={N\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=d9746848fcce379f30da4fa8db258240}{%
+           family={Todisco},
+           familyi={T\bibinitperiod},
+           given={Massimiliano},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=24d798af6af6148c6db71152253615f1}{%
+           family={Nautsch},
+           familyi={N\bibinitperiod},
+           given={Andreas},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=e4022cbee16cd294b79b020fa73f9b9c}{%
+           family={Evans},
+           familyi={E\bibinitperiod},
+           given={Nicholas},
+           giveni={N\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{6d9630f3a38a2f5e9c848376f3f041c2}
+      \strng{fullhash}{e0bf9d167d50c6d66325d0a35ead3650}
+      \strng{fullhashraw}{e0bf9d167d50c6d66325d0a35ead3650}
+      \strng{bibnamehash}{e0bf9d167d50c6d66325d0a35ead3650}
+      \strng{authorbibnamehash}{e0bf9d167d50c6d66325d0a35ead3650}
+      \strng{authornamehash}{6d9630f3a38a2f5e9c848376f3f041c2}
+      \strng{authorfullhash}{e0bf9d167d50c6d66325d0a35ead3650}
+      \strng{authorfullhashraw}{e0bf9d167d50c6d66325d0a35ead3650}
+      \field{sortinit}{P}
+      \field{sortinithash}{ff3bcf24f47321b42cb156c2cc8a8422}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Proceedings of Interspeech 2021}
+      \field{title}{Speaker anonymisation using the {McAdams} coefficient}
+      \field{year}{2021}
+      \field{dateera}{ce}
+      \field{pages}{1099\bibrangedash 1103}
+      \range{pages}{5}
+      \verb{doi}
+      \verb 10.21437/Interspeech.2021-1070
+      \endverb
+    \endentry
+    \entry{quamer2024}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=02a44f00d47fef5906baa16fa5764bd0}{%
+           family={Quamer},
+           familyi={Q\bibinitperiod},
+           given={Waris},
+           giveni={W\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=0e7c2c39d97457715a7465a75cb42fca}{%
+           family={Gutierrez-Osuna},
+           familyi={G\bibinithyphendelim O\bibinitperiod},
+           given={Ricardo},
+           giveni={R\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{7ef2f4132ae118314c0de499e3862fb6}
+      \strng{fullhash}{7ef2f4132ae118314c0de499e3862fb6}
+      \strng{fullhashraw}{7ef2f4132ae118314c0de499e3862fb6}
+      \strng{bibnamehash}{7ef2f4132ae118314c0de499e3862fb6}
+      \strng{authorbibnamehash}{7ef2f4132ae118314c0de499e3862fb6}
+      \strng{authornamehash}{7ef2f4132ae118314c0de499e3862fb6}
+      \strng{authorfullhash}{7ef2f4132ae118314c0de499e3862fb6}
+      \strng{authorfullhashraw}{7ef2f4132ae118314c0de499e3862fb6}
+      \field{sortinit}{Q}
+      \field{sortinithash}{ce69a400a872ddd02ee7fdb3b38c6abd}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{eprinttype}{arxiv}
+      \field{journaltitle}{2024 {IEEE} Spoken Language Technology Workshop ({SLT})}
+      \field{title}{End-to-end streaming model for low-latency speech anonymization}
+      \field{year}{2024}
+      \field{dateera}{ce}
+      \field{pages}{727\bibrangedash 734}
+      \range{pages}{8}
+      \verb{eprint}
+      \verb 2406.09277
+      \endverb
+      \verb{urlraw}
+      \verb https://arxiv.org/abs/2406.09277
+      \endverb
+      \verb{url}
+      \verb https://arxiv.org/abs/2406.09277
+      \endverb
+    \endentry
+    \entry{tomashenko2024}{misc}{}{}
+      \name{author}{10}{}{%
+        {{un=0,uniquepart=base,hash=1bc1a9b4f40ca9ea97057b7c51916560}{%
+           family={Tomashenko},
+           familyi={T\bibinitperiod},
+           given={Natalia},
+           giveni={N\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=ef3f59b432af3281a54422f454db0486}{%
+           family={Miao},
+           familyi={M\bibinitperiod},
+           given={Xiaoxiao},
+           giveni={X\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=6ff81adca11632c615d255b59e824b52}{%
+           family={Champion},
+           familyi={C\bibinitperiod},
+           given={Pierre},
+           giveni={P\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=7d97dfef795743c083f65bc2469317da}{%
+           family={Meyer},
+           familyi={M\bibinitperiod},
+           given={Sarina},
+           giveni={S\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=03d3e23852937fa39b0e34246c4ecd1d}{%
+           family={Wang},
+           familyi={W\bibinitperiod},
+           given={Xin},
+           giveni={X\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=8c20d285377b0667d451da42b73d2f11}{%
+           family={Vincent},
+           familyi={V\bibinitperiod},
+           given={Emmanuel},
+           giveni={E\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=a2f05256e6861c45d5783ed2857b3577}{%
+           family={Panariello},
+           familyi={P\bibinitperiod},
+           given={Michele},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=e4022cbee16cd294b79b020fa73f9b9c}{%
+           family={Evans},
+           familyi={E\bibinitperiod},
+           given={Nicholas},
+           giveni={N\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=64bfb2b1761cc3077e7b25f2eaa562ee}{%
+           family={Yamagishi},
+           familyi={Y\bibinitperiod},
+           given={Junichi},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=d9746848fcce379f30da4fa8db258240}{%
+           family={Todisco},
+           familyi={T\bibinitperiod},
+           given={Massimiliano},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{e02a1759f425e4774f5f7138ae565cc2}
+      \strng{fullhash}{8fbd937f24bb7249c008bc1b6db52ac9}
+      \strng{fullhashraw}{8fbd937f24bb7249c008bc1b6db52ac9}
+      \strng{bibnamehash}{8fbd937f24bb7249c008bc1b6db52ac9}
+      \strng{authorbibnamehash}{8fbd937f24bb7249c008bc1b6db52ac9}
+      \strng{authornamehash}{e02a1759f425e4774f5f7138ae565cc2}
+      \strng{authorfullhash}{8fbd937f24bb7249c008bc1b6db52ac9}
+      \strng{authorfullhashraw}{8fbd937f24bb7249c008bc1b6db52ac9}
+      \field{sortinit}{T}
+      \field{sortinithash}{9af77f0292593c26bde9a56e688eaee9}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{day}{6}
+      \field{eventtitle}{4th Symposium on Security and Privacy in Speech Communication}
+      \field{month}{9}
+      \field{title}{The {VoicePrivacy} 2024 Challenge}
+      \field{type}{Presentación}
+      \field{venue}{Kos, Grecia}
+      \field{year}{2024}
+      \field{dateera}{ce}
+      \verb{urlraw}
+      \verb https://www.voiceprivacychallenge.org
+      \endverb
+      \verb{url}
+      \verb https://www.voiceprivacychallenge.org
+      \endverb
+    \endentry
+  \enddatalist
+  \datalist[entry]{apa/global//global/global/global}
+    \entry{deng2023}{article}{}{}
+      \name{author}{6}{}{%
+        {{un=0,uniquepart=base,hash=2c7e81728b967c6314fca2f29fd8e388}{%
+           family={Deng},
+           familyi={D\bibinitperiod},
+           given={Jiangyi},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=a1df1e3a0b8bb49611dae09bca253d64}{%
+           family={Teng},
+           familyi={T\bibinitperiod},
+           given={Fei},
+           giveni={F\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=cd727269daf54d24d4c909361fa56bbd}{%
+           family={Chen},
+           familyi={C\bibinitperiod},
+           given={Yanjiao},
+           giveni={Y\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=77427426e4dcaa1ff54412acd494a005}{%
+           family={Chen},
+           familyi={C\bibinitperiod},
+           given={Xiaofu},
+           giveni={X\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=a38a25993ef9a206164dfb02c729091c}{%
+           family={Wang},
+           familyi={W\bibinitperiod},
+           given={Zhaohui},
+           giveni={Z\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=cbfca178c9b24694c91e26dd876e8283}{%
+           family={Xu},
+           familyi={X\bibinitperiod},
+           given={Wenyuan},
+           giveni={W\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{55902dcbe808ae54b5ab28b40831895a}
+      \strng{fullhash}{da21c5d78e9634e8d7d418a243e65f4c}
+      \strng{fullhashraw}{da21c5d78e9634e8d7d418a243e65f4c}
+      \strng{bibnamehash}{da21c5d78e9634e8d7d418a243e65f4c}
+      \strng{authorbibnamehash}{da21c5d78e9634e8d7d418a243e65f4c}
+      \strng{authornamehash}{55902dcbe808ae54b5ab28b40831895a}
+      \strng{authorfullhash}{da21c5d78e9634e8d7d418a243e65f4c}
+      \strng{authorfullhashraw}{da21c5d78e9634e8d7d418a243e65f4c}
+      \field{sortinit}{D}
+      \field{sortinithash}{6f385f66841fb5e82009dc833c761848}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{eprinttype}{arxiv}
+      \field{journaltitle}{32nd {USENIX} Security Symposium}
+      \field{title}{{V-Cloak}: Intelligibility-, naturalness- \& timbre-preserving real-time voice anonymization}
+      \field{year}{2023}
+      \field{dateera}{ce}
+      \field{pages}{5181\bibrangedash 5198}
+      \range{pages}{18}
+      \verb{eprint}
+      \verb 2210.15140
+      \endverb
+      \verb{urlraw}
+      \verb https://arxiv.org/abs/2210.15140
+      \endverb
+      \verb{url}
+      \verb https://arxiv.org/abs/2210.15140
+      \endverb
+    \endentry
+    \entry{kuzmin2026}{online}{}{}
+      \name{author}{4}{}{%
+        {{un=0,uniquepart=base,hash=6c18e2dfd589e08efc3063ee37ee6bdf}{%
+           family={Kuzmin},
+           familyi={K\bibinitperiod},
+           given={Nikita},
+           giveni={N\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=4ec68b787101000cc07520571596cd21}{%
+           family={Liu},
+           familyi={L\bibinitperiod},
+           given={Songting},
+           giveni={S\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=4b1c8475d6ba863aeabd315d2f10c9cf}{%
+           family={Lee},
+           familyi={L\bibinitperiod},
+           given={Kong\bibnamedelima Aik},
+           giveni={K\bibinitperiod\bibinitdelim A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=53d4f35e2541041fac8947cc15d26853}{%
+           family={Chng},
+           familyi={C\bibinitperiod},
+           given={Eng\bibnamedelima Siong},
+           giveni={E\bibinitperiod\bibinitdelim S\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{140151c63d3ee1077e1bf0657db4b0ad}
+      \strng{fullhash}{e4d55d42f1a61f0c22ad2d01ef1ea561}
+      \strng{fullhashraw}{e4d55d42f1a61f0c22ad2d01ef1ea561}
+      \strng{bibnamehash}{e4d55d42f1a61f0c22ad2d01ef1ea561}
+      \strng{authorbibnamehash}{e4d55d42f1a61f0c22ad2d01ef1ea561}
+      \strng{authornamehash}{140151c63d3ee1077e1bf0657db4b0ad}
+      \strng{authorfullhash}{e4d55d42f1a61f0c22ad2d01ef1ea561}
+      \strng{authorfullhashraw}{e4d55d42f1a61f0c22ad2d01ef1ea561}
+      \field{sortinit}{K}
+      \field{sortinithash}{c02bf6bff1c488450c352b40f5d853ab}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{eprintclass}{eess.AS}
+      \field{eprinttype}{arxiv}
+      \field{title}{{Stream-Voice-Anon}: Enhancing utility of real-time speaker anonymization via neural audio codec and language models}
+      \field{year}{2026}
+      \field{dateera}{ce}
+      \verb{eprint}
+      \verb 2601.13948
+      \endverb
+      \verb{urlraw}
+      \verb https://arxiv.org/abs/2601.13948
+      \endverb
+      \verb{url}
+      \verb https://arxiv.org/abs/2601.13948
+      \endverb
+    \endentry
+    \entry{markel1976linear}{book}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=4e3dba77944fa7df425641e466af2bdc}{%
+           family={Markel},
+           familyi={M\bibinitperiod},
+           given={John\bibnamedelima D.},
+           giveni={J\bibinitperiod\bibinitdelim D\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=0241d1ac3526d624b30c6c1c5ae8d6b0}{%
+           family={Gray},
+           familyi={G\bibinitperiod},
+           given={Augustine\bibnamedelima H.},
+           giveni={A\bibinitperiod\bibinitdelim H\bibinitperiod},
+           givenun=0,
+           suffix={Jr.},
+           suffixi={J\bibinitperiod},
+           suffixun=0}}%
+      }
+      \list{location}{1}{%
+        {Berlin, Heidelberg}%
+      }
+      \list{publisher}{1}{%
+        {Springer}%
+      }
+      \strng{namehash}{e6386c4089918ef70a55680ca975db53}
+      \strng{fullhash}{e6386c4089918ef70a55680ca975db53}
+      \strng{fullhashraw}{e6386c4089918ef70a55680ca975db53}
+      \strng{bibnamehash}{e6386c4089918ef70a55680ca975db53}
+      \strng{authorbibnamehash}{e6386c4089918ef70a55680ca975db53}
+      \strng{authornamehash}{e6386c4089918ef70a55680ca975db53}
+      \strng{authorfullhash}{e6386c4089918ef70a55680ca975db53}
+      \strng{authorfullhashraw}{e6386c4089918ef70a55680ca975db53}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{isbn}{978-3-642-66288-1}
+      \field{number}{12}
+      \field{series}{Communication and Cybernetics}
+      \field{title}{Linear Prediction of Speech}
+      \field{year}{1976}
+      \field{dateera}{ce}
+      \verb{doi}
+      \verb 10.1007/978-3-642-66286-7
+      \endverb
+    \endentry
+    \entry{patino2021}{article}{}{}
+      \name{author}{5}{}{%
+        {{un=0,uniquepart=base,hash=defbfe996a7c96e54a0fafcbc696e57a}{%
+           family={Patino},
+           familyi={P\bibinitperiod},
+           given={Jose},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=1bc1a9b4f40ca9ea97057b7c51916560}{%
+           family={Tomashenko},
+           familyi={T\bibinitperiod},
+           given={Natalia},
+           giveni={N\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=d9746848fcce379f30da4fa8db258240}{%
+           family={Todisco},
+           familyi={T\bibinitperiod},
+           given={Massimiliano},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=24d798af6af6148c6db71152253615f1}{%
+           family={Nautsch},
+           familyi={N\bibinitperiod},
+           given={Andreas},
+           giveni={A\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=e4022cbee16cd294b79b020fa73f9b9c}{%
+           family={Evans},
+           familyi={E\bibinitperiod},
+           given={Nicholas},
+           giveni={N\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{6d9630f3a38a2f5e9c848376f3f041c2}
+      \strng{fullhash}{e0bf9d167d50c6d66325d0a35ead3650}
+      \strng{fullhashraw}{e0bf9d167d50c6d66325d0a35ead3650}
+      \strng{bibnamehash}{e0bf9d167d50c6d66325d0a35ead3650}
+      \strng{authorbibnamehash}{e0bf9d167d50c6d66325d0a35ead3650}
+      \strng{authornamehash}{6d9630f3a38a2f5e9c848376f3f041c2}
+      \strng{authorfullhash}{e0bf9d167d50c6d66325d0a35ead3650}
+      \strng{authorfullhashraw}{e0bf9d167d50c6d66325d0a35ead3650}
+      \field{sortinit}{P}
+      \field{sortinithash}{ff3bcf24f47321b42cb156c2cc8a8422}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Proceedings of Interspeech 2021}
+      \field{title}{Speaker anonymisation using the {McAdams} coefficient}
+      \field{year}{2021}
+      \field{dateera}{ce}
+      \field{pages}{1099\bibrangedash 1103}
+      \range{pages}{5}
+      \verb{doi}
+      \verb 10.21437/Interspeech.2021-1070
+      \endverb
+    \endentry
+    \entry{quamer2024}{article}{}{}
+      \name{author}{2}{}{%
+        {{un=0,uniquepart=base,hash=02a44f00d47fef5906baa16fa5764bd0}{%
+           family={Quamer},
+           familyi={Q\bibinitperiod},
+           given={Waris},
+           giveni={W\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=0e7c2c39d97457715a7465a75cb42fca}{%
+           family={Gutierrez-Osuna},
+           familyi={G\bibinithyphendelim O\bibinitperiod},
+           given={Ricardo},
+           giveni={R\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{7ef2f4132ae118314c0de499e3862fb6}
+      \strng{fullhash}{7ef2f4132ae118314c0de499e3862fb6}
+      \strng{fullhashraw}{7ef2f4132ae118314c0de499e3862fb6}
+      \strng{bibnamehash}{7ef2f4132ae118314c0de499e3862fb6}
+      \strng{authorbibnamehash}{7ef2f4132ae118314c0de499e3862fb6}
+      \strng{authornamehash}{7ef2f4132ae118314c0de499e3862fb6}
+      \strng{authorfullhash}{7ef2f4132ae118314c0de499e3862fb6}
+      \strng{authorfullhashraw}{7ef2f4132ae118314c0de499e3862fb6}
+      \field{sortinit}{Q}
+      \field{sortinithash}{ce69a400a872ddd02ee7fdb3b38c6abd}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{eprinttype}{arxiv}
+      \field{journaltitle}{2024 {IEEE} Spoken Language Technology Workshop ({SLT})}
+      \field{title}{End-to-end streaming model for low-latency speech anonymization}
+      \field{year}{2024}
+      \field{dateera}{ce}
+      \field{pages}{727\bibrangedash 734}
+      \range{pages}{8}
+      \verb{eprint}
+      \verb 2406.09277
+      \endverb
+      \verb{urlraw}
+      \verb https://arxiv.org/abs/2406.09277
+      \endverb
+      \verb{url}
+      \verb https://arxiv.org/abs/2406.09277
+      \endverb
+    \endentry
+    \entry{tomashenko2024}{misc}{}{}
+      \name{author}{10}{}{%
+        {{un=0,uniquepart=base,hash=1bc1a9b4f40ca9ea97057b7c51916560}{%
+           family={Tomashenko},
+           familyi={T\bibinitperiod},
+           given={Natalia},
+           giveni={N\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=ef3f59b432af3281a54422f454db0486}{%
+           family={Miao},
+           familyi={M\bibinitperiod},
+           given={Xiaoxiao},
+           giveni={X\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=6ff81adca11632c615d255b59e824b52}{%
+           family={Champion},
+           familyi={C\bibinitperiod},
+           given={Pierre},
+           giveni={P\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=7d97dfef795743c083f65bc2469317da}{%
+           family={Meyer},
+           familyi={M\bibinitperiod},
+           given={Sarina},
+           giveni={S\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=03d3e23852937fa39b0e34246c4ecd1d}{%
+           family={Wang},
+           familyi={W\bibinitperiod},
+           given={Xin},
+           giveni={X\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=8c20d285377b0667d451da42b73d2f11}{%
+           family={Vincent},
+           familyi={V\bibinitperiod},
+           given={Emmanuel},
+           giveni={E\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=a2f05256e6861c45d5783ed2857b3577}{%
+           family={Panariello},
+           familyi={P\bibinitperiod},
+           given={Michele},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=e4022cbee16cd294b79b020fa73f9b9c}{%
+           family={Evans},
+           familyi={E\bibinitperiod},
+           given={Nicholas},
+           giveni={N\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=64bfb2b1761cc3077e7b25f2eaa562ee}{%
+           family={Yamagishi},
+           familyi={Y\bibinitperiod},
+           given={Junichi},
+           giveni={J\bibinitperiod},
+           givenun=0}}%
+        {{un=0,uniquepart=base,hash=d9746848fcce379f30da4fa8db258240}{%
+           family={Todisco},
+           familyi={T\bibinitperiod},
+           given={Massimiliano},
+           giveni={M\bibinitperiod},
+           givenun=0}}%
+      }
+      \strng{namehash}{e02a1759f425e4774f5f7138ae565cc2}
+      \strng{fullhash}{8fbd937f24bb7249c008bc1b6db52ac9}
+      \strng{fullhashraw}{8fbd937f24bb7249c008bc1b6db52ac9}
+      \strng{bibnamehash}{8fbd937f24bb7249c008bc1b6db52ac9}
+      \strng{authorbibnamehash}{8fbd937f24bb7249c008bc1b6db52ac9}
+      \strng{authornamehash}{e02a1759f425e4774f5f7138ae565cc2}
+      \strng{authorfullhash}{8fbd937f24bb7249c008bc1b6db52ac9}
+      \strng{authorfullhashraw}{8fbd937f24bb7249c008bc1b6db52ac9}
+      \field{sortinit}{T}
+      \field{sortinithash}{9af77f0292593c26bde9a56e688eaee9}
+      \field{extradatescope}{labelyear}
+      \field{labeldatesource}{}
+      \true{uniqueprimaryauthor}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{day}{6}
+      \field{eventtitle}{4th Symposium on Security and Privacy in Speech Communication}
+      \field{month}{9}
+      \field{title}{The {VoicePrivacy} 2024 Challenge}
+      \field{type}{Presentación}
+      \field{venue}{Kos, Grecia}
+      \field{year}{2024}
+      \field{dateera}{ce}
+      \verb{urlraw}
+      \verb https://www.voiceprivacychallenge.org
+      \endverb
+      \verb{url}
+      \verb https://www.voiceprivacychallenge.org
+      \endverb
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+

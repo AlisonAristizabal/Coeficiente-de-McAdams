@@ -1,0 +1,17 @@
+[0] Config.pm:328> INFO - This is Biber 2.21
+[0] Config.pm:331> INFO - Logfile is 'build/Proyecto_de_grado.blg'
+[79] biber-MSWIN64:342> INFO - === 
+[109] Biber.pm:421> INFO - Reading 'build/Proyecto_de_grado.bcf'
+[195] Biber.pm:1002> INFO - Found 6 citekeys in bib section 0
+[207] Biber.pm:4487> INFO - Processing section 0
+[215] Biber.pm:4678> INFO - Looking for bibtex file 'referencias.bib' for section 0
+[260] bibtex.pm:1713> INFO - LaTeX decoding ...
+[265] bibtex.pm:1519> INFO - Found BibTeX data source 'build/referencias.bib'
+[323] UCollate.pm:68> INFO - Overriding locale 'es-ES' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[323] UCollate.pm:68> INFO - Overriding locale 'es-ES' defaults 'variable = shifted' with 'variable = non-ignorable'
+[323] Biber.pm:4307> INFO - Sorting list 'apa/apasortcite//global/global/global' of type 'entry' with template 'apa' and locale 'es-ES'
+[336] UCollate.pm:68> INFO - Overriding locale 'es-ES' defaults 'normalization = NFD' with 'normalization = prenormalized'
+[336] UCollate.pm:68> INFO - Overriding locale 'es-ES' defaults 'variable = shifted' with 'variable = non-ignorable'
+[336] Biber.pm:4307> INFO - Sorting list 'apa/global//global/global/global' of type 'entry' with template 'apa' and locale 'es-ES'
+[344] bbl.pm:676> INFO - Writing 'build/Proyecto_de_grado.bbl' with encoding 'UTF-8'
+[352] bbl.pm:779> INFO - Output to build/Proyecto_de_grado.bbl
