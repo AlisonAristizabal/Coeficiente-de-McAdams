@@ -2,7 +2,12 @@ import inspect
 
 import pytest
 
-from common_voice_corpus import read_tsv_rows, load_durations, load_speakers
+from common_voice_corpus import (
+    read_tsv_rows, 
+    load_durations, 
+    load_speakers,
+    filter_speakers
+)
 
 
 def write_tsv(tmp_path, lines):
@@ -277,3 +282,51 @@ def test_load_speakers_filas_totales_igual_a_conservados_mas_descartados(tmp_pat
     assert conservados + sum(discarded.values()) == len(filas)
     assert conservados == 3
     assert discarded == {"sin_duracion": 1, "muy_corto": 1, "sin_client_id": 1}
+
+
+def clips_de_prueba(n):
+    """Lista de n clips mínimos, solo para contar."""
+    return [{"path": f"c{i}.mp3"} for i in range(n)]
+
+
+def test_filter_speakers_descarta_hablantes_con_pocos_clips():
+    speakers = {"a1": clips_de_prueba(2), "b2": clips_de_prueba(6)}
+    assert set(filter_speakers(speakers, 5)) == {"b2"}
+
+
+def test_filter_speakers_conserva_hablante_con_exactamente_el_minimo():
+    speakers = {"a1": clips_de_prueba(5), "b2": clips_de_prueba(4)}
+    assert set(filter_speakers(speakers, 5)) == {"a1"}
+
+
+def test_filter_speakers_conserva_los_clips_intactos():
+    clips = clips_de_prueba(5)
+    resultado = filter_speakers({"a1": clips}, 5)
+    assert resultado["a1"] == clips
+
+
+def test_filter_speakers_no_modifica_el_diccionario_de_entrada():
+    speakers = {"a1": clips_de_prueba(2), "b2": clips_de_prueba(6)}
+    copia = {k: list(v) for k, v in speakers.items()}
+    filter_speakers(speakers, 5)
+    assert speakers == copia
+
+
+def test_filter_speakers_devuelve_un_diccionario_nuevo():
+    speakers = {"a1": clips_de_prueba(6)}
+    resultado = filter_speakers(speakers, 5)
+    assert resultado is not speakers
+
+
+def test_filter_speakers_diccionario_vacio():
+    assert filter_speakers({}, 5) == {}
+
+
+def test_filter_speakers_nadie_cumple_el_minimo():
+    speakers = {"a1": clips_de_prueba(1), "b2": clips_de_prueba(3)}
+    assert filter_speakers(speakers, 5) == {}
+
+
+def test_filter_speakers_con_minimo_uno_conserva_a_todos():
+    speakers = {"a1": clips_de_prueba(1), "b2": clips_de_prueba(3)}
+    assert set(filter_speakers(speakers, 1)) == {"a1", "b2"}

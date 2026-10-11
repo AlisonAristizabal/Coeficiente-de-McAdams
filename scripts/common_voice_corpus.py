@@ -113,3 +113,25 @@ def load_speakers(validated_path, durations, min_duration_ms):
 
     return speakers, discarded
 
+def filter_speakers(speakers, min_clips):
+    """
+    Descarta los hablantes con menos de `min_clips` clips válidos.
+
+    Se aplica sobre el resultado de `load_speakers`, es decir, después
+    del filtro de duración, y antes de asignar estratos de acento. No
+    modifica el diccionario de entrada: devuelve uno nuevo.
+
+    Parámetros:
+        speakers: diccionario {client_id: lista de clips}.
+        min_clips: número mínimo de clips que debe tener un hablante; un
+            hablante con exactamente `min_clips` se conserva.
+
+    Retorna:
+        Diccionario {client_id: lista de clips} solo con los hablantes
+        que cumplen el mínimo.
+    """
+    valid_speakers = {}
+    for client_id, clips in speakers.items():
+        if len(clips) >= min_clips:
+            valid_speakers[client_id] = clips
+    return valid_speakers
