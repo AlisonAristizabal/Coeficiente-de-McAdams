@@ -113,6 +113,7 @@ def load_speakers(validated_path, durations, min_duration_ms):
 
     return speakers, discarded
 
+
 def filter_speakers(speakers, min_clips):
     """
     Descarta los hablantes con menos de `min_clips` clips válidos.
@@ -135,3 +136,60 @@ def filter_speakers(speakers, min_clips):
         if len(clips) >= min_clips:
             valid_speakers[client_id] = clips
     return valid_speakers
+
+
+SUBSET_COLUMNS = ['client_id', 'stratum', 'path', 'accents', 'sentence', 'duration_ms']  # las seis columnas, en el orden del manifiesto
+
+
+def write_subset(selected, output_path):
+    """
+    Escribe el manifiesto `subset.tsv` con los clips elegidos.
+
+    Recorre `selected` en el orden recibido y escribe una fila por clip,
+    con las columnas `client_id`, `stratum`, `path`, `accents`,
+    `sentence` y `duration_ms`, separadas por tabulación y sin
+    entrecomillar (coherente con `read_tsv_rows`, que lee con
+    `QUOTE_NONE`). El archivo se codifica en UTF-8.
+
+    Antes de abrir el archivo se validan todos los campos: si alguno
+    contiene una tabulación o un salto de línea se lanza `ValueError`
+    indicando estrato, hablante y campo, y no se escribe nada. Un valor
+    `None` (por ejemplo `accents`) se escribe como cadena vacía.
+
+    Parámetros:
+        selected: diccionario {estrato: {client_id: lista de clips}},
+            donde cada clip es un diccionario con `path`, `accents`,
+            `sentence` y `duration_ms`.
+        output_path: ruta del archivo a escribir; si existe, se
+            sobrescribe.
+
+    Retorna:
+        `output_path`.
+    """
+    rows = []
+    for stratum, speakers in selected.items():
+        for client_id, clips in speakers.items(): 
+            for clip in clips:
+
+                values = [client_id, stratum] + [clip[col] for col in SUBSET_COLUMNS[2:]]
+
+                row = [str(value) if value is not None else "" for value in values]
+
+                for column, text in zip(SUBSET_COLUMNS, row):
+                    if "\t" in text or "\n" in text or "\r" in text:
+                        raise ValueError(f"el campo '{column}' en el estrato '{stratum}', hablante '{client_id}' contiene caracteres no permitidos")
+
+                rows.append(row)
+
+    with open(output_path, "w", encoding="utf-8", newline="") as f:
+        writer = csv.writer(
+            f,
+            delimiter="\t",
+            quoting=csv.QUOTE_NONE,
+            quotechar=None,
+            lineterminator="\n",
+        )
+        writer.writerow(SUBSET_COLUMNS)       
+        writer.writerows(rows)      
+
+    return output_path

@@ -1,12 +1,14 @@
 import inspect
-
+import copy
 import pytest
 
 from common_voice_corpus import (
     read_tsv_rows, 
     load_durations, 
     load_speakers,
-    filter_speakers
+    filter_speakers,
+    write_subset,
+    SUBSET_COLUMNS,
 )
 
 
@@ -330,3 +332,213 @@ def test_filter_speakers_nadie_cumple_el_minimo():
 def test_filter_speakers_con_minimo_uno_conserva_a_todos():
     speakers = {"a1": clips_de_prueba(1), "b2": clips_de_prueba(3)}
     assert set(filter_speakers(speakers, 1)) == {"a1", "b2"}
+
+
+
+def clip(path, accents="", sentence="hola mundo", duration_ms=4200):
+    """Clip como los que devuelve `load_speakers` (sin `client_id`)."""
+    return {
+        "path": path,
+        "accents": accents,
+        "sentence": sentence,
+        "duration_ms": duration_ms,
+    }
+
+
+def seleccion_basica():
+    """Dos estratos, el primero con dos hablantes. Cuatro clips en total."""
+    return {
+        "mexico": {
+            "a1": [clip("a1_1.mp3", "México"), clip("a1_2.mp3", "México")],
+            "b2": [clip("b2_1.mp3", "México")],
+        },
+        "caribe": {
+            "c3": [clip("c3_1.mp3", "Caribe")],
+        },
+    }
+
+
+def leer(path):
+    """Lee el manifiesto de vuelta con la misma función que usa el proyecto."""
+    return list(read_tsv_rows(path))
+
+
+def test_write_subset_devuelve_la_ruta(tmp_path):
+    salida = tmp_path / "subset.tsv"
+    assert write_subset(seleccion_basica(), salida) == salida
+
+
+def test_write_subset_encabezado_y_orden_de_columnas(tmp_path):
+    salida = tmp_path / "subset.tsv"
+    write_subset(seleccion_basica(), salida)
+    primera_linea = salida.read_text(encoding="utf-8").split("\n")[0]
+    assert primera_linea.split("\t") == [
+        "client_id", "stratum", "path", "accents", "sentence", "duration_ms",
+    ]
+    assert SUBSET_COLUMNS == primera_linea.split("\t")
+
+
+def test_write_subset_una_fila_por_clip(tmp_path):
+    salida = tmp_path / "subset.tsv"
+    write_subset(seleccion_basica(), salida)
+    assert len(leer(salida)) == 4
+
+
+def test_write_subset_cada_valor_queda_en_su_columna(tmp_path):
+    salida = tmp_path / "subset.tsv"
+    seleccion = {"mexico": {"a1": [clip("a1_1.mp3", "México", "buenos días", 3500)]}}
+    write_subset(seleccion, salida)
+    assert leer(salida) == [{
+        "client_id": "a1",
+        "stratum": "mexico",
+        "path": "a1_1.mp3",
+        "accents": "México",
+        "sentence": "buenos días",
+        "duration_ms": "3500",
+    }]
+
+
+def test_write_subset_conserva_el_orden_recibido(tmp_path):
+    salida = tmp_path / "subset.tsv"
+    # Orden deliberadamente no alfabético en estratos, hablantes y clips.
+    seleccion = {
+        "mexico": {"z9": [clip("z9_2.mp3"), clip("z9_1.mp3")], "a1": [clip("a1_1.mp3")]},
+        "caribe": {"c3": [clip("c3_1.mp3")]},
+    }
+    write_subset(seleccion, salida)
+    filas = leer(salida)
+    assert [(f["stratum"], f["client_id"], f["path"]) for f in filas] == [
+        ("mexico", "z9", "z9_2.mp3"),
+        ("mexico", "z9", "z9_1.mp3"),
+        ("mexico", "a1", "a1_1.mp3"),
+        ("caribe", "c3", "c3_1.mp3"),
+    ]
+
+
+def test_write_subset_ida_y_vuelta_con_texto_dificil(tmp_path):
+    salida = tmp_path / "subset.tsv"
+    sentence = '¿Dijo "hola", señor? Sí: \'ñandú\' y comillas "sueltas'
+    seleccion = {"andino_pacifico": {"a1": [clip("a1_1.mp3", "Andino-Pacífico", sentence)]}}
+    write_subset(seleccion, salida)
+    assert leer(salida)[0]["sentence"] == sentence
+
+
+def test_write_subset_ida_y_vuelta_completa(tmp_path):
+    salida = tmp_path / "subset.tsv"
+    seleccion = seleccion_basica()
+    write_subset(seleccion, salida)
+    esperado = [
+        {
+            "client_id": client_id,
+            "stratum": stratum,
+            "path": c["path"],
+            "accents": c["accents"],
+            "sentence": c["sentence"],
+            "duration_ms": str(c["duration_ms"]),
+        }
+        for stratum, hablantes in seleccion.items()
+        for client_id, clips in hablantes.items()
+        for c in clips
+    ]
+    assert leer(salida) == esperado
+
+
+def test_write_subset_none_se_escribe_como_cadena_vacia(tmp_path):
+    salida = tmp_path / "subset.tsv"
+    seleccion = {"mexico": {"a1": [clip("a1_1.mp3", accents=None)]}}
+    write_subset(seleccion, salida)
+    assert leer(salida)[0]["accents"] == ""
+
+
+def test_write_subset_duration_ms_se_escribe_como_texto_entero(tmp_path):
+    salida = tmp_path / "subset.tsv"
+    seleccion = {"mexico": {"a1": [clip("a1_1.mp3", duration_ms=12345)]}}
+    write_subset(seleccion, salida)
+    assert leer(salida)[0]["duration_ms"] == "12345"
+
+
+def test_write_subset_seleccion_vacia_solo_escribe_encabezado(tmp_path):
+    salida = tmp_path / "subset.tsv"
+    write_subset({}, salida)
+    assert salida.read_text(encoding="utf-8") == "\t".join(SUBSET_COLUMNS) + "\n"
+    assert leer(salida) == []
+
+
+def test_write_subset_usa_salto_de_linea_unix_y_utf8(tmp_path):
+    salida = tmp_path / "subset.tsv"
+    seleccion = {"mexico": {"a1": [clip("a1_1.mp3", sentence="canción")]}}
+    write_subset(seleccion, salida)
+    crudo = salida.read_bytes()
+    assert b"\r" not in crudo
+    assert "canción".encode("utf-8") in crudo
+
+
+def test_write_subset_sobrescribe_un_archivo_existente(tmp_path):
+    salida = tmp_path / "subset.tsv"
+    salida.write_text("contenido viejo\n", encoding="utf-8")
+    write_subset(seleccion_basica(), salida)
+    assert "contenido viejo" not in salida.read_text(encoding="utf-8")
+    assert len(leer(salida)) == 4
+
+
+def test_write_subset_no_modifica_la_entrada(tmp_path):
+    seleccion = seleccion_basica()
+    copia = copy.deepcopy(seleccion)
+    write_subset(seleccion, tmp_path / "subset.tsv")
+    assert seleccion == copia
+
+
+@pytest.mark.parametrize("caracter", ["\t", "\n", "\r"])
+@pytest.mark.parametrize("campo", ["path", "accents", "sentence"])
+def test_write_subset_rechaza_separadores_en_los_campos_del_clip(tmp_path, campo, caracter):
+    salida = tmp_path / "subset.tsv"
+    mal = clip("a1_1.mp3")
+    mal[campo] = f"antes{caracter}despues"
+    with pytest.raises(ValueError):
+        write_subset({"mexico": {"a1": [mal]}}, salida)
+
+
+@pytest.mark.parametrize("caracter", ["\t", "\n", "\r"])
+def test_write_subset_rechaza_separadores_en_client_id_y_estrato(tmp_path, caracter):
+    with pytest.raises(ValueError):
+        write_subset({"mexico": {f"a{caracter}1": [clip("a1_1.mp3")]}}, tmp_path / "s1.tsv")
+    with pytest.raises(ValueError):
+        write_subset({f"mex{caracter}ico": {"a1": [clip("a1_1.mp3")]}}, tmp_path / "s2.tsv")
+
+
+def test_write_subset_el_error_indica_estrato_hablante_y_campo(tmp_path):
+    mal = clip("a1_1.mp3", sentence="una\tfrase")
+    seleccion = {"caribe": {"c3": [clip("c3_1.mp3")]}, "mexico": {"hablante_malo": [mal]}}
+    with pytest.raises(ValueError) as error:
+        write_subset(seleccion, tmp_path / "subset.tsv")
+    mensaje = str(error.value)
+    assert "sentence" in mensaje
+    assert "mexico" in mensaje
+    assert "hablante_malo" in mensaje
+
+
+def test_write_subset_si_falla_no_crea_el_archivo(tmp_path):
+    salida = tmp_path / "subset.tsv"
+    seleccion = seleccion_basica()
+    # El clip malo va al final: las filas anteriores ya son válidas.
+    seleccion["caribe"]["c3"].append(clip("c3_2.mp3", sentence="mala\nfrase"))
+    with pytest.raises(ValueError):
+        write_subset(seleccion, salida)
+    assert not salida.exists()
+
+
+def test_write_subset_si_falla_no_toca_un_archivo_existente(tmp_path):
+    salida = tmp_path / "subset.tsv"
+    salida.write_text("manifiesto anterior\n", encoding="utf-8")
+    mal = clip("a1_1.mp3", sentence="mala\tfrase")
+    with pytest.raises(ValueError):
+        write_subset({"mexico": {"a1": [mal]}}, salida)
+    assert salida.read_text(encoding="utf-8") == "manifiesto anterior\n"
+
+
+@pytest.mark.parametrize("llave", ["path", "accents", "sentence", "duration_ms"])
+def test_write_subset_clip_sin_llave_lanza_key_error(tmp_path, llave):
+    incompleto = clip("a1_1.mp3")
+    del incompleto[llave]
+    with pytest.raises(KeyError):
+        write_subset({"mexico": {"a1": [incompleto]}}, tmp_path / "subset.tsv")

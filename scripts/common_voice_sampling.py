@@ -1,5 +1,5 @@
 import random
-from scripts.common_voice_strata import assign_stratum
+from common_voice_strata import assign_stratum
 
 
 def group_by_stratum(speakers):
