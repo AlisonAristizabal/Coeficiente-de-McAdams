@@ -437,3 +437,16 @@ def test_main_respeta_la_semilla(monkeypatch, tmp_path, captured):
     seed7 = dict(captured["thresholds"])
     run_main(monkeypatch, npz, manifest, tmp_path / "f")
     assert seed7 != captured["thresholds"]
+
+def test_main_usa_load_and_score(monkeypatch, tmp_path, captured):
+    from run_eer import load_and_score
+    npz, manifest, _ = write_inputs(tmp_path)
+    calls = []
+
+    def spy(*args):
+        calls.append(args)
+        return load_and_score(*args)
+
+    monkeypatch.setattr(plot_eer, "load_and_score", spy)
+    run_main(monkeypatch, npz, manifest, tmp_path / "f", "--seed", "7", "--n-enroll", "2", "--n-trial", "3")
+    assert calls == [(str(npz), str(manifest), 7, 2, 3)]

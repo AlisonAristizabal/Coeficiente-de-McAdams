@@ -17,6 +17,7 @@ from run_eer import (
     SCENARIOS,
     build_row_index,
     check_splits,
+    load_and_score,
     main,
     run_scenarios,
     score_scenario,
@@ -506,3 +507,64 @@ def test_main_imprime_resumen(monkeypatch, tmp_path, inputs, capsys):
     for name in ("o-o", "o-a", "a-a"):
         assert f"{name}: EER =" in printed
     assert str(output) in printed
+
+# ---------------------------------------------------------------------------
+# load_and_score
+# ---------------------------------------------------------------------------
+
+def test_load_and_score_coincide_con_los_pasos_por_separado(tmp_path, inputs):
+    rows, session_ids, original, anonymized, npz, manifest = inputs
+    splits, excluded, results = load_and_score(npz, manifest, 42, 3, 2)
+    exp_splits, exp_excluded = split_enrollment_trial(rows)
+    expected = run_scenarios({"original": original.astype(np.float32), "anonymized": anonymized.astype(np.float32)},
+                             build_row_index(session_ids), exp_splits)
+    assert splits == exp_splits and excluded == exp_excluded
+    assert list(splits) == list(exp_splits)
+    for name in SCENARIOS:
+        np.testing.assert_array_equal(results[name]["scores"], expected[name]["scores"])
+        np.testing.assert_array_equal(results[name]["owner"], expected[name]["owner"])
+        assert results[name]["eer"] == expected[name]["eer"]
+        assert results[name]["threshold"] == expected[name]["threshold"]
+
+
+def test_load_and_score_respeta_semilla_n_enroll_y_n_trial(tmp_path, inputs):
+    rows, *_, npz, manifest = inputs
+    splits, _, results = load_and_score(npz, manifest, 7, 2, 3)
+    assert splits == split_enrollment_trial(rows, n_enroll=2, n_trial=3, seed=7)[0]
+    assert results["o-o"]["n_target"] == 18
+
+
+def test_load_and_score_informa_excluidos(tmp_path):
+    rows = [r for r in make_rows(5) if r["session_id"] != "spk02_c1"]
+    session_ids, original, _ = make_embeddings(rows)
+    npz, manifest = write_inputs(tmp_path, rows, session_ids, original, original)
+    splits, excluded, _ = load_and_score(npz, manifest, 42, 3, 2)
+    assert excluded == {"spk02": 4} and "spk02" not in splits
+
+
+def test_load_and_score_acepta_rutas_como_texto(tmp_path, inputs):
+    *_, npz, manifest = inputs
+    a = load_and_score(npz, manifest, 42, 3, 2)[2]
+    b = load_and_score(str(npz), str(manifest), 42, 3, 2)[2]
+    np.testing.assert_array_equal(a["a-a"]["scores"], b["a-a"]["scores"])
+
+
+def test_load_and_score_deja_el_npz_cerrado(tmp_path, inputs):
+    *_, npz, manifest = inputs
+    _, _, results = load_and_score(npz, manifest, 42, 3, 2)
+    npz.unlink()  # En Windows falla si el archivo sigue abierto.
+    assert results["o-o"]["scores"].shape == (12, 6)
+
+
+def test_main_usa_load_and_score(monkeypatch, tmp_path, inputs):
+    import run_eer
+    *_, npz, manifest = inputs
+    calls = []
+
+    def spy(*args):
+        calls.append(args)
+        return load_and_score(*args)
+
+    monkeypatch.setattr(run_eer, "load_and_score", spy)
+    run_main(monkeypatch, npz, manifest, tmp_path / "out.json", "--seed", "7", "--n-enroll", "2", "--n-trial", "3")
+    assert calls == [(str(npz), str(manifest), 7, 2, 3)]

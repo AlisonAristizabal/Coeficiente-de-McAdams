@@ -14,10 +14,8 @@ from matplotlib.figure import Figure
 from matplotlib.ticker import FuncFormatter
 from scipy.stats import norm
 
-from common_voice_corpus import read_tsv_rows
-from eer_protocol import split_enrollment_trial
 from eer_scoring import split_target_impostor
-from run_eer import build_row_index, run_scenarios
+from run_eer import load_and_score
 
 # Ancho de una columna del artículo (pulgadas) y tamaño de letra (pt).
 COLUMN_WIDTH = 3.35
@@ -171,13 +169,7 @@ def main():
     """Calcula los escenarios y guarda det.pdf y distribuciones.pdf."""
     args = parse_args()
     configure_fonts()
-    with np.load(args.embeddings) as data:
-        session_ids = [str(s) for s in data["session_ids"]]
-        embeddings = {key: data[key] for key in ("original", "anonymized")}
-    row_of = build_row_index(session_ids)
-    rows = list(read_tsv_rows(args.manifest))
-    splits, _ = split_enrollment_trial(rows, n_enroll=args.n_enroll, n_trial=args.n_trial, seed=args.seed)
-    results = run_scenarios(embeddings, row_of, splits)
+    _, _, results = load_and_score(args.embeddings, args.manifest, args.seed, args.n_enroll, args.n_trial)
 
     scores_by_scenario = {name: split_target_impostor(r["scores"], r["owner"]) for name, r in results.items()}
     curves = {name: det_curve(*pair) for name, pair in scores_by_scenario.items()}
