@@ -7,6 +7,7 @@ from mcadams_core.signal_transform.lpc import (
 from mcadams_core.signal_transform.resynth import (
     get_excitation,
     resynthesize_signal,
+    match_energy,
 )
 
 
@@ -15,10 +16,12 @@ def process_frame(frame, order, mcadams_coefficient):
     """Procesa un único fragmento ya enventanado a través de todo el
     pipeline de análisis y resíntesis: calcula los coeficientes LPC,
     los convierte a polos, estos polos los transforma con el coeficiente
-    de McAdams, los reconstruye de vuelta a coeficientes, extrae la excitación 
-    con los coeficientes originales, y resintetiza con los coeficientes reconstruidos. 
-    Devuelve el fragmento reconstruido y anonimizado en cierta medida según el 
-    coeficiente utilizado."""
+    de McAdams, los reconstruye de vuelta a coeficientes, extrae la excitación
+    con los coeficientes originales y resintetiza con los coeficientes
+    reconstruidos. Por último, escala el fragmento resintetizado para que
+    tenga la misma energía que el de entrada, porque los polos modificados
+    cambian la ganancia del filtro. Devuelve el fragmento reconstruido y
+    anonimizado en cierta medida según el coeficiente utilizado."""
 
     lpc_coefficients = compute_lpc(frame, order)
     poles = poles_from_coeffs(lpc_coefficients)
@@ -28,7 +31,7 @@ def process_frame(frame, order, mcadams_coefficient):
     # Resintetiza el fragmento usando la señal de excitación y los
     # coeficientes reconstruidos.
     reconstructed_frame = resynthesize_signal(excitation, new_lpc_coefficients)
-    return reconstructed_frame
+    return match_energy(reconstructed_frame, frame)
 
 def transform_angle(angle, mcadams_coefficient):
 

@@ -41,4 +41,4 @@ def convert_mp3_to_wav(input_path, output_path):
 
     save_wav(output_path, TARGET_SAMPLE_RATE, audio)
 
-    print(f"el audio se convirtió y guardó correctamente en el path {output_path}")
+    #print(f"el audio se convirtió y guardó correctamente en el path {output_path}")
