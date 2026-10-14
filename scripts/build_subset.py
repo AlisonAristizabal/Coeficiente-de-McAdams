@@ -15,7 +15,7 @@ from common_voice_strata import (
 )
 
 SEED = 42
-K = 50
+K = 134
 CLIPS_PER_SPEAKER = 5
 MIN_DURATION_MS = 3000
 STRATA = [a for a in ACCENT_TO_STRATUM.values()] + [SIN_DATO]   
