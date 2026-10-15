@@ -14,6 +14,7 @@ un TSV; si la corrida se interrumpe, al volver a lanzarla con el mismo
 import argparse
 import csv
 import random
+import re
 import time
 import unicodedata
 from pathlib import Path
@@ -284,6 +285,28 @@ def normalize_provisional(text):
     text = unicodedata.normalize("NFC", text).lower()
     text = "".join(" " if unicodedata.category(c).startswith("P") else c for c in text)
     return " ".join(text.split())
+
+
+def normalize_final(text):
+    """
+    Normalización definitiva: la provisional más los números en palabras.
+
+    Antes de quitar la puntuación, cada secuencia de dígitos se escribe en
+    palabras en español con `num2words` ("14" → "catorce", "100" → "cien"),
+    rodeada de espacios para que no se pegue a lo que tenga al lado. Así no
+    cuenta como error que Whisper escriba "4" donde la referencia dice
+    "cuatro". Los dígitos separados por puntuación se convierten por
+    separado ("3,5" → "tres cinco"). El import de num2words está dentro de
+    la función para poder importar este módulo sin esa biblioteca.
+
+    Retorna:
+        El texto normalizado.
+    """
+    from num2words import num2words
+
+    text = unicodedata.normalize("NFC", text).lower()
+    text = re.sub(r"[0-9]+", lambda m: f" {num2words(int(m.group()), lang='es')} ", text)
+    return normalize_provisional(text)
 
 
 def edit_distance(reference, hypothesis):

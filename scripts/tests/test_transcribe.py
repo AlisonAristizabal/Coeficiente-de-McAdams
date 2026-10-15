@@ -553,3 +553,40 @@ def test_append_rows_cada_fila_queda_en_disco_antes_de_la_siguiente(tmp_path):
 def test_corpus_wer_normaliza_tambien_la_hipotesis():
     # Whisper devuelve mayúsculas y puntuación: no deben contar como errores.
     assert corpus_wer(["cómo estás"], ["¿Cómo estás?"]) == 0.0
+
+
+# ---------------------------------------------------------------------------
+# normalize_final
+# ---------------------------------------------------------------------------
+
+from transcribe import normalize_final  # noqa: E402
+
+
+@pytest.mark.parametrize("digits, words", [
+    ("7", "siete"), ("4", "cuatro"), ("14", "catorce"), ("10", "diez"), ("0", "cero"), ("100", "cien"),
+])
+def test_normalize_final_casos_del_corpus(digits, words):
+    assert normalize_final(digits) == words
+
+
+def test_normalize_final_capitulo_4():
+    assert normalize_final("Capítulo 4") == "capítulo cuatro"
+
+
+def test_normalize_final_numeros_de_varias_palabras():
+    assert normalize_final("En 1999.") == "en mil novecientos noventa y nueve"
+
+
+def test_normalize_final_cifras_pegadas_a_letras_o_puntuacion():
+    assert normalize_final("4x4, (7)") == "cuatro x cuatro siete"
+    assert normalize_final("3,5") == "tres cinco"
+
+
+def test_normalize_final_igual_que_la_provisional_sin_cifras():
+    for text in ("¿Cómo estás, Señor Núñez?", "Pingüino: ÁRBOL.", "¡Hola!—«dijo» (bien-estar)", "é"):
+        assert normalize_final(text) == normalize_provisional(text)
+
+
+def test_normalize_final_iguala_cifras_y_palabras_en_el_wer():
+    assert corpus_wer(["capítulo cuatro"], ["Capítulo 4."], normalize=normalize_final) == 0.0
+    assert corpus_wer(["capítulo cuatro"], ["Capítulo 4."]) == 0.5
