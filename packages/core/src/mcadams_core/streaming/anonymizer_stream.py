@@ -15,17 +15,24 @@ from mcadams_core.signal_transform.mcadams import (
 )
 
 class AnonymizerStream:
-    def __init__(self, sample_rate, session_id):
+    def __init__(self, sample_rate, session_id, alpha_min=None, alpha_max=None):
         """Inicializa el flujo de procesamiento de audio para la
         anonimización de voz. Calcula los parámetros de enventanado y
         orden LPC según la frecuencia de muestreo, y genera un coeficiente
         de McAdams determinístico a partir del identificador de sesión
-        (session_id)."""
+        (session_id).
+
+        alpha_min y alpha_max fijan el rango del coeficiente (iguales para
+        un alpha fijo). Con None se usa el rango por defecto de
+        generate_coefficient, y solo se le pasan los que se dieron, de modo
+        que sin argumentos la llamada es exactamente la de siempre."""
 
         self.sample_rate = sample_rate
         self.frame_length, self.hop_length = compute_frame_params(sample_rate)
         self.order = compute_lpc_order(sample_rate)
-        self.mcadams_coefficient, self.seed = generate_coefficient(session_id)
+        alpha_range = {name: value for name, value in (("alpha_min", alpha_min), ("alpha_max", alpha_max))
+                       if value is not None}
+        self.mcadams_coefficient, self.seed = generate_coefficient(session_id, **alpha_range)
         self.window = hann_window(self.frame_length)
 
         self.buffer_original_audio = np.array([])  # Buffer para almacenar audio entrante

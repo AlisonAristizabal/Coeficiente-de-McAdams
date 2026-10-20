@@ -401,6 +401,54 @@ def print_summary(paths):
                       f"WER provisional {100 * s['wer']:.2f} %".replace(".", ","))
 
 
+def reuse_original_rows(source_rows, jobs):
+    """
+    Toma las transcripciones originales de un TSV ya hecho para la misma muestra.
+
+    La versión original no depende de la anonimización, así que no hace
+    falta volver a transcribirla. Verifica que la muestra sea exactamente la
+    misma: el conjunto de parejas (session_id, referencia) de las filas
+    "original" del TSV debe ser igual al de `jobs`. Si no, lanza
+    `ValueError` con cuántos clips faltan o sobran.
+
+    Parámetros:
+        source_rows: filas de un TSV de `transcribe.py` (por ejemplo
+            whisper_turbo_k134.tsv).
+        jobs: la muestra a transcribir (salida de `select_sample` o de
+            `build_jobs`).
+
+    Retorna:
+        Lista de filas "original" con las columnas de `OUTPUT_COLUMNS`, en
+        el orden de `jobs`, con la hipótesis y los segundos del TSV.
+    """
+    source = {}
+    for row in source_rows:
+        if row["version"] != "original":
+            continue
+        if row["session_id"] in source:
+            raise ValueError(f"el TSV reutilizado repite el clip {row['session_id']} en la versión original")
+        source[row["session_id"]] = row
+    expected = {(job["session_id"], single_line(job["reference"])) for job in jobs}
+    found = {(session_id, row["reference"]) for session_id, row in source.items()}
+    if expected != found:
+        missing, extra = sorted(expected - found), sorted(found - expected)
+        example = (missing or extra)[0][0]
+        raise ValueError(
+            f"la muestra no coincide con la del TSV reutilizado: {len(missing)} clips de la muestra faltan "
+            f"o tienen otra referencia y {len(extra)} del TSV no están en la muestra (p. ej. {example}); "
+            "revise --per-stratum y --seed"
+        )
+    return [{
+        "session_id": job["session_id"],
+        "client_id": job["client_id"],
+        "stratum": job["stratum"],
+        "version": "original",
+        "reference": job["reference"],
+        "hypothesis": source[job["session_id"]]["hypothesis"],
+        "seconds": float(source[job["session_id"]]["seconds"]),
+    } for job in jobs]
+
+
 def parse_args():
     """Lee los argumentos de la línea de comandos."""
     parser = argparse.ArgumentParser(description="Transcribe los clips originales y anonimizados con Whisper.")
@@ -413,6 +461,8 @@ def parse_args():
     parser.add_argument("--per-stratum", type=int, default=None, help="Clips por estrato; si se omite, todos.")
     parser.add_argument("--seed", type=int, default=42, help="Semilla de la muestra.")
     parser.add_argument("--output", required=True, help="TSV de salida (se continúa si ya existe).")
+    parser.add_argument("--reuse-original-from", default=None,
+                        help="TSV de transcribe.py del que se copian las filas originales (solo se transcribe el anonimizado).")
     return parser.parse_args()
 
 
@@ -423,8 +473,18 @@ def main():
     if args.per_stratum is not None:
         jobs = select_sample(jobs, args.per_stratum, args.seed)
     done = prepare_output(args.output)
+    if args.reuse_original_from:
+        # Se verifica y copia antes de cargar Whisper, para fallar rápido si la muestra no coincide.
+        reused = reuse_original_rows(read_tsv_rows(args.reuse_original_from), jobs)
+        copied = append_rows([r for r in reused if (r["session_id"], "original") not in done], args.output,
+                             progress_every=0)
+        done = done | {(r["session_id"], "original") for r in reused}
+        print(f"Originales reutilizados de {args.reuse_original_from}: {len(reused)} (copiados ahora: {copied})")
     pending = sum((job["session_id"], v) not in done for job in jobs for v in VERSIONS)
     print(f"Clips: {len(jobs)}; transcripciones pendientes: {pending} (ya hechas: {2 * len(jobs) - pending})")
+    if pending == 0:
+        print(f"Nada pendiente; no se carga el modelo. Archivo: {args.output}")
+        return
 
     start = time.perf_counter()
     model = load_model(args.model, args.model_dir)
