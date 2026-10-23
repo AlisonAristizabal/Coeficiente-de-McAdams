@@ -51,6 +51,36 @@ def stratified_resample(strata, rng):
     return sample
 
 
+def copy_trial_rows(owner, n_speakers, sample):
+    """
+    Filas de prueba de cada copia de una muestra bootstrap.
+
+    Cada posición k de `sample` es una copia del hablante `sample[k]` y se
+    lleva todas sus pruebas. Las filas de cada hablante salen de un
+    ordenamiento estable de `owner`, así que conservan su orden original.
+
+    Parámetros:
+        owner: arreglo con el hablante dueño de cada prueba.
+        n_speakers: número de hablantes (columnas de la matriz de puntuaciones).
+        sample: índices de hablantes, de `stratified_resample`.
+
+    Retorna:
+        Una tupla (rows, row_copy): `rows[r]` es la fila de prueba original
+        de la posición r y `row_copy[r]` la copia (posición en `sample`) a
+        la que pertenece. Las filas de cada copia van seguidas, en el orden
+        de `sample`.
+    """
+    owner = np.asarray(owner)
+    sample = np.asarray(sample)
+    order = np.argsort(owner, kind="stable")
+    counts = np.bincount(owner, minlength=n_speakers)
+    starts = np.cumsum(counts) - counts
+    copy_counts = counts[sample]
+    row_copy = np.repeat(np.arange(sample.size), copy_counts)
+    offset = np.arange(row_copy.size) - np.repeat(np.cumsum(copy_counts) - copy_counts, copy_counts)
+    return order[starts[sample][row_copy] + offset], row_copy
+
+
 def resample_pairs(scores, owner, sample):
     """
     Separa los pares objetivo e impostor de una muestra bootstrap.
@@ -76,16 +106,7 @@ def resample_pairs(scores, owner, sample):
     owner = np.asarray(owner)
     sample = np.asarray(sample)
 
-    # Filas de prueba de cada copia: las del hablante original, agrupadas
-    # por hablante con un ordenamiento estable de `owner`.
-    order = np.argsort(owner, kind="stable")
-    counts = np.bincount(owner, minlength=scores.shape[1])
-    starts = np.cumsum(counts) - counts
-    copy_counts = counts[sample]
-    row_copy = np.repeat(np.arange(sample.size), copy_counts)
-    offset = np.arange(row_copy.size) - np.repeat(np.cumsum(copy_counts) - copy_counts, copy_counts)
-    rows = order[starts[sample][row_copy] + offset]
-
+    rows, row_copy = copy_trial_rows(owner, scores.shape[1], sample)
     sub = scores[rows][:, sample]
     is_target = row_copy[:, None] == np.arange(sample.size)[None, :]
     is_impostor = owner[rows][:, None] != sample[None, :]
