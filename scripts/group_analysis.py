@@ -37,7 +37,7 @@ from pathlib import Path
 import numpy as np
 from matplotlib.figure import Figure
 from matplotlib.lines import Line2D
-from matplotlib.ticker import FuncFormatter, MaxNLocator
+from matplotlib.ticker import FuncFormatter, MaxNLocator, MultipleLocator
 
 from alpha_config import DEFAULT_RANGE, config_tag
 from common_voice_corpus import read_tsv_rows
@@ -110,12 +110,62 @@ def config_files(tag, data_dir, dataset_tag="k134", whisper_model="turbo"):
             "embeddings": data / f"emb_{dataset_tag}.npz",
             "transcripts": data / f"whisper_{whisper_model}_{dataset_tag}.tsv",
             "eer_json": data / f"eer_bootstrap_{dataset_tag}.json",
+            "eer_replicates": data / f"eer_bootstrap_{dataset_tag}_replicas.npz",
             "impersonation_json": data / f"impersonation_{dataset_tag}.json",
+            "wer_json": data / f"wer_{whisper_model}_{dataset_tag}.json",
         }
     p = config_paths(tag, Namespace(anon_root=anon_root, output_dir=data, dataset_tag=dataset_tag,
                                     whisper_model=whisper_model))
     return {"manifest": p["manifest"], "embeddings": p["embeddings"], "transcripts": p["transcripts"],
-            "eer_json": p["eer"], "impersonation_json": p["impersonation"]}
+            "eer_json": p["eer"], "eer_replicates": p["eer_replicates"], "impersonation_json": p["impersonation"],
+            "wer_json": p["wer"]}
+
+
+def manifest_alpha(manifest_path):
+    """
+    α real de una configuración, leído de la columna coefficient del manifiesto.
+
+    Usa los clips con estado "ok". Si todos tienen el mismo coeficiente, la
+    configuración es de α fijo y ese es su α (por ejemplo 0.725 para la
+    etiqueta a072, que está redondeada); si no, es un rango aleatorio.
+
+    Retorna:
+        Una tupla (fijo, mínimo, máximo) con los coeficientes observados.
+        Lanza `ValueError` si no hay ningún coeficiente.
+    """
+    values = {float(r["coefficient"]) for r in read_tsv_rows(manifest_path)
+              if r["status"] == "ok" and r.get("coefficient") not in (None, "")}
+    if not values:
+        raise ValueError(f"{manifest_path}: no hay coeficientes en el manifiesto")
+    return len(values) == 1, min(values), max(values)
+
+
+def is_fixed(config):
+    """Si la configuración es de α fijo (con "fixed" si está; si no, por alpha_min == alpha_max)."""
+    return config.get("fixed", config["alpha_min"] == config["alpha_max"])
+
+
+def alpha_of(config):
+    """α real de una configuración de α fijo; None para un rango."""
+    if not is_fixed(config):
+        return None
+    return config.get("alpha", config["alpha_min"])
+
+
+def check_unique_alphas(configs):
+    """Lanza `ValueError` si dos configuraciones tienen el mismo α real (o el mismo rango observado)."""
+    seen = {}
+    for c in configs:
+        key = ("fijo", alpha_of(c)) if is_fixed(c) else ("rango", c["alpha_min"], c["alpha_max"])
+        if key in seen:
+            raise ValueError(f"las configuraciones {seen[key]} y {c['tag']} tienen el mismo α real "
+                             f"({alpha_of(c) if is_fixed(c) else (c['alpha_min'], c['alpha_max'])})")
+        seen[key] = c["tag"]
+
+
+def sort_configs(configs):
+    """Ordena por α numérico: primero los α fijos de menor a mayor y después los rangos."""
+    return sorted(configs, key=lambda c: (not is_fixed(c), c["alpha_min"], c["alpha_max"], c["tag"]))
 
 
 def discover_configs(data_dir, dataset_tag="k134", whisper_model="turbo"):
@@ -123,28 +173,32 @@ def discover_configs(data_dir, dataset_tag="k134", whisper_model="turbo"):
     Busca todas las configuraciones que tienen manifiesto y embeddings.
 
     Una configuración nueva (por ejemplo a072) entra sola en cuanto existen
-    sus archivos. Se ordenan primero los α fijos de menor a mayor y después
-    los rangos.
+    sus archivos. El α sale del manifiesto (`manifest_alpha`), no de la
+    etiqueta: la etiqueta solo nombra los archivos. Se ordenan por α numérico
+    (primero los fijos, después los rangos) y se verifica que no haya dos con
+    el mismo α real.
 
     Retorna:
-        Lista de diccionarios {"tag", "alpha_min", "alpha_max", "files"}.
+        Lista de diccionarios {"tag", "fixed", "alpha", "alpha_min",
+        "alpha_max", "files"}; "alpha" es None en los rangos y "alpha_min" /
+        "alpha_max" son los coeficientes mínimo y máximo observados.
     """
     anon_root = Path(data_dir) / f"anon_{dataset_tag}"
     configs = []
     for manifest in anon_root.glob("anon_manifest_*.tsv"):
         tag = manifest.name[len("anon_manifest_"):-len(".tsv")]
-        try:
-            alpha_min, alpha_max = parse_tag(tag)
-        except ValueError:
-            continue
         files = config_files(tag, data_dir, dataset_tag, whisper_model)
-        if files["manifest"].exists() and files["embeddings"].exists():
-            configs.append({"tag": tag, "alpha_min": alpha_min, "alpha_max": alpha_max, "files": files})
-    return sorted(configs, key=lambda c: (c["alpha_min"] != c["alpha_max"], c["alpha_min"], c["alpha_max"]))
+        if not (files["manifest"].exists() and files["embeddings"].exists()):
+            continue
+        fixed, alpha_min, alpha_max = manifest_alpha(files["manifest"])
+        configs.append({"tag": tag, "fixed": fixed, "alpha": alpha_min if fixed else None,
+                        "alpha_min": alpha_min, "alpha_max": alpha_max, "files": files})
+    check_unique_alphas(configs)
+    return sort_configs(configs)
 
 
 def wer_reliable(config):
-    """Si el WER de la configuración entra en las figuras y pruebas (α >= 0.6; en un rango, su mínimo)."""
+    """Si el WER de la configuración entra en las figuras y pruebas (α >= 0.6; en un rango, su mínimo observado)."""
     return config["alpha_min"] >= WER_MIN_ALPHA - 1e-9
 
 
@@ -521,7 +575,7 @@ def speaker_level(results, wer_counts, thresholds, n_speakers):
 
 METRIC_COLUMNS = ["genuine_eer", "impersonation_eer", "genuine_far", "impersonation_far",
                   "eer_oo", "eer_oa", "eer_aa", "wer_original", "wer_anonymized", "wer_difference"]
-SUMMARY_COLUMNS = (["config", "alpha_min", "alpha_max", "group", "n_speakers", "n_target_pairs",
+SUMMARY_COLUMNS = (["config", "alpha", "alpha_min", "alpha_max", "group", "n_speakers", "n_target_pairs",
                     "threshold_eer", "threshold_far"]
                    + [f"{m}{s}" for m in METRIC_COLUMNS for s in ("", "_ci_low", "_ci_high")]
                    + ["n_words", "wer_note"])
@@ -539,7 +593,8 @@ def summary_rows(config, groups, codes, analysis, level, eer_override=None):
     """
     rows = []
     for g, group in enumerate(groups):
-        row = {"config": config["tag"], "alpha_min": config["alpha_min"], "alpha_max": config["alpha_max"],
+        row = {"config": config["tag"], "alpha": alpha_of(config),
+               "alpha_min": config["alpha_min"], "alpha_max": config["alpha_max"],
                "group": group, "n_speakers": int(np.sum(codes == g)),
                "n_target_pairs": int(analysis["impersonation"]["genuine_eer"]["pairs"][g]),
                "threshold_eer": analysis["thresholds"]["eer"], "threshold_far": analysis["thresholds"]["far"]}
@@ -599,10 +654,18 @@ def merge_permutation_rows(path, grouping, new_rows):
 # ---------------------------------------------------------------------------
 
 def config_label(config):
-    """Rótulo de una configuración: "0,6" para un α fijo, "U(0,7; 0,9)" para un rango."""
-    if config["alpha_min"] == config["alpha_max"]:
-        return f"{config['alpha_min']:g}".replace(".", ",")
-    return f"U({config['alpha_min']:g}; {config['alpha_max']:g})".replace(".", ",")
+    """
+    Rótulo de una configuración: el α real para un α fijo ("0,725") y el
+    rango nominal de la etiqueta para un rango ("U(0,7; 0,9)"); si la
+    etiqueta no se puede leer, el rango observado con dos decimales.
+    """
+    if is_fixed(config):
+        return f"{alpha_of(config):g}".replace(".", ",")
+    try:
+        low, high = parse_tag(config["tag"])
+    except (KeyError, ValueError):
+        low, high = round(config["alpha_min"], 2), round(config["alpha_max"], 2)
+    return f"U({low:g}; {high:g})".replace(".", ",")
 
 
 def heatmap_layout(groups, configs):
@@ -614,8 +677,8 @@ def heatmap_layout(groups, configs):
     """
     accents = [g for g in groups if g != MISSING]
     rows = accents + ([None, MISSING] if MISSING in groups else [])
-    fixed = [c for c in configs if c["alpha_min"] == c["alpha_max"]]
-    ranges = [c for c in configs if c["alpha_min"] != c["alpha_max"]]
+    fixed = [c for c in configs if is_fixed(c)]
+    ranges = [c for c in configs if not is_fixed(c)]
     columns = fixed + ([None] + ranges if ranges and fixed else ranges)
     return rows, columns
 
@@ -658,7 +721,8 @@ def plot_heatmap(summary, groups, configs, metric, colorbar_label, cmap="Blues")
                 ax.text(j, i, decimal_comma(matrix[i, j], 1), ha="center", va="center", fontsize=5,
                         color="white" if matrix[i, j] > middle else INK)
     ax.set_xticks([j for j, c in enumerate(columns) if c is not None],
-                  [config_label(c) for c in columns if c is not None], fontsize=SMALL_FONT - 0.5)
+                  [config_label(c) for c in columns if c is not None], fontsize=SMALL_FONT - 0.5,
+                  rotation=90 if len(columns) > 11 else 0)
     ax.set_yticks([i for i, g in enumerate(rows) if g is not None],
                   [GROUP_LABELS.get(g, g) for g in rows if g is not None], fontsize=SMALL_FONT)
     ax.tick_params(length=0)
@@ -689,16 +753,16 @@ def plot_groups_vs_alpha(summary, configs, series):
     Retorna:
         Una `Figure` de matplotlib.
     """
-    fixed = [c for c in configs if c["alpha_min"] == c["alpha_max"]]
+    fixed = [c for c in configs if is_fixed(c)]
     lookup = {(r["config"], r["group"]): r for r in summary}
     fig = Figure(figsize=(COLUMN_WIDTH, 3.6))
     axes = fig.subplots(2, 1, sharex=True)
     panels = (("impersonation_far", "Suplantación o-a\nFAR ≤ 1 % (%)", fixed),
               ("wer_difference", "Diferencia de WER\n(pp)", [c for c in fixed if wer_reliable(c)]))
-    offsets = np.linspace(-0.012, 0.012, len(series)) if len(series) > 1 else [0.0]
+    offsets = np.linspace(-0.004, 0.004, len(series)) if len(series) > 1 else [0.0]
     for ax, (metric, ylabel, cfgs) in zip(axes, panels):
         for (group, _, color, style), dx in zip(series, offsets):
-            points = [(c["alpha_min"] + dx, lookup[(c["tag"], group)]) for c in cfgs
+            points = [(alpha_of(c) + dx, lookup[(c["tag"], group)]) for c in cfgs
                       if (c["tag"], group) in lookup and lookup[(c["tag"], group)][metric] is not None]
             if not points:
                 continue
@@ -713,9 +777,8 @@ def plot_groups_vs_alpha(summary, configs, series):
         ax.yaxis.set_major_formatter(FuncFormatter(lambda v, _: percent_label(round(v, 6))))
         ax.yaxis.set_major_locator(MaxNLocator(nbins=5, steps=[1, 2, 5, 10]))
         ax.grid(axis="y", color="0.9", linewidth=0.5)
-    alphas = sorted({c["alpha_min"] for c in fixed})
-    if alphas:
-        axes[1].set_xticks(alphas)
+    # Espaciado real del α: marcas cada 0,1 y cada punto en su α (0,725 cae entre 0,7 y 0,75).
+    axes[1].xaxis.set_major_locator(MultipleLocator(0.1))
     axes[1].xaxis.set_major_formatter(FuncFormatter(lambda v, _: f"{v:g}".replace(".", ",")))
     axes[1].set_xlabel("α (coeficiente de McAdams)")
     handles = [Line2D([], [], color=color, linestyle=style, marker="o", markersize=3.5, linewidth=1.2, label=label)

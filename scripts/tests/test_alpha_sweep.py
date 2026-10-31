@@ -363,7 +363,7 @@ def test_collect_rows_json_faltante_queda_vacio(tmp_path):
     settings = write_toy_jsons(tmp_path, skip_wer=(1.0,))
     rows = collect_rows(build_configs([0.5, 1.0, 0.3]), settings)
     assert rows[1]["wer_anonymized"] is None and rows[1]["eer_oa"] == 0.019
-    assert all(rows[2][c] is None for c in SUMMARY_COLUMNS[3:])
+    assert all(rows[2][c] is None for c in SUMMARY_COLUMNS[4:])
 
 
 def test_write_summary_columnas_y_valores(tmp_path):
@@ -441,7 +441,8 @@ def test_figura_no_dibuja_el_a_a(tmp_path):
 def test_figura_eje_alpha_con_coma_y_rotulos(tmp_path):
     fig = figure(tmp_path)
     ax = fig.axes[2]
-    assert list(ax.get_xticks()) == [0.5, 1.0]
+    ticks = [t for t in ax.get_xticks() if ax.get_xlim()[0] <= t <= ax.get_xlim()[1]]
+    np.testing.assert_allclose(ticks, [0.5, 0.6, 0.7, 0.8, 0.9, 1.0])  # marcas cada 0,1, no en cada α
     assert ax.xaxis.get_major_formatter()(0.5, 0) == "0,5" and ax.yaxis.get_major_formatter()(2.5, 0) == "2,5"
     assert [a.get_ylabel() for a in fig.axes] == ["EER o-a (%)", "Suplantación\nFAR ≤ 1 % (%)", "WER (%)"]
     legend = [t.get_text() for t in fig.legends[0].get_texts()]
@@ -464,11 +465,105 @@ def test_figura_los_rangos_no_entran(tmp_path):
     np.testing.assert_allclose(dots.get_xdata(), [0.5, 1.0])
 
 
-def test_main_escribe_tabla_y_figura(tmp_path, monkeypatch, capsys):
-    write_toy_jsons(tmp_path)
-    monkeypatch.setattr(sys, "argv", ["plot_alpha_sweep.py", "--data-dir", str(tmp_path), "--alphas", "0.5", "1.0"])
+def write_manifest(path, coefficients):
+    """Manifiesto mínimo con un clip por coeficiente."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    lines = ["client_id\tstratum\tpath\tsession_id\tcoefficient\tstatus\terror"]
+    lines += [f"h{i}\ts\tc{i}.mp3\tc{i}\t{c}\tok\t" for i, c in enumerate(coefficients)]
+    path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+
+
+def add_manifests(data, coefficients_by_tag):
+    """Manifiesto y un archivo de embeddings (vacío) por etiqueta, para que la configuración se descubra."""
+    for tag, coefficients in coefficients_by_tag.items():
+        write_manifest(data / "anon_k134" / f"anon_manifest_{tag}.tsv", coefficients)
+        (data / f"emb_k134_{tag}.npz").write_text("x")
+
+
+def run_plot_main(monkeypatch, data, *extra):
+    monkeypatch.setattr(sys, "argv", ["plot_alpha_sweep.py", "--data-dir", str(data), *extra])
     with matplotlib.rc_context():
         plot_alpha_sweep.main()
+
+
+def test_main_escribe_tabla_y_figuras(tmp_path, monkeypatch, capsys):
+    write_toy_jsons(tmp_path)
+    add_manifests(tmp_path, {"a050": [0.5, 0.5], "a100": [1.0, 1.0]})
+    run_plot_main(monkeypatch, tmp_path)
     assert (tmp_path / "barrido_alfa_resumen.tsv").exists()
-    assert (tmp_path / "figuras" / "barrido_alfa.pdf").read_bytes()[:4] == b"%PDF"
-    assert "barrido_alfa.pdf" in capsys.readouterr().out
+    for name in ("barrido_alfa.pdf", "barrido_alfa_zoom.pdf"):
+        assert (tmp_path / "figuras" / name).read_bytes()[:4] == b"%PDF"
+    out = capsys.readouterr().out
+    assert "barrido_alfa.pdf" in out and "barrido_alfa_zoom.pdf" in out
+
+
+def test_main_alpha_real_del_manifiesto_y_orden_numerico(tmp_path, monkeypatch):
+    write_toy_jsons(tmp_path)
+    add_manifests(tmp_path, {"a100": [1.0], "a072": [0.725, 0.725], "a050": [0.5]})
+    run_plot_main(monkeypatch, tmp_path)
+    with open(tmp_path / "barrido_alfa_resumen.tsv", encoding="utf-8", newline="") as f:
+        rows = list(csv.DictReader(f, delimiter="\t"))
+    assert [(r["tag"], r["alpha"]) for r in rows] == [("a050", "0.5"), ("a072", "0.725"), ("a100", "1.0")]
+    assert list(rows[0])[:4] == ["tag", "alpha", "alpha_min", "alpha_max"]
+
+
+def test_main_mismo_alpha_real_error_claro(tmp_path, monkeypatch):
+    add_manifests(tmp_path, {"a072": [0.725], "a073": [0.725]})
+    with pytest.raises(ValueError, match="mismo α real"):
+        run_plot_main(monkeypatch, tmp_path)
+
+
+def test_main_tags_filtra(tmp_path, monkeypatch):
+    write_toy_jsons(tmp_path)
+    add_manifests(tmp_path, {"a050": [0.5], "a100": [1.0]})
+    run_plot_main(monkeypatch, tmp_path, "--tags", "a100")
+    with open(tmp_path / "barrido_alfa_resumen.tsv", encoding="utf-8", newline="") as f:
+        assert [r["tag"] for r in csv.DictReader(f, delimiter="\t")] == ["a100"]
+
+
+def fixed_row(tag, alpha, eer):
+    return {"tag": tag, "alpha": alpha, "alpha_min": alpha, "alpha_max": alpha, **{
+        f"{p}{s}": (None if p.startswith("wer") else v) for p in ("eer_oo", "eer_oa", "eer_aa", "impersonation_eer",
+                                                                  "impersonation_far", "wer_original", "wer_anonymized")
+        for s, v in (("", eer), ("_ci_low", eer * 0.9), ("_ci_high", eer * 1.1))}}
+
+
+def test_figura_alpha_con_espaciado_real():
+    rows = [fixed_row("a070", 0.7, 0.2), fixed_row("a072", 0.725, 0.15), fixed_row("a075", 0.75, 0.1)]
+    fig = draw_sweep(rows)
+    (dots,) = points_of(fig.axes[0])
+    np.testing.assert_allclose(dots.get_xdata(), [0.7, 0.725, 0.75])
+    np.testing.assert_allclose(dots.get_ydata(), [20, 15, 10])
+
+
+def test_figura_ordena_por_alpha_aunque_las_filas_no_lo_esten():
+    rows = [fixed_row("a075", 0.75, 0.1), fixed_row("a070", 0.7, 0.2), fixed_row("a072", 0.725, 0.15)]
+    (dots,) = points_of(draw_sweep(rows).axes[0])
+    np.testing.assert_allclose(dots.get_xdata(), [0.7, 0.725, 0.75])
+
+
+def test_figura_acercamiento_solo_entre_0_6_y_0_9():
+    rows = [fixed_row(f"a{round(a * 1000):03d}", a, 0.1) for a in (0.2, 0.5, 0.6, 0.65, 0.675, 0.9, 1.0)]
+    fig = draw_sweep(rows, window=plot_alpha_sweep.ZOOM_WINDOW)
+    (dots,) = points_of(fig.axes[0])
+    np.testing.assert_allclose(dots.get_xdata(), [0.6, 0.65, 0.675, 0.9])
+    low, high = fig.axes[2].get_xlim()
+    assert low < 0.6 and 0.9 < high < 1.0
+    ticks = [t for t in fig.axes[2].get_xticks() if low <= t <= high]
+    np.testing.assert_allclose(np.diff(ticks), 0.05)
+    (full,) = points_of(draw_sweep(rows).axes[0])
+    assert len(full.get_xdata()) == 7
+
+
+def test_zoom_window_es_0_6_a_0_9():
+    assert plot_alpha_sweep.ZOOM_WINDOW == (0.6, 0.9)
+
+
+def test_main_rango_sin_alpha_fijo_en_la_tabla(tmp_path, monkeypatch):
+    write_toy_jsons(tmp_path)
+    add_manifests(tmp_path, {"a050": [0.5], "u06_08": [0.61, 0.79, 0.7]})
+    run_plot_main(monkeypatch, tmp_path)
+    with open(tmp_path / "barrido_alfa_resumen.tsv", encoding="utf-8", newline="") as f:
+        rows = list(csv.DictReader(f, delimiter="\t"))
+    assert [(r["tag"], r["alpha"], r["alpha_min"], r["alpha_max"]) for r in rows] == [
+        ("a050", "0.5", "0.5", "0.5"), ("u06_08", "", "0.61", "0.79")]

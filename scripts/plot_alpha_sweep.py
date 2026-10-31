@@ -1,9 +1,11 @@
 """
 Resumen y figura del barrido de α a partir de los JSON de cada configuración.
 
-No recalcula nada: lee, para cada α, el JSON del bootstrap del EER, el de
-suplantación y el del WER (los nombres salen de `run_alpha_sweep.config_paths`)
-y escribe:
+No recalcula nada. Las configuraciones son todas las que tienen manifiesto y
+embeddings (`group_analysis.discover_configs`), y su α es el real, leído de
+la columna coefficient del manifiesto, no de la etiqueta (a072 tiene
+α = 0.725). Para cada una lee el JSON del bootstrap del EER, el de
+suplantación y el del WER y escribe:
 
 - una tabla TSV con una fila por configuración: EER o-o, o-a y a-a,
   suplantación en los dos umbrales y WER original y anonimizado, cada uno
@@ -11,7 +13,9 @@ y escribe:
   cualquier programa; vacío si falta ese JSON);
 - una figura de tres paneles con el eje α compartido: EER o-a, suplantación
   con FAR ≤ 1 % y WER anonimizado, con sus intervalos, la referencia sin
-  anonimizar y las metas. El a-a va en la tabla, no en la figura.
+  anonimizar y las metas. El a-a va en la tabla, no en la figura. El eje x
+  usa el α real con su espaciado real;
+- la misma figura con acercamiento a 0.6 <= α <= 0.9.
 
 Si falta algún JSON (por ejemplo, el WER todavía no se ha corrido), esa
 columna queda vacía y ese punto no se dibuja.
@@ -23,11 +27,15 @@ from pathlib import Path
 
 from matplotlib.figure import Figure
 from matplotlib.lines import Line2D
-from matplotlib.ticker import FuncFormatter, MaxNLocator
+from matplotlib.ticker import FuncFormatter, MaxNLocator, MultipleLocator
 
 from plot_eer import COLUMN_WIDTH, GOAL_EER, INK, MUTED_INK, SMALL_FONT, configure_fonts, percent_label
 from plot_results import ANONYMIZED_COLOR, ORIGINAL_COLOR, WER_TARGET
-from run_alpha_sweep import DEFAULT_ALPHAS, REPO, build_configs, config_paths
+from group_analysis import alpha_of, discover_configs, is_fixed
+from run_alpha_sweep import REPO, config_paths
+
+# Ventana del acercamiento (α inclusive).
+ZOOM_WINDOW = (0.6, 0.9)
 
 # (prefijo de columna, de dónde sale cada valor en los JSON).
 METRICS = (
@@ -39,7 +47,7 @@ METRICS = (
     ("wer_original", "wer", ("wer", "original")),
     ("wer_anonymized", "wer", ("wer", "anonymized")),
 )
-SUMMARY_COLUMNS = ["tag", "alpha_min", "alpha_max"] + [
+SUMMARY_COLUMNS = ["tag", "alpha", "alpha_min", "alpha_max"] + [
     f"{prefix}{suffix}" for prefix, _, _ in METRICS for suffix in ("", "_ci_low", "_ci_high")]
 
 
@@ -56,28 +64,37 @@ def read_interval(summary, keys):
     return (node["eer"] if "eer" in node else node["value"]), node["ci_low"], node["ci_high"]
 
 
-def collect_rows(configs, settings):
+def collect_rows(configs, settings=None):
     """
     Arma una fila por configuración con todas las métricas y sus intervalos.
 
     Parámetros:
-        configs: salida de `run_alpha_sweep.build_configs`.
+        configs: salida de `group_analysis.discover_configs` (con sus
+            archivos en "files"); también acepta las de
+            `run_alpha_sweep.build_configs`, cuyas rutas salen de `settings`.
         settings: objeto con `anon_root`, `output_dir`, `dataset_tag` y
-            `whisper_model` (para las rutas de `config_paths`).
+            `whisper_model`; solo hace falta si las configuraciones no traen
+            "files".
 
     Retorna:
-        Lista de diccionarios con las columnas de `SUMMARY_COLUMNS`; las
-        métricas cuyo JSON no existe quedan en None.
+        Lista de diccionarios con las columnas de `SUMMARY_COLUMNS`; "alpha"
+        es el α real (None en un rango) y las métricas cuyo JSON no existe
+        quedan en None.
     """
     rows = []
     for config in configs:
-        paths = config_paths(config["tag"], settings)
+        if "files" in config:
+            f = config["files"]
+            paths = {"eer": f["eer_json"], "impersonation": f["impersonation_json"], "wer": f["wer_json"]}
+        else:
+            paths = config_paths(config["tag"], settings)
         loaded = {}
         for source in ("eer", "impersonation", "wer"):
             if Path(paths[source]).exists():
                 with open(paths[source], encoding="utf-8-sig") as f:
                     loaded[source] = json.load(f)
-        row = {"tag": config["tag"], "alpha_min": config["alpha_min"], "alpha_max": config["alpha_max"]}
+        row = {"tag": config["tag"], "alpha": alpha_of(config), "alpha_min": config["alpha_min"],
+               "alpha_max": config["alpha_max"]}
         for prefix, source, keys in METRICS:
             values = read_interval(loaded[source], keys) if source in loaded else (None, None, None)
             row.update(zip((prefix, f"{prefix}_ci_low", f"{prefix}_ci_high"), values))
@@ -97,10 +114,19 @@ def write_summary(rows, output_path):
     return output_path
 
 
-def _series(rows, prefix):
-    """Puntos (α, valor, ci_low, ci_high) en porcentaje de las filas con α fijo y valor disponible."""
-    return [(r["alpha_min"], 100 * r[prefix], 100 * r[f"{prefix}_ci_low"], 100 * r[f"{prefix}_ci_high"])
-            for r in rows if r["alpha_min"] == r["alpha_max"] and r[prefix] is not None]
+def in_window(alpha, window):
+    """Si el α está dentro de la ventana (inclusive, con tolerancia de redondeo); sin ventana, siempre."""
+    return window is None or window[0] - 1e-9 <= alpha <= window[1] + 1e-9
+
+
+def _series(rows, prefix, window=None):
+    """
+    Puntos (α real, valor, ci_low, ci_high) en porcentaje de las filas con α
+    fijo, valor disponible y α dentro de la ventana, ordenados por α.
+    """
+    points = [(alpha_of(r), 100 * r[prefix], 100 * r[f"{prefix}_ci_low"], 100 * r[f"{prefix}_ci_high"])
+              for r in rows if is_fixed(r) and r[prefix] is not None and in_window(alpha_of(r), window)]
+    return sorted(points)
 
 
 def _reference(rows, prefix):
@@ -136,7 +162,7 @@ def _draw_panel(ax, points, reference=None, target=None, target_label=None):
     ax.grid(axis="y", color="0.9", linewidth=0.5)
 
 
-def plot_alpha_sweep(rows, eer_target=GOAL_EER, wer_target=WER_TARGET):
+def plot_alpha_sweep(rows, eer_target=GOAL_EER, wer_target=WER_TARGET, window=None):
     """
     Figura del barrido: tres paneles con el eje α compartido.
 
@@ -144,32 +170,35 @@ def plot_alpha_sweep(rows, eer_target=GOAL_EER, wer_target=WER_TARGET):
     discontinua y franja de su intervalo) y la meta; (2) tasa de
     suplantación con FAR ≤ 1 % con su intervalo; (3) WER anonimizado con
     su intervalo, el WER original como referencia y la meta. Solo entran las
-    configuraciones de α fijo. El a-a no se dibuja.
+    configuraciones de α fijo, cada una en su α real. El a-a no se dibuja.
 
     Parámetros:
         rows: salida de `collect_rows`.
         eer_target: meta de EER (fracción).
         wer_target: meta de WER (fracción).
+        window: (α mínimo, α máximo) para un acercamiento, o None para todo.
 
     Retorna:
         Una `Figure` de matplotlib.
     """
     fig = Figure(figsize=(COLUMN_WIDTH, 4.6))
     axes = fig.subplots(3, 1, sharex=True)
-    _draw_panel(axes[0], _series(rows, "eer_oa"), _reference(rows, "eer_oo"), eer_target,
+    _draw_panel(axes[0], _series(rows, "eer_oa", window), _reference(rows, "eer_oo"), eer_target,
                 f"Meta ({percent_label(100 * eer_target)} %)")
     axes[0].set_ylabel("EER o-a (%)")
-    _draw_panel(axes[1], _series(rows, "impersonation_far"))
+    _draw_panel(axes[1], _series(rows, "impersonation_far", window))
     axes[1].set_ylabel("Suplantación\nFAR ≤ 1 % (%)")
-    _draw_panel(axes[2], _series(rows, "wer_anonymized"), _reference(rows, "wer_original"), wer_target,
+    _draw_panel(axes[2], _series(rows, "wer_anonymized", window), _reference(rows, "wer_original"), wer_target,
                 f"Meta ({percent_label(100 * wer_target)} %)")
     axes[2].set_ylabel("WER (%)")
 
-    alphas = sorted({r["alpha_min"] for r in rows if r["alpha_min"] == r["alpha_max"]})
+    # Espaciado real: marcas redondas y cada punto en su α (0,725 cae entre 0,7 y 0,75).
+    alphas = sorted({alpha_of(r) for r in rows if is_fixed(r) and in_window(alpha_of(r), window)})
     if alphas:
-        pad = 0.05 * max(alphas[-1] - alphas[0], 0.2)
-        axes[2].set_xlim(alphas[0] - pad, alphas[-1] + pad)
-        axes[2].set_xticks(alphas)
+        low, high = window if window else (alphas[0], alphas[-1])
+        pad = 0.05 * max(high - low, 0.2)
+        axes[2].set_xlim(low - pad, high + pad)
+    axes[2].xaxis.set_major_locator(MultipleLocator(0.05 if window else 0.1))
     axes[2].xaxis.set_major_formatter(FuncFormatter(lambda v, _: f"{v:g}".replace(".", ",")))
     axes[2].set_xlabel("α (coeficiente de McAdams)")
     handles = [
@@ -186,9 +215,8 @@ def plot_alpha_sweep(rows, eer_target=GOAL_EER, wer_target=WER_TARGET):
 def parse_args(argv=None):
     """Lee los argumentos de la línea de comandos."""
     parser = argparse.ArgumentParser(description="Tabla resumen y figura del barrido de α.")
-    parser.add_argument("--alphas", type=float, nargs="+", default=None, help="α fijos (por defecto los 9 del barrido).")
-    parser.add_argument("--range", type=float, nargs=2, action="append", default=[], metavar=("MIN", "MAX"),
-                        dest="ranges", help="Rangos U(MIN, MAX) para la tabla (no van en la figura).")
+    parser.add_argument("--tags", nargs="+", default=None,
+                        help="Solo estas configuraciones (por defecto todas las que tengan manifiesto y embeddings).")
     parser.add_argument("--data-dir", default=str(REPO.parent / "Datos"))
     parser.add_argument("--anon-root", default=None, help="Por defecto <data-dir>\\anon_k134.")
     parser.add_argument("--output-dir", default=None, help="Carpeta de los JSON (por defecto <data-dir>).")
@@ -196,29 +224,34 @@ def parse_args(argv=None):
     parser.add_argument("--whisper-model", default="turbo")
     parser.add_argument("--summary", default=None, help="Por defecto <data-dir>\\barrido_alfa_resumen.tsv.")
     parser.add_argument("--figure", default=None, help="Por defecto <data-dir>\\figuras\\barrido_alfa.pdf.")
+    parser.add_argument("--zoom-figure", default=None,
+                        help="Por defecto <data-dir>\\figuras\\barrido_alfa_zoom.pdf (0.6 <= α <= 0.9).")
     args = parser.parse_args(argv)
     data = Path(args.data_dir)
     args.anon_root = args.anon_root or str(data / "anon_k134")
     args.output_dir = args.output_dir or str(data)
     args.summary = args.summary or str(data / "barrido_alfa_resumen.tsv")
     args.figure = args.figure or str(data / "figuras" / "barrido_alfa.pdf")
-    if args.alphas is None and not args.ranges:
-        args.alphas = list(DEFAULT_ALPHAS)
+    args.zoom_figure = args.zoom_figure or str(data / "figuras" / "barrido_alfa_zoom.pdf")
     return args
 
 
 def main():
-    """Escribe la tabla resumen y la figura del barrido."""
+    """Escribe la tabla resumen, la figura del barrido y la del acercamiento."""
     args = parse_args()
-    configs = build_configs(args.alphas, args.ranges)
-    rows = collect_rows(configs, args)
+    configs = discover_configs(args.data_dir, args.dataset_tag, args.whisper_model)
+    if args.tags:
+        configs = [c for c in configs if c["tag"] in args.tags]
+    rows = collect_rows(configs)
     write_summary(rows, args.summary)
     missing = [r["tag"] for r in rows if any(r[p] is None for p, _, _ in METRICS)]
     configure_fonts()
-    Path(args.figure).parent.mkdir(parents=True, exist_ok=True)
-    plot_alpha_sweep(rows).savefig(args.figure)
+    for path, window in ((args.figure, None), (args.zoom_figure, ZOOM_WINDOW)):
+        Path(path).parent.mkdir(parents=True, exist_ok=True)
+        plot_alpha_sweep(rows, window=window).savefig(path)
+    print(f"Configuraciones: {', '.join(f'{r['tag']} (alfa {r['alpha'] if r['alpha'] is not None else 'rango'})' for r in rows)}")
     print(f"Tabla: {args.summary}")
-    print(f"Figura: {args.figure}")
+    print(f"Figuras: {args.figure} y {args.zoom_figure}")
     if missing:
         print(f"Configuraciones con algún JSON faltante (quedan vacías): {', '.join(missing)}")
 

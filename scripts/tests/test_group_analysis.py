@@ -112,15 +112,78 @@ def test_config_files_u07_09_usa_los_nombres_originales(tmp_path):
     assert (g["embeddings"].name, g["transcripts"].name) == ("emb_k134_a070.npz", "whisper_turbo_k134_a070.tsv")
 
 
-def test_discover_configs_entran_solas_y_ordenadas(tmp_path):
-    (tmp_path / "anon_k134").mkdir()
-    for tag in ("u07_09", "a100", "a072", "a020", "a080"):
-        (tmp_path / "anon_k134" / f"anon_manifest_{tag}.tsv").write_text("x")
-        f = ga.config_files(tag, tmp_path)
-        if tag != "a080":  # sin embeddings: no entra
-            f["embeddings"].write_text("x")
-    (tmp_path / "anon_k134" / "anon_manifest_prueba.tsv").write_text("x")
-    assert [c["tag"] for c in ga.discover_configs(tmp_path)] == ["a020", "a072", "a100", "u07_09"]
+def write_manifest(path, coefficients, status="ok"):
+    """Manifiesto mínimo con un clip por coeficiente."""
+    path.parent.mkdir(parents=True, exist_ok=True)
+    rows = ["client_id\tstratum\tpath\tsession_id\tcoefficient\tstatus\terror"]
+    rows += [f"h{i}\tcaribe\tc{i}.mp3\tc{i}\t{c}\t{status}\t" for i, c in enumerate(coefficients)]
+    path.write_text("\n".join(rows) + "\n", encoding="utf-8")
+
+
+def make_config(data, tag, coefficients, embeddings=True):
+    f = ga.config_files(tag, data)
+    write_manifest(f["manifest"], coefficients)
+    if embeddings:
+        f["embeddings"].write_text("x")
+
+
+def test_discover_configs_entran_solas_y_ordenadas_por_alpha_real(tmp_path):
+    make_config(tmp_path, "u07_09", [0.71, 0.85, 0.79])
+    make_config(tmp_path, "a100", [1.0, 1.0])
+    make_config(tmp_path, "a072", [0.725, 0.725])
+    make_config(tmp_path, "a070", [0.7, 0.7])
+    make_config(tmp_path, "a075", [0.75, 0.75])
+    make_config(tmp_path, "a020", [0.2])
+    make_config(tmp_path, "a080", [0.8], embeddings=False)  # sin embeddings: no entra
+    configs = ga.discover_configs(tmp_path)
+    assert [c["tag"] for c in configs] == ["a020", "a070", "a072", "a075", "a100", "u07_09"]
+    a072 = configs[2]
+    assert (a072["fixed"], a072["alpha"], a072["alpha_min"], a072["alpha_max"]) == (True, 0.725, 0.725, 0.725)
+    u = configs[-1]
+    assert (u["fixed"], u["alpha"], u["alpha_min"], u["alpha_max"]) == (False, None, 0.71, 0.85)
+
+
+def test_discover_configs_etiqueta_desconocida_entra_con_su_alpha(tmp_path):
+    make_config(tmp_path, "prueba", [0.66])
+    (config,) = ga.discover_configs(tmp_path)
+    assert (config["tag"], config["alpha"]) == ("prueba", 0.66)
+
+
+def test_discover_configs_mismo_alpha_real_error_claro(tmp_path):
+    make_config(tmp_path, "a072", [0.725])
+    make_config(tmp_path, "a073", [0.725])
+    with pytest.raises(ValueError, match="a072 y a073 tienen el mismo α real"):
+        ga.discover_configs(tmp_path)
+
+
+def test_manifest_alpha_fijo_rango_y_solo_clips_ok(tmp_path):
+    write_manifest(tmp_path / "m.tsv", [0.725, 0.725, 0.725])
+    assert ga.manifest_alpha(tmp_path / "m.tsv") == (True, 0.725, 0.725)
+    write_manifest(tmp_path / "r.tsv", [0.73, 0.88, 0.71])
+    assert ga.manifest_alpha(tmp_path / "r.tsv") == (False, 0.71, 0.88)
+    path = tmp_path / "e.tsv"
+    path.write_text("client_id\tstratum\tpath\tsession_id\tcoefficient\tstatus\terror\n"
+                    "h\ts\ta.mp3\ta\t0.5\tok\t\nh\ts\tb.mp3\tb\t\terror\tx\n", encoding="utf-8")
+    assert ga.manifest_alpha(path) == (True, 0.5, 0.5)
+    write_manifest(tmp_path / "v.tsv", [""], status="error")
+    with pytest.raises(ValueError, match="no hay coeficientes"):
+        ga.manifest_alpha(tmp_path / "v.tsv")
+
+
+def test_config_label_alpha_real_y_rango_nominal():
+    assert ga.config_label({"tag": "a072", "fixed": True, "alpha": 0.725, "alpha_min": 0.725, "alpha_max": 0.725}) == "0,725"
+    assert ga.config_label({"tag": "u07_09", "fixed": False, "alpha": None, "alpha_min": 0.7001,
+                            "alpha_max": 0.8998}) == "U(0,7; 0,9)"
+    assert ga.config_label({"tag": "raro", "fixed": False, "alpha": None, "alpha_min": 0.6012,
+                            "alpha_max": 0.7987}) == "U(0,6; 0,8)"
+
+
+def test_config_files_incluye_wer_y_replicas(tmp_path):
+    f = ga.config_files("u07_09", tmp_path)
+    assert (f["wer_json"].name, f["eer_replicates"].name) == ("wer_turbo_k134.json", "eer_bootstrap_k134_replicas.npz")
+    g = ga.config_files("a072", tmp_path)
+    assert (g["wer_json"].name, g["eer_replicates"].name) == ("wer_turbo_k134_a072.json",
+                                                              "eer_bootstrap_k134_a072_replicas.npz")
 
 
 # ---------------------------------------------------------------------------
@@ -395,8 +458,8 @@ def test_plot_groups_vs_alpha_solo_alpha_fijo_y_wer_desde_0_6():
                                                            ("total", "Total", "#000000", ":")])
     top, bottom = fig.axes
     lines = [l for l in top.get_lines() if l.get_marker() == "o"]
-    assert sorted(round(x, 2) for x in np.concatenate([l.get_xdata() for l in lines])) == [
-        0.49, 0.51, 0.59, 0.61, 0.69, 0.71]  # α 0,5–0,7 desplazados ±0,012, sin el rango
+    assert sorted(round(x, 3) for x in np.concatenate([l.get_xdata() for l in lines])) == [
+        0.496, 0.504, 0.596, 0.604, 0.696, 0.704]  # α 0,5–0,7 desplazados ±0,004, sin el rango
     lines = [l for l in bottom.get_lines() if l.get_marker() == "o"]
     assert all(min(l.get_xdata()) > 0.55 for l in lines)
     assert [t.get_text() for t in fig.legends[0].get_texts()] == ["Caribe", "Total"]
@@ -417,9 +480,12 @@ def write_tsv(path, rows):
 @pytest.fixture
 def toy_data(tmp_path, case):
     rows, session_ids, original, anonymized = make_case()
+    coefficients = {"u07_09": None, "a050": "0.5", "a070": "0.7"}
     for tag, noise in (("u07_09", 1.5), ("a050", 3.0), ("a070", 1.0)):
         f = ga.config_files(tag, tmp_path)
-        write_tsv(f["manifest"], rows)
+        rng = np.random.default_rng(3)
+        write_tsv(f["manifest"], [{**r, "coefficient": coefficients[tag] or str(rng.uniform(0.7, 0.9))}
+                                  for r in rows])
         anon = original + noise * np.random.default_rng(len(tag) + int(noise)).normal(size=original.shape)
         np.savez(f["embeddings"], session_ids=np.array(session_ids, dtype=str), original=original,
                  anonymized=anon.astype(np.float32))
@@ -558,3 +624,42 @@ def test_load_summary_lee_lo_que_escribe_write_tsv(tmp_path):
     ga.write_tsv(rows, ["config", "group", "impersonation_far", "wer_note", "n_words"], tmp_path / "r.tsv")
     assert ga.load_summary(tmp_path / "r.tsv") == [{"config": "a070", "group": "caribe", "impersonation_far": 0.25,
                                                     "wer_note": "", "n_words": None}]
+
+
+def test_main_tabla_con_el_alpha_real(monkeypatch, toy_data):
+    run_main(monkeypatch, toy_data, "--group-by", "stratum")
+    summary = read(toy_data / "por_grupo" / "resumen_estrato.tsv")
+    assert {(r["config"], r["alpha"]) for r in summary} == {("a050", "0.5"), ("a070", "0.7"), ("u07_09", "")}
+    assert list(summary[0])[:4] == ["config", "alpha", "alpha_min", "alpha_max"]
+
+
+def test_plot_groups_vs_alpha_espaciado_real():
+    configs = [{"tag": t, "fixed": True, "alpha": a, "alpha_min": a, "alpha_max": a}
+               for t, a in (("a070", 0.7), ("a072", 0.725), ("a075", 0.75))]
+    summary = [{"config": c["tag"], "group": "caribe", "impersonation_far": 0.1, "impersonation_far_ci_low": 0.05,
+                "impersonation_far_ci_high": 0.2, "wer_difference": 0.1, "wer_difference_ci_low": 0.05,
+                "wer_difference_ci_high": 0.15} for c in configs]
+    fig = ga.plot_groups_vs_alpha(summary, configs, [("caribe", "Caribe", "#0072B2", "-")])
+    (dots,) = [l for l in fig.axes[0].get_lines() if l.get_marker() == "o"]
+    np.testing.assert_allclose(dots.get_xdata(), [0.7, 0.725, 0.75])
+    ticks = fig.axes[1].get_xticks()
+    np.testing.assert_allclose(np.diff(ticks), 0.1)
+
+
+def test_manifest_alpha_dos_valores_distintos_es_rango(tmp_path):
+    write_manifest(tmp_path / "m.tsv", [0.7, 0.9, 0.7])
+    assert ga.manifest_alpha(tmp_path / "m.tsv") == (False, 0.7, 0.9)
+
+
+def test_manifest_alpha_ignora_el_coeficiente_de_clips_con_error(tmp_path):
+    path = tmp_path / "m.tsv"
+    path.write_text("client_id\tstratum\tpath\tsession_id\tcoefficient\tstatus\terror\n"
+                    "h\ts\ta.mp3\ta\t0.5\tok\t\nh\ts\tb.mp3\tb\t0.9\terror\tx\n", encoding="utf-8")
+    assert ga.manifest_alpha(path) == (True, 0.5, 0.5)
+
+
+def test_discover_configs_ordena_por_alpha_y_no_por_etiqueta(tmp_path):
+    make_config(tmp_path, "b_bajo", [0.3])
+    make_config(tmp_path, "a_alto", [0.9])
+    make_config(tmp_path, "c_medio", [0.65])
+    assert [c["tag"] for c in ga.discover_configs(tmp_path)] == ["b_bajo", "c_medio", "a_alto"]
