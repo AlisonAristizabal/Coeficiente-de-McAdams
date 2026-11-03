@@ -9,6 +9,7 @@ import anonymize_subset as modulo
 from alpha_config import DEFAULT_RANGE, config_tag, validate_range
 from anonymize_subset import anonymize_subset, main, parse_args, process_clip
 from common_voice_corpus import read_tsv_rows
+from mcadams_core.config.mcadams_defaults import MAX_MCADAMS_COEFFICIENT, MIN_MCADAMS_COEFFICIENT
 from mcadams_core.session.coefficient import generate_coefficient
 
 
@@ -30,6 +31,11 @@ def test_config_tag_rango(low, high, tag):
 
 def test_config_tag_rango_por_defecto_es_el_de_siempre():
     assert config_tag(*DEFAULT_RANGE) == "u07_09"
+
+
+def test_default_range_de_evaluacion_es_el_original():
+    # Los scripts de evaluación siguen en U(0,7; 0,9) aunque el núcleo cambie su rango.
+    assert DEFAULT_RANGE == (0.7, 0.9)
 
 
 @pytest.mark.parametrize("low, high", [(0, 0.5), (0.5, 1.2), (0.9, 0.7), (-0.1, 0.2)])
@@ -83,7 +89,7 @@ def argumentos(monkeypatch, *extra):
 
 def test_parse_args_sin_alpha_usa_el_rango_por_defecto(monkeypatch):
     args = argumentos(monkeypatch)
-    assert (args.alpha_min, args.alpha_max, args.tag, args.reuse_original) == (None, None, "u07_09", False)
+    assert (args.alpha_min, args.alpha_max, args.tag, args.reuse_original) == (0.7, 0.9, "u07_09", False)
 
 
 def test_parse_args_alpha_fijo_y_su_etiqueta(monkeypatch):
@@ -126,9 +132,11 @@ def test_process_clip_alpha_fijo(tmp_path):
     assert process_clip(tmp_path / "c.mp3", tmp_path / "o.wav", tmp_path / "a.wav", "c", 0.5, 0.5) == 0.5
 
 
-def test_process_clip_sin_alpha_igual_que_antes(tmp_path):
+def test_process_clip_sin_alpha_usa_el_rango_del_nucleo(tmp_path):
+    # process_clip sin rango delega en el núcleo; el rango de evaluación lo fija parse_args.
     crear_mp3(tmp_path / "c.mp3")
-    assert process_clip(tmp_path / "c.mp3", tmp_path / "o.wav", tmp_path / "a.wav", "c") == generate_coefficient("c")[0]
+    expected = generate_coefficient("c", MIN_MCADAMS_COEFFICIENT, MAX_MCADAMS_COEFFICIENT)[0]
+    assert process_clip(tmp_path / "c.mp3", tmp_path / "o.wav", tmp_path / "a.wav", "c") == expected
 
 
 def test_process_clip_reutiliza_el_original_sin_convertir(tmp_path, monkeypatch):
@@ -199,7 +207,17 @@ def test_main_sin_alpha_igual_que_antes(monkeypatch, escenario):
     subset, clips, salida = escenario
     correr(monkeypatch, subset, clips, salida)
     filas = list(read_tsv_rows(salida / "anon_manifest_u07_09.tsv"))
-    assert [float(f["coefficient"]) for f in filas] == [generate_coefficient(f"c{i}")[0] for i in range(3)]
+    assert [float(f["coefficient"]) for f in filas] == [generate_coefficient(f"c{i}", 0.7, 0.9)[0] for i in range(3)]
+
+
+def test_main_sin_opciones_reproduce_u07_09_y_no_el_rango_del_nucleo(monkeypatch, escenario):
+    subset, clips, salida = escenario
+    correr(monkeypatch, subset, clips, salida)
+    assert sorted(p.name for p in salida.glob("*.tsv")) == ["anon_manifest_u07_09.tsv"]
+    filas = list(read_tsv_rows(salida / "anon_manifest_u07_09.tsv"))
+    coeficientes = {f["session_id"]: float(f["coefficient"]) for f in filas}
+    assert coeficientes == {f"c{i}": generate_coefficient(f"c{i}", 0.7, 0.9)[0] for i in range(3)}
+    assert all(c != generate_coefficient(sid)[0] for sid, c in coeficientes.items())
 
 
 def test_main_reuse_original_no_reescribe_los_originales(monkeypatch, escenario):

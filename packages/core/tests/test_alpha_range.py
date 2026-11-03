@@ -10,7 +10,8 @@ from mcadams_core.session.coefficient import generate_coefficient
 from mcadams_core.streaming.anonymizer_stream import AnonymizerStream
 
 # Coeficientes copiados de ..\Datos\anon_k134\anon_manifest_u07_09.tsv (U(0,7; 0,9),
-# generados antes de agregar alpha_min y alpha_max). Deben salir idénticos.
+# generados antes de agregar alpha_min y alpha_max). Con el rango original explícito
+# deben salir idénticos aunque cambie el rango por defecto del núcleo.
 MANIFEST_SAMPLE = [
     ("common_voice_es_22238783", "0.7472873670702868"),
     ("common_voice_es_18949963", "0.828135124342608"),
@@ -23,21 +24,21 @@ MANIFEST_PATH = Path(__file__).resolve().parents[4] / "Datos" / "anon_k134" / "a
 
 
 # ---------------------------------------------------------------------------
-# Regresión: el alpha por defecto no cambia
+# Regresión: el rango original U(0,7; 0,9) reproduce u07_09
 # ---------------------------------------------------------------------------
 
 @pytest.mark.parametrize("session_id, coefficient", MANIFEST_SAMPLE)
-def test_regresion_coeficiente_por_defecto_igual_al_manifiesto(session_id, coefficient):
-    assert generate_coefficient(session_id)[0] == float(coefficient)
-    assert repr(float(generate_coefficient(session_id)[0])) == coefficient
+def test_regresion_coeficiente_rango_original_igual_al_manifiesto(session_id, coefficient):
+    assert generate_coefficient(session_id, 0.7, 0.9)[0] == float(coefficient)
+    assert repr(float(generate_coefficient(session_id, 0.7, 0.9)[0])) == coefficient
 
 
 @pytest.mark.skipif(not MANIFEST_PATH.exists(), reason="no está el manifiesto real en ..\\Datos")
-def test_regresion_todo_el_manifiesto_u07_09():
+def test_regresion_rango_original_todo_el_manifiesto_u07_09():
     with open(MANIFEST_PATH, encoding="utf-8", newline="") as f:
         rows = [r for r in csv.DictReader(f, delimiter="\t", quoting=csv.QUOTE_NONE) if r["status"] == "ok"]
     assert len(rows) == 6700
-    mismatches = [r["session_id"] for r in rows if generate_coefficient(r["session_id"])[0] != float(r["coefficient"])]
+    mismatches = [r["session_id"] for r in rows if generate_coefficient(r["session_id"], 0.7, 0.9)[0] != float(r["coefficient"])]
     assert mismatches == []
 
 
@@ -45,6 +46,15 @@ def test_regresion_rango_explicito_igual_al_por_defecto():
     for i in range(50):
         sid = f"sesion_{i}"
         assert generate_coefficient(sid, MIN_MCADAMS_COEFFICIENT, MAX_MCADAMS_COEFFICIENT) == generate_coefficient(sid)
+
+
+def test_rango_por_defecto_del_sistema():
+    assert (MIN_MCADAMS_COEFFICIENT, MAX_MCADAMS_COEFFICIENT) == (0.685, 0.865)
+    # Mismo uniforme que el rango original, reescalado a U(0,685; 0,865).
+    for i in range(20):
+        sid = f"sesion_{i}"
+        u = (generate_coefficient(sid, 0.7, 0.9)[0] - 0.7) / 0.2
+        assert generate_coefficient(sid)[0] == pytest.approx(0.685 + 0.18 * u)
 
 
 def test_regresion_semilla_igual_que_antes():
@@ -79,7 +89,7 @@ def test_rango_nuevo_usa_el_mismo_generador_que_el_por_defecto():
     # Misma semilla y mismo uniforme: el valor se reescala al nuevo rango.
     for i in range(20):
         sid = f"s{i}"
-        u = (generate_coefficient(sid)[0] - 0.7) / 0.2
+        u = (generate_coefficient(sid, 0.7, 0.9)[0] - 0.7) / 0.2
         assert generate_coefficient(sid, 0.6, 0.8)[0] == pytest.approx(0.6 + 0.2 * u)
 
 
@@ -100,9 +110,17 @@ def test_limites_validos_extremos():
 # AnonymizerStream y anonymize_utterance
 # ---------------------------------------------------------------------------
 
-def test_stream_sin_argumentos_igual_que_antes():
-    stream = AnonymizerStream(16000, "common_voice_es_22238783")
+def test_stream_rango_original_igual_que_antes():
+    stream = AnonymizerStream(16000, "common_voice_es_22238783", 0.7, 0.9)
     assert stream.mcadams_coefficient == 0.7472873670702868
+
+
+def test_stream_sin_rango_usa_el_rango_por_defecto():
+    for i in range(20):
+        sid = f"sesion_{i}"
+        expected = generate_coefficient(sid, MIN_MCADAMS_COEFFICIENT, MAX_MCADAMS_COEFFICIENT)[0]
+        assert AnonymizerStream(16000, sid).mcadams_coefficient == expected
+    assert AnonymizerStream(16000, "common_voice_es_22238783").mcadams_coefficient != 0.7472873670702868
 
 
 def test_stream_con_alpha_fijo():
@@ -116,7 +134,7 @@ def test_stream_con_rango():
 
 
 def test_stream_solo_alpha_min_usa_el_maximo_por_defecto():
-    assert AnonymizerStream(16000, "x", alpha_min=0.8).mcadams_coefficient == generate_coefficient("x", 0.8, 0.9)[0]
+    assert AnonymizerStream(16000, "x", alpha_min=0.8).mcadams_coefficient == generate_coefficient("x", 0.8, MAX_MCADAMS_COEFFICIENT)[0]
 
 
 def test_stream_alpha_invalido_lanza():
@@ -130,8 +148,8 @@ def audio(n=8000):
 
 def test_utterance_sin_argumentos_igual_que_antes():
     anon_default, coefficient = anonymize_utterance(audio(), 16000, "sesion")
-    anon_explicit, _ = anonymize_utterance(audio(), 16000, "sesion", 0.7, 0.9)
-    assert coefficient == generate_coefficient("sesion")[0]
+    anon_explicit, _ = anonymize_utterance(audio(), 16000, "sesion", MIN_MCADAMS_COEFFICIENT, MAX_MCADAMS_COEFFICIENT)
+    assert coefficient == generate_coefficient("sesion", MIN_MCADAMS_COEFFICIENT, MAX_MCADAMS_COEFFICIENT)[0]
     np.testing.assert_array_equal(anon_default, anon_explicit)
 
 
