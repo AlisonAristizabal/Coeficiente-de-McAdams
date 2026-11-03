@@ -8,7 +8,8 @@ authors = [
 ]
 requires-python = ">=3.11"
 dependencies = [
-    "mcadams-core"
+    "mcadams-core",
+    "sounddevice"
 ]
 
 [tool.uv.sources]

@@ -7,7 +7,7 @@ cada configuración (anon_<etiqueta>, anon_manifest_<etiqueta>.tsv, ...) y
 sigue el patrón del rango por defecto, u07_09. Este módulo no importa
 mcadams_core, para que lo puedan usar los scripts que corren sin él.
 """
-
+# Es el rango de la evaluación original (u07_09), no sigue al núcleo y no se debe cambiar
 DEFAULT_RANGE = (0.7, 0.9)
 
 

@@ -156,7 +156,7 @@ def parse_args():
 
     --alpha y --alpha-range son mutuamente excluyentes; sin ninguno se usa
     el rango por defecto U(0.7, 0.9). Deja en `args.alpha_min` y
-    `args.alpha_max` el rango elegido (None si no se dio ninguno). Si no se
+    `args.alpha_max` el rango elegido, siempre se usa DEFAULT_RANGE. Si no se
     da --tag, la etiqueta sale del rango (`u07_09` por defecto, `a020` para
     --alpha 0.2), de modo que un α nuevo nunca escribe sobre la carpeta ni
     el manifiesto del rango por defecto.
