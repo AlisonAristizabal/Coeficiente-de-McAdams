@@ -78,27 +78,33 @@ def json_points(config):
     }
 
 
-def eer_oa_replicates(config, results, samples, params):
+def eer_replicates(config, results, samples, params, scenario="o-a"):
     """
-    Réplicas del EER o-a con las muestras dadas.
+    Réplicas del EER de un escenario (o-o, o-a o a-a) con las muestras dadas.
 
     Si el JSON de eer_bootstrap se hizo con los mismos parámetros y la
-    primera y la última réplica guardadas coinciden exactamente con las
-    recalculadas, se usan las guardadas; si no, se calculan todas.
+    primera y la última réplica guardadas del escenario coinciden
+    exactamente con las recalculadas, se usan las guardadas; si no, se
+    calculan todas.
     """
-    oa = results["o-a"]
+    result = results[scenario]
 
     def one(sample):
-        return compute_eer(*resample_pairs(oa["scores"], oa["owner"], sample))[0]
+        return compute_eer(*resample_pairs(result["scores"], result["owner"], sample))[0]
 
     summary = read_json(config["files"]["eer_json"])
     same_params = all(summary.get(k) == v for k, v in params.items())
     if same_params and Path(config["files"]["eer_replicates"]).exists():
         with np.load(config["files"]["eer_replicates"]) as data:
-            stored = np.array(data["o-a"])
+            stored = np.array(data[scenario]) if scenario in data.files else np.array([])
         if stored.size == len(samples) and all(stored[b] == one(samples[b]) for b in (0, len(samples) - 1)):
             return stored
     return np.array([one(s) for s in samples])
+
+
+def eer_oa_replicates(config, results, samples, params):
+    """Réplicas del EER o-a (atajo de `eer_replicates`)."""
+    return eer_replicates(config, results, samples, params, "o-a")
 
 
 def config_metrics(config, results, samples, thresholds_reps, client_ids, max_far, params):
@@ -142,18 +148,23 @@ def check_against_json(config, metrics):
         raise ValueError(f"{config['tag']}: el valor puntual de {', '.join(wrong)} no coincide con su JSON")
 
 
-def paired_difference(from_metrics, to_metrics, level):
+def paired_difference(from_metrics, to_metrics, level, metrics=METRICS):
     """
     Diferencia pareada (destino menos origen) de cada métrica.
 
     El valor es la resta de los puntuales; el IC, los percentiles de la resta
     réplica por réplica (mismas muestras en las dos configuraciones).
 
+    Parámetros:
+        from_metrics, to_metrics: {métrica: {"point", "reps"}} de cada configuración.
+        level: nivel de confianza.
+        metrics: métricas que se restan (por defecto las de `METRICS`).
+
     Retorna:
         Diccionario {métrica: (diferencia, ci_low, ci_high)}.
     """
     out = {}
-    for m in METRICS:
+    for m in metrics:
         low, high = percentile_ci(to_metrics[m]["reps"] - from_metrics[m]["reps"], level)
         out[m] = (to_metrics[m]["point"] - from_metrics[m]["point"], low, high)
     return out
