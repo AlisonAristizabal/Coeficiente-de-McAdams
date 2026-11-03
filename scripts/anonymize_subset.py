@@ -180,10 +180,10 @@ def parse_args():
         args.alpha_min, args.alpha_max = args.alpha_range
     else:
         args.alpha_min, args.alpha_max = DEFAULT_RANGE
-        try:
-            validate_range(args.alpha_min, args.alpha_max)
-        except ValueError as error:
-            parser.error(str(error))
+    try:
+        validate_range(args.alpha_min, args.alpha_max)
+    except ValueError as error:
+        parser.error(str(error))
     if args.tag is None:
         args.tag = config_tag(*DEFAULT_RANGE) if args.alpha_min is None else config_tag(args.alpha_min, args.alpha_max)
     return args
