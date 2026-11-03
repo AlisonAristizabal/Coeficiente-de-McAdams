@@ -179,8 +179,7 @@ def parse_args():
     elif args.alpha_range is not None:
         args.alpha_min, args.alpha_max = args.alpha_range
     else:
-        args.alpha_min = args.alpha_max = None
-    if args.alpha_min is not None:
+        args.alpha_min, args.alpha_max = DEFAULT_RANGE
         try:
             validate_range(args.alpha_min, args.alpha_max)
         except ValueError as error:
