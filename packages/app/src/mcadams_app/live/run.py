@@ -1,13 +1,18 @@
-"""Prueba de paso directo (micrófono → audífonos, sin anonimizar).
+"""Prueba en vivo: micrófono → audífonos, sin anonimizar o con McAdams.
 
-Mide la latencia propia del equipo y el costo del callback, y guarda lo
-grabado en una carpeta nueva dentro de ..\\Datos\\en_vivo. Se ejecuta con:
+Mide la latencia del equipo y el costo del callback, y guarda lo grabado en una
+carpeta nueva dentro de ..\\Datos\\en_vivo. Se ejecuta con:
 
     python -m mcadams_app.live.run --seconds 20 --input-device 1 --output-device 4
+    python -m mcadams_app.live.run --mode anonimizado --seconds 20 --input-device 1 --output-device 4
 
-El procesador se configura en la LiveSession y el modo solo nombra la carpeta,
-así que el modo con anonimización no requiere cambiar `run_session` ni
-`save_results`."""
+En modo paso_directo la salida es igual a la entrada y mide la latencia propia
+del equipo. En modo anonimizado cada corrida genera un session_id (uuid4), y el
+α sale del rango por defecto del núcleo; salida.wav contiene la voz anonimizada
+y entrada.wav, la original.
+
+El session_id y el α se guardan en resumen.json solo porque es una prueba de
+laboratorio; el sistema final no los registraría."""
 import argparse
 import csv
 import itertools
@@ -15,6 +20,7 @@ import json
 import math
 import platform
 import time
+import uuid
 from datetime import datetime
 from pathlib import Path
 
@@ -23,6 +29,7 @@ import sounddevice as sd
 
 from mcadams_app.live.session import LiveSession
 from mcadams_core.io.audio_io import save_wav
+from mcadams_core.streaming.block_anonymizer import BlockAnonymizer
 
 REPO = Path(__file__).resolve().parents[5]
 DEFAULT_OUTPUT_ROOT = REPO.parent / "Datos" / "en_vivo"
@@ -30,6 +37,7 @@ DEFAULT_OUTPUT_ROOT = REPO.parent / "Datos" / "en_vivo"
 CHANNELS = 1
 DTYPE = "float32"
 MODE_PASSTHROUGH = "paso_directo"
+MODE_ANONYMIZED = "anonimizado"
 
 
 def positive_int(text):
@@ -63,7 +71,9 @@ def parse_latency(text):
 
 def parse_args(argv=None):
     """Lee los argumentos de la línea de comandos."""
-    parser = argparse.ArgumentParser(description="Prueba de paso directo: micrófono a audífonos, sin anonimizar.")
+    parser = argparse.ArgumentParser(description="Prueba en vivo: micrófono a audífonos, sin anonimizar o con McAdams.")
+    parser.add_argument("--mode", choices=(MODE_PASSTHROUGH, MODE_ANONYMIZED), default=MODE_PASSTHROUGH,
+                        help="paso_directo: la salida es igual a la entrada; anonimizado: aplica McAdams.")
     parser.add_argument("--seconds", type=positive_float, default=10.0, help="Segundos de la prueba.")
     parser.add_argument("--input-device", type=int, default=None,
                         help="Índice del micrófono en sounddevice (por defecto, el del sistema).")
@@ -120,6 +130,25 @@ def version_info():
         "sounddevice": sd.__version__,
         "portaudio": sd.get_portaudio_version()[1],
     }
+
+
+def build_anonymizer(mode, sample_rate, blocksize):
+    """Crea el adaptador del modo anonimizado; en paso directo devuelve None.
+
+    El session_id es un uuid4, igual que en session_manager/activation.py, y
+    el α sale del rango por defecto del núcleo. Se pasa el blocksize para que
+    el retraso del adaptador sea el mínimo con ese tamaño de bloque."""
+    if mode != MODE_ANONYMIZED:
+        return None
+    return BlockAnonymizer(sample_rate, str(uuid.uuid4()), blocksize=blocksize)
+
+
+def describe_anonymizer(anonymizer):
+    """Devuelve el session_id, el α y el retraso del adaptador (0 en paso directo)."""
+    if anonymizer is None:
+        return {"session_id": None, "coefficient": None, "delay_samples": 0, "delay_ms": 0.0}
+    return {"session_id": anonymizer.session_id, "coefficient": anonymizer.coefficient,
+            "delay_samples": anonymizer.delay_samples, "delay_ms": anonymizer.delay_ms}
 
 
 def run_session(session, input_device, output_device, blocksize, latency, seconds,
@@ -193,7 +222,8 @@ def _to_ms(seconds):
     return None if seconds is None else 1000 * seconds
 
 
-def save_results(session, stream_latency, settings, devices, versions, output_root, now=datetime.now):
+def save_results(session, stream_latency, settings, devices, versions, output_root, now=datetime.now,
+                 anonymizer=None):
     """Guarda los WAV, tiempos.tsv y resumen.json en una carpeta nueva.
 
     Se debe llamar con el stream ya cerrado.
@@ -207,6 +237,7 @@ def save_results(session, stream_latency, settings, devices, versions, output_ro
         versions: salida de `version_info`.
         output_root: carpeta donde se crea la carpeta de la corrida.
         now: función que devuelve la fecha y hora actuales.
+        anonymizer: BlockAnonymizer de la sesión; None en paso directo.
 
     Retorna:
         Una tupla (carpeta de la corrida, contenido de resumen.json)."""
@@ -227,6 +258,7 @@ def save_results(session, stream_latency, settings, devices, versions, output_ro
             "blocksize": settings["blocksize"],
             "latency_requested": settings["latency_requested"],
         },
+        "anonymizer": describe_anonymizer(anonymizer),
         "devices": devices,
         "versions": versions,
     }
@@ -243,24 +275,34 @@ def _number(value, decimals=2):
 def print_report(run_dir, summary):
     """Imprime el resumen corto de la corrida en la consola."""
     session, latency, config = summary["session"], summary["stream_latency_ms"], summary["config"]
+    anonymizer = summary["anonymizer"]
     block_ms = 1000 * config["blocksize"] / config["sample_rate"]
     if latency["input"] is None or latency["output"] is None:
         estimated = None
     else:
-        estimated = latency["input"] + latency["output"] + block_ms
+        estimated = latency["input"] + latency["output"] + block_ms + anonymizer["delay_ms"]
     print(f"Carpeta de salida: {run_dir}")
     print(f"Bloques: {session['n_blocks']}")
     print(f"Overflows de entrada: {session['input_overflows']}")
+    print(f"Underflows de entrada: {session['input_underflows']}")
+    print(f"Overflows de salida: {session['output_overflows']}")
     print(f"Underflows de salida: {session['output_underflows']}")
     print(f"Tiempo por bloque: mediana {_number(session['block_ms_median'], 3)} ms, "
           f"p99 {_number(session['block_ms_p99'], 3)} ms, máximo {_number(session['block_ms_max'], 3)} ms")
     print(f"RTF: {_number(session['rtf'], 4)}")
     print(f"Latencia del dispositivo: entrada {_number(latency['input'])} ms, salida {_number(latency['output'])} ms")
-    print(f"Latencia estimada (entrada + salida + un bloque de {_number(block_ms)} ms): {_number(estimated)} ms")
+    terms = f"entrada + salida + un bloque de {_number(block_ms)} ms"
+    if anonymizer["session_id"] is not None:
+        # "alfa" en letras: la consola de Windows con cp1252 no puede escribir la letra griega.
+        print(f"Coeficiente alfa de la sesión: {_number(anonymizer['coefficient'], 4)}")
+        print(f"Retraso algorítmico del adaptador: {anonymizer['delay_samples']} muestras "
+              f"({_number(anonymizer['delay_ms'])} ms)")
+        terms += f" + retraso del adaptador de {_number(anonymizer['delay_ms'])} ms"
+    print(f"Latencia estimada ({terms}): {_number(estimated)} ms")
 
 
 def main(argv=None, stream_class=sd.Stream, wait=time.sleep):
-    """Corre la prueba de paso directo y guarda los resultados."""
+    """Corre la prueba en vivo en el modo pedido y guarda los resultados."""
     args = parse_args(argv)
     if args.list_devices:
         print(sd.query_devices())
@@ -270,7 +312,8 @@ def main(argv=None, stream_class=sd.Stream, wait=time.sleep):
     devices = {"input": describe_device(args.input_device, "input"),
                "output": describe_device(args.output_device, "output")}
 
-    session = LiveSession(args.sample_rate)
+    anonymizer = build_anonymizer(args.mode, args.sample_rate, args.blocksize)
+    session = LiveSession(args.sample_rate, processor=None if anonymizer is None else anonymizer.process)
     try:
         stream_latency = run_session(session, args.input_device, args.output_device, args.blocksize, args.latency,
                                      args.seconds, stream_class, wait)
@@ -278,9 +321,10 @@ def main(argv=None, stream_class=sd.Stream, wait=time.sleep):
         raise SystemExit(f"No se pudo usar el stream de audio con entrada {devices['input']['name']} "
                          f"y salida {devices['output']['name']}: {error}") from error
 
-    settings = {"mode": MODE_PASSTHROUGH, "seconds_requested": args.seconds, "blocksize": args.blocksize,
+    settings = {"mode": args.mode, "seconds_requested": args.seconds, "blocksize": args.blocksize,
                 "latency_requested": args.latency}
-    run_dir, summary = save_results(session, stream_latency, settings, devices, version_info(), args.output_root)
+    run_dir, summary = save_results(session, stream_latency, settings, devices, version_info(), args.output_root,
+                                    anonymizer=anonymizer)
     print_report(run_dir, summary)
 
 

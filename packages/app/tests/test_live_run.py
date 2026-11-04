@@ -1,4 +1,4 @@
-"""Pruebas de la prueba de paso directo sin dispositivo de audio: un stream falso llama
+"""Pruebas de la prueba en vivo sin dispositivo de audio: un stream falso llama
 al callback de la sesión con bloques conocidos y las funciones de consulta de sounddevice
 se reemplazan por versiones falsas. Todo se escribe en tmp_path, nunca en ..\\Datos."""
 import csv
@@ -8,6 +8,7 @@ import re
 import subprocess
 import sys
 import time
+import uuid
 from datetime import datetime
 from pathlib import Path
 from types import SimpleNamespace
@@ -19,7 +20,11 @@ import sounddevice as sd
 
 from mcadams_app.live import run
 from mcadams_app.live.session import LiveSession
+from mcadams_core.batch.utterance import anonymize_utterance
+from mcadams_core.config.mcadams_defaults import MAX_MCADAMS_COEFFICIENT, MIN_MCADAMS_COEFFICIENT
 from mcadams_core.io.audio_io import float_to_int16
+from mcadams_core.session.coefficient import generate_coefficient
+from mcadams_core.streaming.block_anonymizer import BlockAnonymizer
 
 FS = 16000
 BLOCK = 160
@@ -27,6 +32,9 @@ N_BLOCKS = 25
 LATENCY = (0.02, 0.03)
 ARGS = ["--seconds", "0.5", "--input-device", "1", "--output-device", "4"]
 RUN_NAME = re.compile(r"^\d{8}_\d{6}_paso_directo$")
+ANONYMIZED_NAME = re.compile(r"^\d{8}_\d{6}_anonimizado$")
+SESSION_KEYS = {"n_blocks", "input_overflows", "input_underflows", "output_overflows", "output_underflows",
+                "block_ms_median", "block_ms_p99", "block_ms_max", "rtf"}
 
 
 def known_block(k, blocksize=BLOCK):
@@ -163,8 +171,8 @@ VERSIONS = {"python": "3", "sounddevice": "0", "portaudio": "19"}
 
 def test_parse_args_valores_por_defecto():
     args = run.parse_args([])
-    assert (args.seconds, args.input_device, args.output_device, args.sample_rate, args.blocksize, args.latency,
-            args.list_devices) == (10.0, None, None, 16000, 160, "low", False)
+    assert (args.mode, args.seconds, args.input_device, args.output_device, args.sample_rate, args.blocksize,
+            args.latency, args.list_devices) == ("paso_directo", 10.0, None, None, 16000, 160, "low", False)
 
 
 def test_output_root_por_defecto_es_datos_en_vivo_junto_al_repo():
@@ -182,7 +190,7 @@ def test_latency_acepta_low_high_y_numeros(text, expected):
     ("--latency", "medium"), ("--latency", "0"), ("--latency", "-0.1"), ("--latency", "nan"), ("--latency", "inf"),
     ("--seconds", "0"), ("--seconds", "-1"), ("--seconds", "x"), ("--seconds", "inf"),
     ("--sample-rate", "0"), ("--sample-rate", "16000.5"), ("--blocksize", "0"), ("--blocksize", "-160"),
-    ("--input-device", "x"), ("--output-device", "1.5"),
+    ("--input-device", "x"), ("--output-device", "1.5"), ("--mode", "otro"),
 ])
 def test_parse_args_rechaza_valores_invalidos(extra, capsys):
     with pytest.raises(SystemExit) as info:
@@ -425,9 +433,9 @@ def test_tiempos_tsv_esta_en_milisegundos(tmp_path):
 def test_resumen_json_tiene_todas_las_claves(fake_sd, tmp_path):
     correr(tmp_path)
     summary = read_summary(only_run(tmp_path))
-    assert set(summary) == {"session", "stream_latency_ms", "config", "devices", "versions"}
-    assert set(summary["session"]) == {"n_blocks", "input_overflows", "output_underflows", "block_ms_median",
-                                       "block_ms_p99", "block_ms_max", "rtf"}
+    assert set(summary) == {"session", "stream_latency_ms", "config", "anonymizer", "devices", "versions"}
+    assert set(summary["session"]) == SESSION_KEYS
+    assert set(summary["anonymizer"]) == {"session_id", "coefficient", "delay_samples", "delay_ms"}
     assert set(summary["stream_latency_ms"]) == {"input", "output"}
     assert set(summary["config"]) == {"mode", "seconds_requested", "seconds_recorded", "sample_rate", "blocksize",
                                       "latency_requested"}
@@ -442,7 +450,8 @@ def test_resumen_json_valores_coherentes(fake_sd, tmp_path):
     assert RUN_NAME.match(run_dir.name)
     summary = read_summary(run_dir)
     session = summary["session"]
-    assert (session["n_blocks"], session["input_overflows"], session["output_underflows"]) == (N_BLOCKS, 0, 0)
+    assert (session["n_blocks"], session["input_overflows"], session["input_underflows"],
+            session["output_overflows"], session["output_underflows"]) == (N_BLOCKS, 0, 0, 0, 0)
     assert session["block_ms_median"] <= session["block_ms_p99"] <= session["block_ms_max"]
     assert summary["stream_latency_ms"]["input"] == pytest.approx(20.0)
     assert summary["stream_latency_ms"]["output"] == pytest.approx(30.0)
@@ -467,13 +476,24 @@ def test_resumen_json_coincide_con_la_sesion_y_conserva_los_acentos(tmp_path):
     assert "Micrófono" in (run_dir / "resumen.json").read_text(encoding="utf-8")
 
 
-def test_resumen_cuenta_overflows_y_underflows(fake_sd, tmp_path):
-    overflow, underflow = sd.CallbackFlags(), sd.CallbackFlags()
-    overflow.input_overflow = True
-    underflow.output_underflow = True
-    correr(tmp_path, stream_class=make_stream(flags={0: overflow, 3: overflow, 7: underflow}))
+@pytest.mark.parametrize("extra", [(), ("--mode", "anonimizado")])
+def test_resumen_y_consola_cuentan_las_cuatro_banderas(fake_sd, tmp_path, capsys, extra):
+    flags = {name: sd.CallbackFlags() for name in ("in_over", "in_under", "out_over", "out_under")}
+    flags["in_over"].input_overflow = True
+    flags["in_under"].input_underflow = True
+    flags["out_over"].output_overflow = True
+    flags["out_under"].output_underflow = True
+    by_block = {0: flags["in_over"], 1: flags["in_under"], 2: flags["in_under"], 3: flags["out_over"],
+                4: flags["out_over"], 5: flags["out_over"], 6: flags["out_under"], 7: flags["out_under"],
+                8: flags["out_under"], 9: flags["out_under"]}
+    correr(tmp_path, *extra, stream_class=make_stream(flags=by_block))
     session = read_summary(only_run(tmp_path))["session"]
-    assert (session["input_overflows"], session["output_underflows"]) == (2, 1)
+    assert (session["input_overflows"], session["input_underflows"], session["output_overflows"],
+            session["output_underflows"]) == (1, 2, 3, 4)
+    out = capsys.readouterr().out
+    for line in ("Overflows de entrada: 1", "Underflows de entrada: 2", "Overflows de salida: 3",
+                 "Underflows de salida: 4"):
+        assert line in out
 
 
 def test_latencia_pedida_numerica_queda_en_el_resumen(fake_sd, tmp_path):
@@ -515,6 +535,7 @@ def test_ctrl_c_sin_ningun_bloque_guarda_archivos_vacios(fake_sd, tmp_path, caps
     assert read_times(run_dir) == [["block_index", "process_ms"]]
     summary = read_summary(run_dir)
     assert summary["session"]["n_blocks"] == 0 and summary["session"]["rtf"] is None
+    assert set(summary["session"]) == SESSION_KEYS
     assert summary["config"]["seconds_recorded"] == 0
     out = capsys.readouterr().out
     assert "Bloques: 0" in out and "mediana n/d ms, p99 n/d ms, máximo n/d ms" in out and "RTF: n/d" in out
@@ -563,16 +584,20 @@ def test_no_borra_lo_que_ya_hay_en_la_carpeta_raiz(fake_sd, tmp_path):
 
 def test_print_report_exacto(capsys):
     summary = {
-        "session": {"n_blocks": 2000, "input_overflows": 3, "output_underflows": 4, "block_ms_median": 0.0125,
-                    "block_ms_p99": 0.5, "block_ms_max": 1.25, "rtf": 0.00123},
+        "session": {"n_blocks": 2000, "input_overflows": 3, "input_underflows": 5, "output_overflows": 6,
+                    "output_underflows": 4, "block_ms_median": 0.0125, "block_ms_p99": 0.5, "block_ms_max": 1.25,
+                    "rtf": 0.00123},
         "stream_latency_ms": {"input": 20.0, "output": 31.5},
         "config": {"blocksize": 160, "sample_rate": 16000},
+        "anonymizer": {"session_id": None, "coefficient": None, "delay_samples": 0, "delay_ms": 0.0},
     }
     run.print_report("carpeta", summary)
     assert capsys.readouterr().out.splitlines() == [
         "Carpeta de salida: carpeta",
         "Bloques: 2000",
         "Overflows de entrada: 3",
+        "Underflows de entrada: 5",
+        "Overflows de salida: 6",
         "Underflows de salida: 4",
         "Tiempo por bloque: mediana 0,013 ms, p99 0,500 ms, máximo 1,250 ms",
         "RTF: 0,0012",
@@ -583,10 +608,12 @@ def test_print_report_exacto(capsys):
 
 def test_print_report_sin_latencia_del_stream(capsys):
     summary = {
-        "session": {"n_blocks": 0, "input_overflows": 0, "output_underflows": 0, "block_ms_median": None,
-                    "block_ms_p99": None, "block_ms_max": None, "rtf": None},
+        "session": {"n_blocks": 0, "input_overflows": 0, "input_underflows": 0, "output_overflows": 0,
+                    "output_underflows": 0, "block_ms_median": None, "block_ms_p99": None, "block_ms_max": None,
+                    "rtf": None},
         "stream_latency_ms": {"input": None, "output": None},
         "config": {"blocksize": 160, "sample_rate": 16000},
+        "anonymizer": {"session_id": None, "coefficient": None, "delay_samples": 0, "delay_ms": 0.0},
     }
     run.print_report("carpeta", summary)
     out = capsys.readouterr().out
@@ -598,3 +625,138 @@ def test_main_imprime_la_carpeta_y_la_latencia_estimada(fake_sd, tmp_path, capsy
     out = capsys.readouterr().out
     assert f"Carpeta de salida: {only_run(tmp_path)}" in out
     assert "Latencia estimada (entrada + salida + un bloque de 20,00 ms): 70,00 ms" in out
+
+
+def test_print_report_anonimizado_exacto(capsys):
+    summary = {
+        "session": {"n_blocks": 2000, "input_overflows": 0, "input_underflows": 0, "output_overflows": 0,
+                    "output_underflows": 0, "block_ms_median": 0.5, "block_ms_p99": 1.0, "block_ms_max": 2.0,
+                    "rtf": 0.05},
+        "stream_latency_ms": {"input": 20.0, "output": 31.5},
+        "config": {"blocksize": 160, "sample_rate": 16000},
+        "anonymizer": {"session_id": "abc", "coefficient": 0.76543, "delay_samples": 160, "delay_ms": 10.0},
+    }
+    run.print_report("carpeta", summary)
+    lines = capsys.readouterr().out.splitlines()
+    assert lines[-3:] == [
+        "Coeficiente alfa de la sesión: 0,7654",
+        "Retraso algorítmico del adaptador: 160 muestras (10,00 ms)",
+        "Latencia estimada (entrada + salida + un bloque de 10,00 ms + retraso del adaptador de 10,00 ms): 71,50 ms",
+    ]
+    assert "\n".join(lines).encode("cp1252")  # la consola de Windows puede escribirlo
+
+
+# ---------------------------------------------------------------------------
+# Modo paso directo: sigue igual
+# ---------------------------------------------------------------------------
+
+def test_paso_directo_no_tiene_procesador_y_la_salida_es_la_entrada(fake_sd, tmp_path, capsys):
+    stream = correr(tmp_path)
+    assert stream.instances[0].kwargs["callback"].__self__.processor is None
+    run_dir = only_run(tmp_path)
+    assert RUN_NAME.match(run_dir.name)
+    np.testing.assert_array_equal(wav.read(run_dir / "salida.wav")[1], wav.read(run_dir / "entrada.wav")[1])
+    summary = read_summary(run_dir)
+    assert summary["config"]["mode"] == "paso_directo"
+    assert summary["anonymizer"] == {"session_id": None, "coefficient": None, "delay_samples": 0, "delay_ms": 0.0}
+    out = capsys.readouterr().out
+    assert "alfa" not in out and "adaptador" not in out
+    assert "Latencia estimada (entrada + salida + un bloque de 10,00 ms): 60,00 ms" in out
+
+
+# ---------------------------------------------------------------------------
+# Modo anonimizado
+# ---------------------------------------------------------------------------
+
+def correr_anonimizado(root, *extra, **kwargs):
+    return correr(root, "--mode", "anonimizado", *extra, **kwargs)
+
+
+def test_anonimizado_escribe_los_archivos_en_su_carpeta(fake_sd, tmp_path):
+    correr_anonimizado(tmp_path)
+    run_dir = only_run(tmp_path)
+    assert ANONYMIZED_NAME.match(run_dir.name)
+    assert sorted(p.name for p in run_dir.iterdir()) == ["entrada.wav", "resumen.json", "salida.wav", "tiempos.tsv"]
+    assert len(read_times(run_dir)) == N_BLOCKS + 1
+    for name in ("entrada.wav", "salida.wav"):
+        rate, data = wav.read(run_dir / name)
+        assert rate == FS and data.size == N_BLOCKS * BLOCK
+
+
+def test_anonimizado_usa_block_anonymizer_como_procesador(fake_sd, tmp_path):
+    stream = correr_anonimizado(tmp_path)
+    processor = stream.instances[0].kwargs["callback"].__self__.processor
+    assert isinstance(processor.__self__, BlockAnonymizer) and processor.__func__ is BlockAnonymizer.process
+    assert processor.__self__.blocksize == BLOCK
+    assert stream.instances[0].kwargs["device"] == (1, 4)
+
+
+def test_anonimizado_resumen_con_las_claves_nuevas(fake_sd, tmp_path):
+    correr_anonimizado(tmp_path)
+    summary = read_summary(only_run(tmp_path))
+    anonymizer = summary["anonymizer"]
+    assert summary["config"]["mode"] == "anonimizado"
+    assert set(summary["session"]) == SESSION_KEYS
+    assert uuid.UUID(anonymizer["session_id"]).version == 4
+    assert anonymizer["coefficient"] == generate_coefficient(anonymizer["session_id"])[0]
+    assert MIN_MCADAMS_COEFFICIENT <= anonymizer["coefficient"] <= MAX_MCADAMS_COEFFICIENT
+    assert (anonymizer["delay_samples"], anonymizer["delay_ms"]) == (160, pytest.approx(10.0))
+
+
+def test_anonimizado_el_retraso_depende_del_blocksize(fake_sd, tmp_path):
+    correr_anonimizado(tmp_path, "--blocksize", "100")
+    anonymizer = read_summary(only_run(tmp_path))["anonymizer"]
+    assert (anonymizer["delay_samples"], anonymizer["delay_ms"]) == (300, pytest.approx(18.75))
+
+
+def test_anonimizado_salida_distinta_de_la_entrada_y_entrada_original(fake_sd, tmp_path):
+    correr_anonimizado(tmp_path)
+    run_dir = only_run(tmp_path)
+    entrada, salida = wav.read(run_dir / "entrada.wav")[1], wav.read(run_dir / "salida.wav")[1]
+    assert read_summary(run_dir)["anonymizer"]["coefficient"] < 1
+    np.testing.assert_array_equal(entrada, float_to_int16(known_audio()))
+    assert np.mean(np.abs(entrada.astype(float) - salida.astype(float))) > 100
+
+
+def test_anonimizado_salida_es_el_anonimizador_evaluado_retrasado(fake_sd, tmp_path):
+    correr_anonimizado(tmp_path)
+    run_dir = only_run(tmp_path)
+    summary = read_summary(run_dir)["anonymizer"]
+    salida = wav.read(run_dir / "salida.wav")[1]
+    delay = summary["delay_samples"]
+    np.testing.assert_array_equal(salida[:delay], np.zeros(delay, dtype=np.int16))
+    audio = known_audio().astype(np.float64)
+    reference, _ = anonymize_utterance(audio, FS, summary["session_id"])
+    expected = float_to_int16(np.clip(reference[:audio.size - delay], -1.0, 1.0))
+    # Tolerancia de 1 paso de cuantización por pasar la salida a float32 antes del WAV.
+    assert np.max(np.abs(salida[delay:].astype(int) - expected.astype(int))) <= 1
+
+
+def test_anonimizado_dos_corridas_tienen_session_id_distinto(fake_sd, tmp_path):
+    correr_anonimizado(tmp_path)
+    correr_anonimizado(tmp_path)
+    ids = {read_summary(d)["anonymizer"]["session_id"] for d in tmp_path.iterdir()}
+    assert len(ids) == 2
+
+
+def test_anonimizado_consola_con_alfa_retraso_y_latencia(fake_sd, tmp_path, capsys):
+    correr_anonimizado(tmp_path)
+    out = capsys.readouterr().out
+    coefficient = read_summary(only_run(tmp_path))["anonymizer"]["coefficient"]
+    assert f"Coeficiente alfa de la sesión: {coefficient:.4f}".replace(".", ",") in out
+    assert "Retraso algorítmico del adaptador: 160 muestras (10,00 ms)" in out
+    assert "Latencia estimada (entrada + salida + un bloque de 10,00 ms + retraso del adaptador de 10,00 ms): 70,00 ms" in out
+
+
+def test_anonimizado_ctrl_c_igual_guarda(fake_sd, tmp_path):
+    correr_anonimizado(tmp_path, wait=raise_interrupt)
+    run_dir = only_run(tmp_path)
+    assert read_summary(run_dir)["session"]["n_blocks"] == N_BLOCKS
+    assert wav.read(run_dir / "salida.wav")[1].size == N_BLOCKS * BLOCK
+
+
+def test_build_anonymizer():
+    assert run.build_anonymizer("paso_directo", FS, BLOCK) is None
+    anonymizer = run.build_anonymizer("anonimizado", 8000, 80)
+    assert anonymizer.blocksize == 80 and anonymizer.delay_samples == 80
+    assert uuid.UUID(anonymizer.session_id).version == 4

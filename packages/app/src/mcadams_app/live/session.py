@@ -9,7 +9,8 @@ class LiveSession:
     entrada), lo que sirve para medir la latencia propia del equipo. Con
     procesador (por ejemplo, la anonimización) se mide además el costo del
     procesamiento. En los dos casos guarda los bloques de entrada y salida,
-    el tiempo de proceso de cada bloque y cuántas veces se perdió audio, para
+    el tiempo de proceso de cada bloque y cuántas veces sounddevice avisó de un
+    problema de audio (overflow o underflow, de entrada o de salida), para
     analizarlos cuando termine la sesión."""
 
     def __init__(self, sample_rate, processor=None, clock=time.perf_counter):
@@ -18,7 +19,9 @@ class LiveSession:
         Parámetros:
             sample_rate: frecuencia de muestreo en Hz (por ejemplo 16000).
             processor: función que recibe un bloque 1D y devuelve otro del
-                mismo largo. Con None la salida es igual a la entrada.
+                mismo largo. Recibe una copia, así que puede modificarla en su
+                lugar sin alterar lo guardado como entrada. Con None la salida
+                es igual a la entrada.
             clock: función que devuelve el tiempo en segundos. Por defecto
                 time.perf_counter; los tests pasan un reloj falso para
                 controlar el tiempo medido."""
@@ -31,6 +34,8 @@ class LiveSession:
         self.process_times = []
 
         self.input_overflows = 0
+        self.input_underflows = 0
+        self.output_overflows = 0
         self.output_underflows = 0
 
     def callback(self, indata, outdata, frames, time_info, status):
@@ -38,11 +43,13 @@ class LiveSession:
         micrófono entrega un bloque (cada 10 ms con bloques de 160 muestras a
         16 kHz).
 
-        Toma la columna del bloque de entrada, la pasa por el procesador (o la
-        deja igual si no hay), escribe el resultado en outdata, guarda copias
-        de la entrada y la salida, y registra cuánto tardó. Si status indica
-        que se perdió audio de entrada (overflow) o que faltó audio de salida
-        (underflow), suma 1 al contador correspondiente.
+        Toma la columna del bloque de entrada, le pasa una copia al procesador
+        (o la deja igual si no hay), escribe el resultado en outdata, guarda
+        copias de la entrada y la salida, y registra cuánto tardó. Por cada
+        bandera de status que esté activa suma 1 a su contador: se perdió audio
+        de entrada (input_overflow), faltó audio de entrada (input_underflow),
+        se descartó audio de salida (output_overflow) o faltó audio de salida
+        (output_underflow).
 
         Reglas, porque esta función corre dentro del hilo de audio:
             - Nada lento adentro (print, escribir archivos, esperar): si
@@ -57,13 +64,18 @@ class LiveSession:
             frames: número de muestras del bloque.
             time_info: tiempos del dispositivo que entrega sounddevice (no se
                 usa).
-            status: banderas de sounddevice (input_overflow, output_underflow).
+            status: banderas de sounddevice (input_overflow, input_underflow,
+                output_overflow, output_underflow).
 
         Lanza ValueError si el procesador devuelve un bloque de otro largo."""
         start = self.clock()
 
         if status.input_overflow:
             self.input_overflows += 1
+        if status.input_underflow:
+            self.input_underflows += 1
+        if status.output_overflow:
+            self.output_overflows += 1
         if status.output_underflow:
             self.output_underflows += 1
 
@@ -72,7 +84,7 @@ class LiveSession:
         if self.processor is None:
             output = block
         else:
-            output = self.processor(block)
+            output = self.processor(block.copy())
 
         if len(output) != frames:
             raise ValueError(f"Output length {len(output)} does not match expected length {frames}")
@@ -88,6 +100,8 @@ class LiveSession:
         Claves:
             n_blocks: número de bloques procesados.
             input_overflows: veces que se perdió audio de entrada.
+            input_underflows: veces que faltó audio de entrada.
+            output_overflows: veces que se descartó audio de salida.
             output_underflows: veces que faltó audio de salida.
             block_ms_median, block_ms_p99, block_ms_max: tiempo de proceso por
                 bloque en milisegundos (mediana, percentil 99 y máximo).
@@ -104,6 +118,8 @@ class LiveSession:
             return {
                 "n_blocks": 0,
                 "input_overflows": self.input_overflows ,
+                "input_underflows": self.input_underflows,
+                "output_overflows": self.output_overflows,
                 "output_underflows": self.output_underflows,
                 "block_ms_median": None,
                 "block_ms_p99": None,
@@ -118,6 +134,8 @@ class LiveSession:
         return {
             "n_blocks": n_blocks,
             "input_overflows": self.input_overflows ,
+            "input_underflows": self.input_underflows,
+            "output_overflows": self.output_overflows,
             "output_underflows": self.output_underflows,
             "block_ms_median": float(np.median(times_ms)),
             "block_ms_p99": float(np.percentile(times_ms, 99)),

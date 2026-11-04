@@ -4,6 +4,7 @@ from types import SimpleNamespace
 
 import numpy as np
 import pytest
+import sounddevice as sd
 
 from mcadams_app.live.session import LiveSession
 
@@ -11,9 +12,15 @@ FS = 16000
 N = 160  # 10 ms a 16 kHz
 
 
-def status(overflow=False, underflow=False):
+def status(overflow=False, underflow=False, input_underflow=False, output_overflow=False):
     """Imita las banderas de sounddevice (CallbackFlags)."""
-    return SimpleNamespace(input_overflow=overflow, output_underflow=underflow)
+    return SimpleNamespace(input_overflow=overflow, output_underflow=underflow,
+                           input_underflow=input_underflow, output_overflow=output_overflow)
+
+
+def counters(session):
+    """Los 4 contadores: overflow y underflow de entrada, overflow y underflow de salida."""
+    return (session.input_overflows, session.input_underflows, session.output_overflows, session.output_underflows)
 
 
 def call(session, block, st=None):
@@ -83,6 +90,19 @@ def test_bloques_en_orden():
     assert len(s.output_blocks) == 3
 
 
+def test_procesador_que_modifica_en_su_lugar_no_altera_la_entrada_guardada():
+    def in_place(block):
+        block *= 2
+        return block
+
+    s = LiveSession(FS, processor=in_place)
+    indata, out = call(s, np.full(N, 0.25))
+    np.testing.assert_allclose(s.input_blocks[0], 0.25, rtol=1e-6)
+    np.testing.assert_allclose(s.output_blocks[0], 0.5, rtol=1e-6)
+    np.testing.assert_allclose(out[:, 0], 0.5, rtol=1e-6)
+    np.testing.assert_allclose(indata[:, 0], 0.25, rtol=1e-6)
+
+
 def test_procesador_con_longitud_incorrecta_lanza_error():
     s = LiveSession(FS, processor=lambda x: x[:-1])
     with pytest.raises(ValueError):
@@ -104,6 +124,47 @@ def test_contadores_se_acumulan():
     call(s, np.zeros(N), status(overflow=True, underflow=True))
     call(s, np.zeros(N))
     assert (s.input_overflows, s.output_underflows) == (2, 1)
+
+
+def test_contadores_empiezan_en_cero():
+    assert counters(LiveSession(FS)) == (0, 0, 0, 0)
+
+
+@pytest.mark.parametrize("flags, expected", [
+    ({"overflow": True}, (1, 0, 0, 0)),
+    ({"input_underflow": True}, (0, 1, 0, 0)),
+    ({"output_overflow": True}, (0, 0, 1, 0)),
+    ({"underflow": True}, (0, 0, 0, 1)),
+    ({}, (0, 0, 0, 0)),
+    ({"overflow": True, "output_overflow": True}, (1, 0, 1, 0)),
+    ({"input_underflow": True, "underflow": True}, (0, 1, 0, 1)),
+    ({"overflow": True, "underflow": True, "input_underflow": True, "output_overflow": True}, (1, 1, 1, 1)),
+])
+def test_cuenta_cada_bandera_sola_y_combinada(flags, expected):
+    s = LiveSession(FS)
+    call(s, np.zeros(N), status(**flags))
+    assert counters(s) == expected
+
+
+def test_las_cuatro_banderas_se_acumulan_por_separado():
+    s = LiveSession(FS)
+    call(s, np.zeros(N), status(overflow=True, input_underflow=True, output_overflow=True, underflow=True))
+    call(s, np.zeros(N), status(input_underflow=True, output_overflow=True, underflow=True))
+    call(s, np.zeros(N), status(output_overflow=True, underflow=True))
+    call(s, np.zeros(N), status(underflow=True))
+    call(s, np.zeros(N))
+    assert counters(s) == (1, 2, 3, 4)
+    r = s.summary()
+    assert (r["input_overflows"], r["input_underflows"], r["output_overflows"], r["output_underflows"]) == (1, 2, 3, 4)
+
+
+def test_banderas_reales_de_sounddevice():
+    flags = sd.CallbackFlags()
+    flags.input_underflow = True
+    flags.output_overflow = True
+    s = LiveSession(FS)
+    call(s, np.zeros(N), flags)
+    assert counters(s) == (0, 1, 1, 0)
 
 
 def test_tiempo_por_bloque_con_reloj_falso():
@@ -144,10 +205,18 @@ def test_resumen_sin_bloques():
     assert r["n_blocks"] == 0
     assert r["rtf"] is None and r["block_ms_median"] is None
     assert r["block_ms_p99"] is None and r["block_ms_max"] is None
+    assert (r["input_overflows"], r["input_underflows"], r["output_overflows"], r["output_underflows"]) == (0, 0, 0, 0)
+
+
+def test_resumen_sin_bloques_tiene_las_mismas_claves():
+    s = LiveSession(FS)
+    empty = set(s.summary())
+    call(s, np.zeros(N))
+    assert empty == set(s.summary())
 
 
 def test_resumen_tiene_las_claves_esperadas():
     s = LiveSession(FS)
     call(s, np.zeros(N))
-    assert set(s.summary()) == {"n_blocks", "input_overflows", "output_underflows",
-                                "block_ms_median", "block_ms_p99", "block_ms_max", "rtf"}
+    assert set(s.summary()) == {"n_blocks", "input_overflows", "input_underflows", "output_overflows",
+                                "output_underflows", "block_ms_median", "block_ms_p99", "block_ms_max", "rtf"}
