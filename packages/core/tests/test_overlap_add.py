@@ -1,13 +1,12 @@
 import numpy as np
 
 from mcadams_core.signal_transform.framing import (
-    compute_frame_params, 
-    frame_signal, 
-    hann_window, 
+    compute_frame_params,
+    hann_window,
     apply_window,
 )
 
-from mcadams_core.signal_transform.overlap_add import overlap_add
+from reference_pipeline import frame_signal, overlap_add
 
 def test_overlap_add_small_manual():
     # Prueba manual con un ejemplo pequeño

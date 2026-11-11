@@ -2,11 +2,11 @@ import numpy as np
 from scipy.signal import check_COLA
 
 from mcadams_core.signal_transform.framing import (
-    compute_frame_params, 
-    frame_signal, 
-    hann_window, 
+    compute_frame_params,
+    hann_window,
     apply_window,
 )
+from reference_pipeline import frame_signal
 
 def test_compute_frame_params():
 

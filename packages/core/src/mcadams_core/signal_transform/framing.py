@@ -1,5 +1,4 @@
 import scipy.signal.windows as windows
-import numpy as np
 
 def compute_frame_params(sample_rate, win_length_ms=20, hop_length_ms=10):
     """
@@ -19,19 +18,6 @@ def compute_frame_params(sample_rate, win_length_ms=20, hop_length_ms=10):
     hop_length = round(sample_rate * hop_length_ms / 1000)
 
     return frame_length, hop_length
-
-def frame_signal(audio_float, frame_length, hop_length):
-
-    """Divide audio_float (1D) en fragmentos superpuestos usando
-    np.lib.stride_tricks.sliding_window_view: se generan todas las
-    ventanas de longitud frame_length (una por cada muestra inicial) y
-    luego se toma una de cada hop_length. Devuelve un arreglo de forma
-    (numero_fragmentos, longitud_frame), que es una vista de solo
-    lectura sobre audio_float (no copia los datos)."""
-
-    frames = np.lib.stride_tricks.sliding_window_view(audio_float, frame_length)[::hop_length]
-
-    return frames
 
 def hann_window(frame_length):
 

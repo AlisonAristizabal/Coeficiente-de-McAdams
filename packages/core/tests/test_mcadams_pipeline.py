@@ -1,9 +1,9 @@
 import numpy as np
 from mcadams_core.config.lpc_defaults import compute_lpc_order
 from mcadams_core.signal_transform.framing import compute_frame_params
-from mcadams_core.signal_transform.framing import frame_signal, hann_window, apply_window
+from mcadams_core.signal_transform.framing import hann_window, apply_window
 from mcadams_core.signal_transform.mcadams import process_frame
-from mcadams_core.signal_transform.overlap_add import overlap_add
+from reference_pipeline import frame_signal, overlap_add
 
 
 

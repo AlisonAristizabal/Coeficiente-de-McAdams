@@ -17,4 +17,8 @@ dev = [
 
 [tool.pytest.ini_options]
 addopts = "--import-mode=importlib"
-pythonpath = ["scripts", "packages/core/src"]
+# packages/core/tests está para que las pruebas del núcleo importen su módulo
+# auxiliar como "from reference_pipeline import ...". Un import relativo no
+# sirve: packages/core/tests y packages/app/tests se importan ambos como el
+# paquete "tests" y, en la suite completa, "tests" queda apuntando al de app.
+pythonpath =["scripts", "packages/core/src", "packages/core/tests"]
