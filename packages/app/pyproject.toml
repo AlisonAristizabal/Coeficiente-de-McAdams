@@ -1,7 +1,7 @@
 [project]
 name = "mcadams-app"
 version = "0.1.0"
-description = "Add your description here"
+description = "Prototipo de escritorio para anonimización de voz en tiempo real"
 readme = "README.md"
 authors = [
     { name = "Alison Aristizabal", email = "a.aristizabalg@uniandes.edu.co" }
@@ -16,7 +16,7 @@ dependencies = [
 mcadams-core = { workspace = true }
 
 [project.scripts]
-mcadams-app = "mcadams_app:main"
+mcadams-app = "mcadams_app.live.run:main"
 
 [build-system]
 requires = ["uv_build>=0.12.8,<0.13.0"]

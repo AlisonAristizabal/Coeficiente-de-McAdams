@@ -135,9 +135,9 @@ def version_info():
 def build_anonymizer(mode, sample_rate, blocksize):
     """Crea el adaptador del modo anonimizado; en paso directo devuelve None.
 
-    El session_id es un uuid4, igual que en session_manager/activation.py, y
-    el α sale del rango por defecto del núcleo. Se pasa el blocksize para que
-    el retraso del adaptador sea el mínimo con ese tamaño de bloque."""
+    Cada llamada genera un session_id nuevo (uuid4), del que sale un α en el
+    rango por defecto del núcleo. Se pasa el blocksize para que el retraso
+    del adaptador sea el mínimo con ese tamaño de bloque."""
     if mode != MODE_ANONYMIZED:
         return None
     return BlockAnonymizer(sample_rate, str(uuid.uuid4()), blocksize=blocksize)

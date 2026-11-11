@@ -1,7 +1,7 @@
 [project]
 name = "mcadams-core"
 version = "0.1.0"
-description = "Add your description here"
+description = "Núcleo de procesamiento para anonimización de voz con el coeficiente de McAdams estocástico"
 readme = "README.md"
 authors = [
     { name = "Alison Aristizabal", email = "a.aristizabalg@uniandes.edu.co" }

@@ -1,6 +1,23 @@
 .venv/
 __pycache__/
 *.pyc
-uv.lock
 *.wav
 .pytest_cache/
+.ipynb_checkpoints/
+
+# Artículo (LaTeX): solo se versiona articulo/Proyecto_de_grado.tex. La salida
+# de pdflatex va en articulo/build/ (-output-directory=build); los patrones de
+# abajo cubren una compilación hecha sin esa opción.
+articulo/build/
+articulo/**/*.aux
+articulo/**/*.bbl
+articulo/**/*.blg
+articulo/**/*.dvi
+articulo/**/*.log
+articulo/**/*.out
+articulo/**/*.toc
+articulo/**/*.synctex.gz
+articulo/**/*.synctex(busy)
+articulo/**/*.fdb_latexmk
+articulo/**/*.fls
+articulo/**/*.pdf
