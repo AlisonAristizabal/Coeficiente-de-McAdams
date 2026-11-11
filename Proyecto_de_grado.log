@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.9.22)  22 OCT 2026 20:12
+This is pdfTeX, Version 3.141592653-2.6-1.40.28 (MiKTeX 25.12) (preloaded format=pdflatex 2026.9.22)  6 NOV 2026 20:22
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -515,62 +515,62 @@ Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 28
 )
 \Hy@SectionHShift=\skip60
 )
-LaTeX Font Info:    Trying to load font information for T1+ntxtlf on input line 59.
+LaTeX Font Info:    Trying to load font information for T1+ntxtlf on input line 41.
  (C:\Users\Daiana\AppData\Local\Programs\MiKTeX\tex/latex/newtx\t1ntxtlf.fd
 File: t1ntxtlf.fd 2021/05/24 v1.1 font definition file for T1/ntx/tlf
 )
 LaTeX Font Info:    Font shape `T1/ntxtlf/m/n' will be
-(Font)              scaled to size 10.0pt on input line 59.
+(Font)              scaled to size 10.0pt on input line 41.
  (Proyecto_de_grado.aux
-LaTeX Info: Redefining \. on input line 15.
-LaTeX Info: Redefining \% on input line 15.
+LaTeX Info: Redefining \. on input line 12.
+LaTeX Info: Redefining \% on input line 12.
 Package babel Info: 'spanish' activates 'spanish' shorthands.
-(babel)             Reported on input line 15.
+(babel)             Reported on input line 12.
 )
 \openout1 = `Proyecto_de_grado.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/ntxmi/m/it on input line 59.
-LaTeX Font Info:    Trying to load font information for OML+ntxmi on input line 59.
+LaTeX Font Info:    Checking defaults for OML/ntxmi/m/it on input line 41.
+LaTeX Font Info:    Trying to load font information for OML+ntxmi on input line 41.
  (C:\Users\Daiana\AppData\Local\Programs\MiKTeX\tex/latex/newtx\omlntxmi.fd
 File: omlntxmi.fd 2015/08/25 Fontinst v1.933 font definitions for OML/ntxmi.
 )
-LaTeX Font Info:    ... okay on input line 59.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 59.
-LaTeX Font Info:    ... okay on input line 59.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 59.
-LaTeX Font Info:    ... okay on input line 59.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 59.
-LaTeX Font Info:    ... okay on input line 59.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 59.
-LaTeX Font Info:    ... okay on input line 59.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 59.
-LaTeX Font Info:    ... okay on input line 59.
-LaTeX Font Info:    Checking defaults for U/ntxexa/m/n on input line 59.
-LaTeX Font Info:    Trying to load font information for U+ntxexa on input line 59.
+LaTeX Font Info:    ... okay on input line 41.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 41.
+LaTeX Font Info:    ... okay on input line 41.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 41.
+LaTeX Font Info:    ... okay on input line 41.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 41.
+LaTeX Font Info:    ... okay on input line 41.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 41.
+LaTeX Font Info:    ... okay on input line 41.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 41.
+LaTeX Font Info:    ... okay on input line 41.
+LaTeX Font Info:    Checking defaults for U/ntxexa/m/n on input line 41.
+LaTeX Font Info:    Trying to load font information for U+ntxexa on input line 41.
  (C:\Users\Daiana\AppData\Local\Programs\MiKTeX\tex/latex/newtx\untxexa.fd
 File: untxexa.fd 2012/04/16 Fontinst v1.933 font definitions for U/ntxexa.
 )
-LaTeX Font Info:    ... okay on input line 59.
-LaTeX Font Info:    Checking defaults for LMS/ntxsy/m/n on input line 59.
-LaTeX Font Info:    Trying to load font information for LMS+ntxsy on input line 59.
+LaTeX Font Info:    ... okay on input line 41.
+LaTeX Font Info:    Checking defaults for LMS/ntxsy/m/n on input line 41.
+LaTeX Font Info:    Trying to load font information for LMS+ntxsy on input line 41.
  (C:\Users\Daiana\AppData\Local\Programs\MiKTeX\tex/latex/newtx\lmsntxsy.fd
 File: lmsntxsy.fd 2016/07/02 Fontinst v1.933 font definitions for LMS/ntxsy.
 )
-LaTeX Font Info:    ... okay on input line 59.
-LaTeX Font Info:    Checking defaults for LMX/ntxexx/m/n on input line 59.
-LaTeX Font Info:    Trying to load font information for LMX+ntxexx on input line 59.
+LaTeX Font Info:    ... okay on input line 41.
+LaTeX Font Info:    Checking defaults for LMX/ntxexx/m/n on input line 41.
+LaTeX Font Info:    Trying to load font information for LMX+ntxexx on input line 41.
  (C:\Users\Daiana\AppData\Local\Programs\MiKTeX\tex/latex/newtx\lmxntxexx.fd
 File: lmxntxexx.fd 2016/07/03 Fontinst v1.933 font definitions for LMX/ntxexx.
 )
-LaTeX Font Info:    ... okay on input line 59.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 59.
-LaTeX Font Info:    ... okay on input line 59.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 59.
-LaTeX Font Info:    ... okay on input line 59.
-LaTeX Info: Redefining \. on input line 59.
-LaTeX Info: Redefining \% on input line 59.
-LaTeX Info: Command `\dddot' is already robust on input line 59.
-LaTeX Info: Command `\ddddot' is already robust on input line 59.
+LaTeX Font Info:    ... okay on input line 41.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 41.
+LaTeX Font Info:    ... okay on input line 41.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 41.
+LaTeX Font Info:    ... okay on input line 41.
+LaTeX Info: Redefining \. on input line 41.
+LaTeX Info: Redefining \% on input line 41.
+LaTeX Info: Command `\dddot' is already robust on input line 41.
+LaTeX Info: Command `\ddddot' is already robust on input line 41.
  (C:\Users\Daiana\AppData\Local\Programs\MiKTeX\tex/context/base/mkii\supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count331
@@ -587,13 +587,13 @@ LaTeX Info: Command `\ddddot' is already robust on input line 59.
 )
 \c@mv@tabular=\count337
 \c@mv@boldtabular=\count338
-LaTeX Info: Redefining \microtypecontext on input line 59.
-Package microtype Info: Applying patch `item' on input line 59.
-Package microtype Info: Applying patch `toc' on input line 59.
-Package microtype Info: Applying patch `eqnum' on input line 59.
-Package microtype Info: Applying patch `footnote' on input line 59.
-Package microtype Info: Applying patch `verbatim' on input line 59.
-LaTeX Info: Redefining \microtypesetup on input line 59.
+LaTeX Info: Redefining \microtypecontext on input line 41.
+Package microtype Info: Applying patch `item' on input line 41.
+Package microtype Info: Applying patch `toc' on input line 41.
+Package microtype Info: Applying patch `eqnum' on input line 41.
+Package microtype Info: Applying patch `footnote' on input line 41.
+Package microtype Info: Applying patch `verbatim' on input line 41.
+LaTeX Info: Redefining \microtypesetup on input line 41.
 Package microtype Info: Generating PDF output.
 Package microtype Info: Character protrusion enabled (level 2).
 Package microtype Info: Using default protrusion set `alltext'.
@@ -641,228 +641,230 @@ File: mt-ptm.cfg 2006/04/20 v1.7 microtype config. file: Times (RS)
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-Package hyperref Info: Link coloring OFF on input line 59.
+Package hyperref Info: Link coloring OFF on input line 41.
 (Proyecto_de_grado.out) (Proyecto_de_grado.out)
 \@outlinefile=\write3
 \openout3 = `Proyecto_de_grado.out'.
 
 LaTeX Font Info:    Font shape `T1/ntxtlf/m/n' will be
-(Font)              scaled to size 17.28pt on input line 122.
+(Font)              scaled to size 17.28pt on input line 83.
 LaTeX Font Info:    Font shape `T1/ntxtlf/b/n' will be
-(Font)              scaled to size 17.28pt on input line 122.
+(Font)              scaled to size 17.28pt on input line 83.
 LaTeX Font Info:    Font shape `T1/ntxtlf/m/n' will be
-(Font)              scaled to size 12.0pt on input line 122.
-LaTeX Font Info:    Trying to load font information for OT1+minntx on input line 122.
+(Font)              scaled to size 12.0pt on input line 83.
+LaTeX Font Info:    Trying to load font information for OT1+minntx on input line 83.
  (C:\Users\Daiana\AppData\Local\Programs\MiKTeX\tex/latex/newtx\ot1minntx.fd
 File: ot1minntx.fd 2023/09/09 v1.1 font definition file for OT1/minntx
 )
 LaTeX Font Info:    Font shape `OT1/minntx/m/n' will be
-(Font)              scaled to size 12.0pt on input line 122.
+(Font)              scaled to size 12.0pt on input line 83.
 Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             `minntx' (encoding: OT1).
 (microtype)             For optimal results, create family-specific settings.
 (microtype)             See the microtype manual for details.
 LaTeX Font Info:    Font shape `OT1/minntx/m/n' will be
-(Font)              scaled to size 8.8pt on input line 122.
+(Font)              scaled to size 8.8pt on input line 83.
 LaTeX Font Info:    Font shape `OT1/minntx/m/n' will be
-(Font)              scaled to size 6.6pt on input line 122.
+(Font)              scaled to size 6.6pt on input line 83.
 LaTeX Font Info:    Font shape `OML/ntxmi/m/it' will be
-(Font)              scaled to size 12.0pt on input line 122.
+(Font)              scaled to size 12.0pt on input line 83.
 LaTeX Font Info:    Font shape `OML/ntxmi/m/it' will be
-(Font)              scaled to size 8.8pt on input line 122.
+(Font)              scaled to size 8.8pt on input line 83.
 LaTeX Font Info:    Font shape `OML/ntxmi/m/it' will be
-(Font)              scaled to size 6.6pt on input line 122.
+(Font)              scaled to size 6.6pt on input line 83.
 LaTeX Font Info:    Font shape `LMS/ntxsy/m/n' will be
-(Font)              scaled to size 12.0pt on input line 122.
+(Font)              scaled to size 12.0pt on input line 83.
 LaTeX Font Info:    Font shape `LMS/ntxsy/m/n' will be
-(Font)              scaled to size 8.8pt on input line 122.
+(Font)              scaled to size 8.8pt on input line 83.
 LaTeX Font Info:    Font shape `LMS/ntxsy/m/n' will be
-(Font)              scaled to size 6.6pt on input line 122.
+(Font)              scaled to size 6.6pt on input line 83.
 LaTeX Font Info:    Font shape `LMX/ntxexx/m/n' will be
-(Font)              scaled to size 12.0pt on input line 122.
+(Font)              scaled to size 12.0pt on input line 83.
 LaTeX Font Info:    Font shape `LMX/ntxexx/m/n' will be
-(Font)              scaled to size 8.8pt on input line 122.
+(Font)              scaled to size 8.8pt on input line 83.
 LaTeX Font Info:    Font shape `LMX/ntxexx/m/n' will be
-(Font)              scaled to size 6.6pt on input line 122.
-LaTeX Font Info:    Trying to load font information for U+ntxmia on input line 122.
+(Font)              scaled to size 6.6pt on input line 83.
+LaTeX Font Info:    Trying to load font information for U+ntxmia on input line 83.
  (C:\Users\Daiana\AppData\Local\Programs\MiKTeX\tex/latex/newtx\untxmia.fd
 File: untxmia.fd 2024/04/09 Fontinst v1.933 font definitions for U/ntxmia.
 )
 LaTeX Font Info:    Font shape `U/ntxmia/m/it' will be
-(Font)              scaled to size 12.0pt on input line 122.
+(Font)              scaled to size 12.0pt on input line 83.
 LaTeX Font Info:    Font shape `U/ntxmia/m/it' will be
-(Font)              scaled to size 8.8pt on input line 122.
+(Font)              scaled to size 8.8pt on input line 83.
 LaTeX Font Info:    Font shape `U/ntxmia/m/it' will be
-(Font)              scaled to size 6.6pt on input line 122.
-LaTeX Font Info:    Trying to load font information for U+ntxsym on input line 122.
+(Font)              scaled to size 6.6pt on input line 83.
+LaTeX Font Info:    Trying to load font information for U+ntxsym on input line 83.
  (C:\Users\Daiana\AppData\Local\Programs\MiKTeX\tex/latex/newtx\untxsym.fd
 File: untxsym.fd 2023/08/16 Fontinst v1.933 font definitions for U/ntxsym.
 )
 LaTeX Font Info:    Font shape `U/ntxsym/m/n' will be
-(Font)              scaled to size 12.0pt on input line 122.
+(Font)              scaled to size 12.0pt on input line 83.
 LaTeX Font Info:    Font shape `U/ntxsym/m/n' will be
-(Font)              scaled to size 8.8pt on input line 122.
+(Font)              scaled to size 8.8pt on input line 83.
 LaTeX Font Info:    Font shape `U/ntxsym/m/n' will be
-(Font)              scaled to size 6.6pt on input line 122.
-LaTeX Font Info:    Trying to load font information for U+ntxsyc on input line 122.
+(Font)              scaled to size 6.6pt on input line 83.
+LaTeX Font Info:    Trying to load font information for U+ntxsyc on input line 83.
  (C:\Users\Daiana\AppData\Local\Programs\MiKTeX\tex/latex/newtx\untxsyc.fd
 File: untxsyc.fd 2012/04/12 Fontinst v1.933 font definitions for U/ntxsyc.
 )
 LaTeX Font Info:    Font shape `U/ntxsyc/m/n' will be
-(Font)              scaled to size 12.0pt on input line 122.
+(Font)              scaled to size 12.0pt on input line 83.
 LaTeX Font Info:    Font shape `U/ntxsyc/m/n' will be
-(Font)              scaled to size 8.8pt on input line 122.
+(Font)              scaled to size 8.8pt on input line 83.
 LaTeX Font Info:    Font shape `U/ntxsyc/m/n' will be
-(Font)              scaled to size 6.6pt on input line 122.
+(Font)              scaled to size 6.6pt on input line 83.
 LaTeX Font Info:    Font shape `U/ntxexa/m/n' will be
-(Font)              scaled to size 12.0pt on input line 122.
+(Font)              scaled to size 12.0pt on input line 83.
 LaTeX Font Info:    Font shape `U/ntxexa/m/n' will be
-(Font)              scaled to size 8.8pt on input line 122.
+(Font)              scaled to size 8.8pt on input line 83.
 LaTeX Font Info:    Font shape `U/ntxexa/m/n' will be
-(Font)              scaled to size 6.6pt on input line 122.
+(Font)              scaled to size 6.6pt on input line 83.
 LaTeX Font Info:    Font shape `T1/ntxtlf/m/n' will be
-(Font)              scaled to size 9.0pt on input line 122.
+(Font)              scaled to size 9.0pt on input line 83.
 LaTeX Font Info:    Font shape `OT1/minntx/m/n' will be
-(Font)              scaled to size 9.0pt on input line 122.
+(Font)              scaled to size 9.0pt on input line 83.
 LaTeX Font Info:    Font shape `OT1/minntx/m/n' will be
-(Font)              scaled to size 5.5pt on input line 122.
+(Font)              scaled to size 5.5pt on input line 83.
 LaTeX Font Info:    Font shape `OML/ntxmi/m/it' will be
-(Font)              scaled to size 9.0pt on input line 122.
+(Font)              scaled to size 9.0pt on input line 83.
 LaTeX Font Info:    Font shape `OML/ntxmi/m/it' will be
-(Font)              scaled to size 5.5pt on input line 122.
+(Font)              scaled to size 5.5pt on input line 83.
 LaTeX Font Info:    Font shape `LMS/ntxsy/m/n' will be
-(Font)              scaled to size 9.0pt on input line 122.
+(Font)              scaled to size 9.0pt on input line 83.
 LaTeX Font Info:    Font shape `LMS/ntxsy/m/n' will be
-(Font)              scaled to size 5.5pt on input line 122.
+(Font)              scaled to size 5.5pt on input line 83.
 LaTeX Font Info:    Font shape `LMX/ntxexx/m/n' will be
-(Font)              scaled to size 9.0pt on input line 122.
+(Font)              scaled to size 9.0pt on input line 83.
 LaTeX Font Info:    Font shape `LMX/ntxexx/m/n' will be
-(Font)              scaled to size 5.5pt on input line 122.
+(Font)              scaled to size 5.5pt on input line 83.
 LaTeX Font Info:    Font shape `U/ntxmia/m/it' will be
-(Font)              scaled to size 9.0pt on input line 122.
+(Font)              scaled to size 9.0pt on input line 83.
 LaTeX Font Info:    Font shape `U/ntxmia/m/it' will be
-(Font)              scaled to size 5.5pt on input line 122.
+(Font)              scaled to size 5.5pt on input line 83.
 LaTeX Font Info:    Font shape `U/ntxsym/m/n' will be
-(Font)              scaled to size 9.0pt on input line 122.
+(Font)              scaled to size 9.0pt on input line 83.
 LaTeX Font Info:    Font shape `U/ntxsym/m/n' will be
-(Font)              scaled to size 5.5pt on input line 122.
+(Font)              scaled to size 5.5pt on input line 83.
 LaTeX Font Info:    Font shape `U/ntxsyc/m/n' will be
-(Font)              scaled to size 9.0pt on input line 122.
+(Font)              scaled to size 9.0pt on input line 83.
 LaTeX Font Info:    Font shape `U/ntxsyc/m/n' will be
-(Font)              scaled to size 5.5pt on input line 122.
+(Font)              scaled to size 5.5pt on input line 83.
 LaTeX Font Info:    Font shape `U/ntxexa/m/n' will be
-(Font)              scaled to size 9.0pt on input line 122.
+(Font)              scaled to size 9.0pt on input line 83.
 LaTeX Font Info:    Font shape `U/ntxexa/m/n' will be
-(Font)              scaled to size 5.5pt on input line 122.
+(Font)              scaled to size 5.5pt on input line 83.
 LaTeX Font Info:    Font shape `T1/ntxtlf/b/n' will be
-(Font)              scaled to size 10.0pt on input line 122.
+(Font)              scaled to size 10.0pt on input line 83.
 LaTeX Font Info:    Font shape `T1/ntxtlf/m/n' will be
-(Font)              scaled to size 14.4pt on input line 127.
+(Font)              scaled to size 14.4pt on input line 88.
 LaTeX Font Info:    Font shape `T1/ntxtlf/b/n' will be
-(Font)              scaled to size 14.4pt on input line 127.
+(Font)              scaled to size 14.4pt on input line 88.
 LaTeX Font Info:    Font shape `OT1/minntx/m/n' will be
-(Font)              scaled to size 10.0pt on input line 143.
+(Font)              scaled to size 10.0pt on input line 90.
 LaTeX Font Info:    Font shape `OT1/minntx/m/n' will be
-(Font)              scaled to size 7.3pt on input line 143.
+(Font)              scaled to size 7.3pt on input line 90.
 LaTeX Font Info:    Font shape `OML/ntxmi/m/it' will be
-(Font)              scaled to size 10.0pt on input line 143.
+(Font)              scaled to size 10.0pt on input line 90.
 LaTeX Font Info:    Font shape `OML/ntxmi/m/it' will be
-(Font)              scaled to size 7.3pt on input line 143.
+(Font)              scaled to size 7.3pt on input line 90.
 LaTeX Font Info:    Font shape `LMS/ntxsy/m/n' will be
-(Font)              scaled to size 10.0pt on input line 143.
+(Font)              scaled to size 10.0pt on input line 90.
 LaTeX Font Info:    Font shape `LMS/ntxsy/m/n' will be
-(Font)              scaled to size 7.3pt on input line 143.
+(Font)              scaled to size 7.3pt on input line 90.
 LaTeX Font Info:    Font shape `LMX/ntxexx/m/n' will be
-(Font)              scaled to size 10.0pt on input line 143.
+(Font)              scaled to size 10.0pt on input line 90.
 LaTeX Font Info:    Font shape `LMX/ntxexx/m/n' will be
-(Font)              scaled to size 7.3pt on input line 143.
+(Font)              scaled to size 7.3pt on input line 90.
 LaTeX Font Info:    Font shape `U/ntxmia/m/it' will be
-(Font)              scaled to size 10.0pt on input line 143.
+(Font)              scaled to size 10.0pt on input line 90.
 LaTeX Font Info:    Font shape `U/ntxmia/m/it' will be
-(Font)              scaled to size 7.3pt on input line 143.
+(Font)              scaled to size 7.3pt on input line 90.
 LaTeX Font Info:    Font shape `U/ntxsym/m/n' will be
-(Font)              scaled to size 10.0pt on input line 143.
+(Font)              scaled to size 10.0pt on input line 90.
 LaTeX Font Info:    Font shape `U/ntxsym/m/n' will be
-(Font)              scaled to size 7.3pt on input line 143.
+(Font)              scaled to size 7.3pt on input line 90.
 LaTeX Font Info:    Font shape `U/ntxsyc/m/n' will be
-(Font)              scaled to size 10.0pt on input line 143.
+(Font)              scaled to size 10.0pt on input line 90.
 LaTeX Font Info:    Font shape `U/ntxsyc/m/n' will be
-(Font)              scaled to size 7.3pt on input line 143.
+(Font)              scaled to size 7.3pt on input line 90.
 LaTeX Font Info:    Font shape `U/ntxexa/m/n' will be
-(Font)              scaled to size 10.0pt on input line 143.
+(Font)              scaled to size 10.0pt on input line 90.
 LaTeX Font Info:    Font shape `U/ntxexa/m/n' will be
-(Font)              scaled to size 7.3pt on input line 143.
+(Font)              scaled to size 7.3pt on input line 90.
+LaTeX Font Info:    Font shape `T1/ntxtlf/m/it' will be
+(Font)              scaled to size 10.0pt on input line 92.
 
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
-LaTeX Font Info:    Font shape `T1/ntxtlf/b/n' will be
-(Font)              scaled to size 12.0pt on input line 169.
-LaTeX Font Info:    Font shape `T1/ntxtlf/b/it' will be
-(Font)              scaled to size 12.0pt on input line 169.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
  [1{C:/Users/Daiana/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/Daiana/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/newtx/ntx-ec-tlf.enc}{C:/Users/Daiana/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/newtx/ntx-ot1-tlf.enc}
 
 
 ]
-LaTeX Font Info:    Font shape `T1/ntxtlf/m/it' will be
-(Font)              scaled to size 10.0pt on input line 205.
+LaTeX Font Info:    Font shape `T1/ntxtlf/b/n' will be
+(Font)              scaled to size 12.0pt on input line 104.
+LaTeX Font Info:    Font shape `T1/ntxtlf/b/it' will be
+(Font)              scaled to size 12.0pt on input line 104.
 
-Underfull \vbox (badness 4872) has occurred while \output is active []
-
- [2]
 Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [3]
-Underfull \vbox (badness 4940) has occurred while \output is active []
 
-LaTeX Font Info:    Trying to load font information for T1+ntxtt on input line 581.
+Underfull \vbox (badness 3179) has occurred while \output is active []
+
+ [2]
+Underfull \hbox (badness 7486) in paragraph at lines 171--172
+[]\T1/ntxtlf/b/n/10 (+20) Atacante semi-informado (a--a, anonimizado--
+ []
+
+[3] [4]
+LaTeX Font Info:    Font shape `T1/ntxtlf/m/n' will be
+(Font)              scaled to size 7.3pt on input line 280.
+LaTeX Font Info:    Font shape `T1/ntxtlf/m/n' will be
+(Font)              scaled to size 5.5pt on input line 280.
+ [5]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [6]
+LaTeX Font Info:    Trying to load font information for T1+ntxtt on input line 444.
  (C:\Users\Daiana\AppData\Local\Programs\MiKTeX\tex/latex/newtx\t1ntxtt.fd
 File: t1ntxtt.fd 2012/04/20 v3.1
 )
 LaTeX Font Info:    Font shape `T1/ntxtt/m/n' will be
-(Font)              scaled to size 10.0pt on input line 581.
+(Font)              scaled to size 10.0pt on input line 444.
 Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             `ntxtt' (encoding: T1).
 (microtype)             For optimal results, create family-specific settings.
 (microtype)             See the microtype manual for details.
 
-Underfull \vbox (badness 10000) has occurred while \output is active []
 
- [4] [5] (Proyecto_de_grado.aux
-LaTeX Info: Redefining \. on input line 15.
-LaTeX Info: Redefining \% on input line 15.
+LaTeX Warning: `h' float specifier changed to `ht'.
+
+[7] [8] (Proyecto_de_grado.aux
+LaTeX Info: Redefining \. on input line 12.
+LaTeX Info: Redefining \% on input line 12.
 )
  ***********
 LaTeX2e <2025-11-01>
 L3 programming layer <2020/03/25>
  ***********
-
-
-Package rerunfilecheck Warning: File `Proyecto_de_grado.out' has changed.
-(rerunfilecheck)                Rerun to get outlines right
-(rerunfilecheck)                or use package `bookmark'.
-
-Package rerunfilecheck Info: Checksums for `Proyecto_de_grado.out':
-(rerunfilecheck)             Before: F7920FCF5A75F785D29155A189D5395F;5812
-(rerunfilecheck)             After:  56EFC64B84C460AF01C988F3F8094B70;5279.
+Package rerunfilecheck Info: File `Proyecto_de_grado.out' has not changed.
+(rerunfilecheck)             Checksum: D8117626FC25B3D6D2C01BCF7C1699A9;6059.
  ) 
 Here is how much of TeX's memory you used:
- 18174 strings out of 467871
- 282269 string characters out of 5417892
- 744533 words of memory out of 5000000
- 46581 multiletter control sequences out of 15000+600000
- 713503 words of font info for 215 fonts, out of 8000000 for 9000
+ 18234 strings out of 467871
+ 283346 string characters out of 5417892
+ 748895 words of memory out of 5000000
+ 46604 multiletter control sequences out of 15000+600000
+ 720895 words of font info for 229 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,12n,80p,1083b,511s stack positions out of 10000i,1000n,20000p,200000b,200000s
-
-pdfTeX warning (dest): name{subsection.5.2} has been referenced but does not exist, replaced by a fixed one
-
-
-pdfTeX warning (dest): name{subsection.5.1} has been referenced but does not exist, replaced by a fixed one
-
+ 75i,12n,80p,1086b,626s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <C:/Users/Daiana/AppData/Local/Programs/MiKTeX/fonts/type1/public/newtx/NewTXMI.pfb><C:/Users/Daiana/AppData/Local/Programs/MiKTeX/fonts/type1/public/newtx/NewTXMI5.pfb><C:/Users/Daiana/AppData/Local/Programs/MiKTeX/fonts/type1/public/newtx/NewTXMI7.pfb><C:/Users/Daiana/AppData/Local/Programs/MiKTeX/fonts/type1/public/txfonts/t1xtt.pfb><C:/Users/Daiana/AppData/Local/Programs/MiKTeX/fonts/type1/public/newtx/txmiaX.pfb><C:/Users/Daiana/AppData/Local/Programs/MiKTeX/fonts/type1/public/newtx/txsys.pfb><C:/Users/Daiana/AppData/Local/Programs/MiKTeX/fonts/type1/public/newtx/ztmb.pfb><C:/Users/Daiana/AppData/Local/Programs/MiKTeX/fonts/type1/public/newtx/ztmbi.pfb><C:/Users/Daiana/AppData/Local/Programs/MiKTeX/fonts/type1/public/newtx/ztmr.pfb><C:/Users/Daiana/AppData/Local/Programs/MiKTeX/fonts/type1/public/newtx/ztmri.pfb>
-Output written on Proyecto_de_grado.pdf (5 pages, 258602 bytes).
+Output written on Proyecto_de_grado.pdf (8 pages, 292346 bytes).
 PDF statistics:
- 307 PDF objects out of 1000 (max. 8388607)
- 54 named destinations out of 1000 (max. 500000)
- 30961 words of extra memory for PDF output out of 35830 (max. 10000000)
+ 356 PDF objects out of 1000 (max. 8388607)
+ 69 named destinations out of 1000 (max. 500000)
+ 35073 words of extra memory for PDF output out of 35830 (max. 10000000)
 

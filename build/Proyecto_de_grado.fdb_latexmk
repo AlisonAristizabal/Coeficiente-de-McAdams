@@ -1,5 +1,5 @@
 # Fdb version 4
-["pdflatex"] 1792717333.67597 "c:/Users/Daiana/Documents/Proyecto de grado/Coeficiente-de-McAdams/Proyecto_de_grado.tex" "build/Proyecto_de_grado.pdf" "Proyecto_de_grado" 1792717334.50857 0
+["pdflatex"] 1794333738.45343 "c:/Users/Daiana/Documents/Proyecto de grado/Coeficiente-de-McAdams/Proyecto_de_grado.tex" "build/Proyecto_de_grado.pdf" "Proyecto_de_grado" 1794333739.33757 0
   "C:/Users/Daiana/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map" 1792715504 163260 f7138aa97b0a1dcae55100dabb7d9e7d ""
   "C:/Users/Daiana/AppData/Local/MiKTeX/miktex/data/le/pdftex/pdflatex.fmt" 1790122791 13333971 9a768a2e42746202b5eea817cafbe58b ""
   "C:/Users/Daiana/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/newtx/ntx-ec-tlf.enc" 1736607166 2914 fdbc4a54b9bc76f4551b5303f2737d33 ""
@@ -47,6 +47,7 @@
   "C:/Users/Daiana/AppData/Local/Programs/MiKTeX/fonts/vf/public/newtx/ntxmi7.vf" 1736607166 2576 4000b56c7179792370b883556f71007a ""
   "C:/Users/Daiana/AppData/Local/Programs/MiKTeX/fonts/vf/public/newtx/ntxmia.vf" 1736607166 2052 32313fcb5c0cec3f7956da7328e62ee4 ""
   "C:/Users/Daiana/AppData/Local/Programs/MiKTeX/fonts/vf/public/newtx/ntxsy.vf" 1736607166 1792 7cf99effbd74f7851ca7683a6d12b685 ""
+  "C:/Users/Daiana/AppData/Local/Programs/MiKTeX/fonts/vf/public/newtx/ntxsy7.vf" 1736607166 1940 bf4bac1135a7513fb45cfd9280176019 ""
   "C:/Users/Daiana/AppData/Local/Programs/MiKTeX/tex/context/base/mkii/supp-pdf.mkii" 1580390158 71627 94eb9990bed73c364d7f53f960cc8c5b ""
   "C:/Users/Daiana/AppData/Local/Programs/MiKTeX/tex/generic/babel/babel.sty" 1765441417 146654 eaac99efd6386094bb8a3980e34ec87b ""
   "C:/Users/Daiana/AppData/Local/Programs/MiKTeX/tex/generic/babel/locale/es/babel-es.ini" 1765441421 4303 c450545e79f0d9ac3027df4bd9b132d8 ""
@@ -135,10 +136,10 @@
   "C:/Users/Daiana/AppData/Local/Programs/MiKTeX/tex/latex/xpatch/xpatch.sty" 1585221260 8510 7803f78066c4f9d008405191a4b43073 ""
   "C:/Users/Daiana/AppData/Local/Programs/MiKTeX/tex/latex/xstring/xstring.sty" 1693735632 123 a302f2c651a95033260db60e51527ae8 ""
   "C:/Users/Daiana/AppData/Local/Programs/MiKTeX/tex/latex/xurl/xurl.sty" 1641733940 4675 e4b8c405820368c2dfb03526e16d725a ""
-  "Proyecto_de_grado.tex" 1792717300 35694 dcf1408f9dea4394c0db0c0408f41e66 ""
-  "build/Proyecto_de_grado.aux" 1792717334 6989 76e8fa760ca8ee830ea0912c613eab24 "pdflatex"
-  "build/Proyecto_de_grado.out" 1792717334 6363 4e49268c4588a921fc8fb8858d6ce091 "pdflatex"
-  "c:/Users/Daiana/Documents/Proyecto de grado/Coeficiente-de-McAdams/Proyecto_de_grado.tex" 1792717300 35694 dcf1408f9dea4394c0db0c0408f41e66 ""
+  "Proyecto_de_grado.tex" 1794333737 53331 a449069c4755fa24199a10208dfe64d3 ""
+  "build/Proyecto_de_grado.aux" 1794333739 7142 569b9d8085deb6b9afe16910f6333316 "pdflatex"
+  "build/Proyecto_de_grado.out" 1794333739 6024 40ba0e0f55fc43666d1a659dc63d1bed "pdflatex"
+  "c:/Users/Daiana/Documents/Proyecto de grado/Coeficiente-de-McAdams/Proyecto_de_grado.tex" 1794333737 53331 a449069c4755fa24199a10208dfe64d3 ""
   (generated)
   "build/Proyecto_de_grado.aux"
   "build/Proyecto_de_grado.log"
