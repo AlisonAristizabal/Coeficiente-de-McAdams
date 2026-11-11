@@ -53,27 +53,15 @@ carpeta padre del repositorio, con Python 3.12:
 
 ```powershell
 python -m venv venv-eval
-$reqs = Get-Content Coeficiente-de-McAdams\requirements-eval.txt | Where-Object { $_ -notmatch '^torchvision==' }
-venv-eval\Scripts\python.exe -m pip install $reqs
+venv-eval\Scripts\python.exe -m pip install -r Coeficiente-de-McAdams\requirements-eval.txt
 ```
 
-Todo sale del índice por defecto (PyPI). torch y torchaudio son las builds para
-CPU de PyPI: `torch.__version__` reporta `2.14.1+cpu` aunque el paquete se
-llama `torch==2.14.1`.
-
-`torchvision==0.29.1+cu126` está en `requirements-eval.txt` porque está
-instalado en `venv-eval`, pero se omite al recrearlo:
-
-- viene del índice de PyTorch para CUDA 12.6
-  (`https://download.pytorch.org/whl/cu126`), no de PyPI;
-- no carga con el torch para CPU instalado (`RuntimeError: operator
-  torchvision::nms does not exist`);
-- ningún script lo usa.
-
-No conviene instalar todo el archivo con
-`--extra-index-url https://download.pytorch.org/whl/cu126`. `torch==2.14.1`
-también acepta la versión local `2.14.1+cu126`, así que pip reemplazaría torch
-y torchaudio por sus builds CUDA.
+Todo sale de PyPI. torch y torchaudio son las builds para CPU:
+`torch.__version__` reporta `2.14.1+cpu` aunque el paquete se llama
+`torch==2.14.1`. No hace falta el índice de PyTorch (`download.pytorch.org`).
+Si se agrega con `--extra-index-url`, pip podría cambiar torch y torchaudio por
+sus builds CUDA, porque `torch==2.14.1` también acepta versiones locales como
+`2.14.1+cu126`.
 
 ## Pruebas
 

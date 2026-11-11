@@ -122,7 +122,6 @@ tiktoken==0.14.0
 tinycss2==1.5.1
 torch==2.14.1
 torchaudio==2.11.0
-torchvision==0.29.1+cu126
 tornado==6.5.10
 tqdm==4.70.1
 traitlets==5.16.1
