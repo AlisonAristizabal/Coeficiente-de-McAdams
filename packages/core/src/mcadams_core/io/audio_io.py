@@ -1,5 +1,6 @@
 import scipy.io.wavfile as wav
 import numpy as np
+import soundfile
 
 def load_wav(path):
 
@@ -7,10 +8,18 @@ def load_wav(path):
     Lee un archivo WAV desde disco y lo devuelve normalizado y listo
     para trabajar con él como audio en punto flotante.
 
-    Primero normaliza los valores crudos del archivo
-    (que pueden venir en distintos formatos internos) a un rango
-    consistente de [-1.0, 1.0], y luego colapsa a mono si el archivo
-    viene en estéreo u otro número de canales.
+    Usa soundfile.read (basada en libsndfile), la misma lectura que
+    convert_mp3_to_wav. libsndfile identifica el formato interno del WAV
+    según su cabecera (enteros de 8, 16, 24 o 32 bits, o punto flotante)
+    y entrega las muestras normalizadas a [-1.0, 1.0] en float64: los
+    enteros con signo de n bits se dividen entre 2^(n-1), los de 8 bits,
+    que no tienen signo y cuyo silencio es 128, se calculan como
+    (x - 128) / 128, y los de punto flotante se entregan sin escalar.
+    Luego colapsa a mono si el archivo viene en estéreo.
+
+    soundfile devuelve (audio, frecuencia), en el orden inverso al de
+    scipy.io.wavfile; esta función devuelve (sample_rate, audio_float),
+    que es el orden que esperan quienes la llaman.
 
     Parámetros:
         path: ruta al archivo .wav a leer.
@@ -18,49 +27,16 @@ def load_wav(path):
     Retorna:
         (sample_rate, audio_float): la frecuencia de muestreo del
         archivo, y un arreglo 1D de NumPy en float64 normalizado.
-    """
-    sample_rate, data = wav.read(path)
 
-    audio_float = _normalize_to_float(data)
+    Lanza soundfile.LibsndfileError si libsndfile no reconoce el archivo
+    como audio.
+    """
+    audio_float, sample_rate = soundfile.read(path, dtype="float64")
 
     audio_float = _downmix_to_mono(audio_float)
 
     return sample_rate, audio_float
 
-
-def _normalize_to_float(data):
-
-    """
-    Convierte un arreglo de audio crudo (en el dtype original del WAV)
-    a punto flotante normalizado en el rango [-1.0, 1.0].
-
-    scipy.io.wavfile no normaliza nada por sí solo: devuelve los valores
-    exactamente en el formato en que estén guardados en el archivo, que
-    puede variar. Por eso esta función despacha según el dtype detectado,
-    en vez de asumir un solo formato:
-
-    - int16: el más común en telefonía. Rango [-32768, 32767].
-    - int32: PCM de mayor resolución. Rango [-2^31, 2^31 - 1].
-    - uint8: sin signo, el silencio no es 0 sino 128 (el punto medio),
-      por eso hay que restar 128 antes de escalar.
-    - float32 / float64: ya suele venir normalizado, solo se homogeniza
-      el tipo de dato.
-
-    Si el dtype no es ninguno de los anteriores, se rechaza explícitamente
-    en vez de intentar procesarlo con una fórmula que podría ser incorrecta.
-    """
-
-    if data.dtype == 'int16':
-        return data.astype('float64') / 32768.0
-    elif data.dtype == 'int32':
-        return data.astype('float64') / (2**31)
-    elif data.dtype == 'uint8':
-        return (data.astype('float64') - 128) / 128.0
-    elif data.dtype == 'float32' or data.dtype == 'float64':
-        return data.astype('float64')
-    else:
-        raise ValueError(f"dtype de WAV no soportado: {data.dtype}")
-    
 
 def _downmix_to_mono(audio_float):
 
