@@ -18,9 +18,10 @@ def convert_mp3_to_wav(input_path, output_path):
     a float64 en [-1.0, 1.0]. Si el audio tiene más de un canal, se
     promedia a mono. Si la frecuencia de muestreo del archivo es distinta
     de TARGET_SAMPLE_RATE, se remuestrea con scipy.signal.resample_poly,
-    usando el factor racional exacto up/down (reducido con el máximo
-    común divisor); si ya coincide, no se remuestrea. El WAV final se
-    escribe reutilizando save_wav, que se encarga del recorte a
+    pasando TARGET_SAMPLE_RATE como factor de aumento y la frecuencia
+    original como factor de reducción; la función simplifica internamente
+    esa fracción con el máximo común divisor. Si ya coincide, no se
+    remuestrea. El WAV final seescribe reutilizando save_wav, que se encarga del recorte a
     [-1.0, 1.0] y la conversión a int16.
 
     No devuelve ningún valor — el éxito de la conversión se señala por
@@ -34,10 +35,8 @@ def convert_mp3_to_wav(input_path, output_path):
         audio = audio.mean(axis=1)
 
     if sample_rate != TARGET_SAMPLE_RATE:
-        divisor = math.gcd(TARGET_SAMPLE_RATE, sample_rate)
-        up = TARGET_SAMPLE_RATE // divisor
-        down = sample_rate // divisor
-        audio = resample_poly(audio, up, down)
+        
+        audio = resample_poly(audio, TARGET_SAMPLE_RATE, sample_rate)
 
     save_wav(output_path, TARGET_SAMPLE_RATE, audio)
 
