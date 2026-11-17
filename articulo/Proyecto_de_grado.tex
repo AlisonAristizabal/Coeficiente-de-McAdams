@@ -53,9 +53,9 @@ $^{2}$ Departamento de Ingeniería de Sistemas y Computación, Universidad de lo
 
 \section{Introducción}\label{sec:1}
 
-El fraude telefónico y el uso de técnicas de inteligencia artificial (IA) para suplantar la identidad de las personas son un problema creciente de seguridad y privacidad. La voz, además de ser uno de los principales medios de comunicación, contiene características biométricas que permiten distinguir a un hablante, y esas mismas características pueden ser aprovechadas por tecnologías de síntesis y clonación de voz. El estudio de \textcite{barrington2025} muestra lo convincentes que pueden ser estas voces: los participantes juzgaron que una voz clonada pertenecía a la misma persona que la original alrededor del 80\,\% de las veces, y solo reconocieron como artificial cerca del 60\,\% de las voces clonadas. Informes recientes sobre fraude, como el de \textcite{groupib2025}, describen además cómo la clonación de voz ya se usa en esquemas de ingeniería social.
+El fraude telefónico y el uso de técnicas de inteligencia artificial (IA) para suplantar la identidad de las personas son un problema creciente de seguridad y privacidad. La voz, además de ser uno de los principales medios de comunicación, contiene características biométricas que permiten distinguir a un hablante, y esas mismas características pueden ser aprovechadas por tecnologías de síntesis y clonación de voz. El estudio de \textcite{barrington2025} muestra lo convincentes que pueden ser estas voces: los participantes juzgaron que una voz clonada pertenecía a la misma persona que la original alrededor del 80 \% de las veces, y solo reconocieron como artificial cerca del 60 \% de las voces clonadas. Informes recientes sobre fraude, como el de \textcite{groupib2025}, describen además cómo la clonación de voz ya se usa en esquemas de ingeniería social.
 
-En Colombia, este riesgo aparece en un contexto de alta exposición a llamadas no deseadas. Según datos de la aplicación Truecaller reseñados por \textcite{acis2026}, durante 2025 los colombianos recibieron más de 16 630 millones de llamadas spam. A esto se suma que, en una encuesta de \textcite{transunion2025} a 995 personas, el 27\,\% de quienes afirmaron haber sido blanco de un intento de fraude digital entre agosto y diciembre de 2024 indicó que el intento ocurrió mediante vishing (voice phishing), es decir, una llamada en la que el estafador busca que la víctima entregue información personal; fue la modalidad más reportada. Así, cada vez que una persona contesta una llamada de un número desconocido, fragmentos de su voz quedan expuestos a un interlocutor potencialmente malicioso.
+En Colombia, este riesgo aparece en un contexto de alta exposición a llamadas no deseadas. Según datos de la aplicación Truecaller reseñados por \textcite{acis2026}, durante 2025 los colombianos recibieron más de 16 630 millones de llamadas spam. A esto se suma que, en una encuesta de TransUnion Colombia a 995 personas \parencite{transunion2025}, el 27 \% de quienes afirmaron haber sido blanco de un intento de fraude digital entre agosto y diciembre de 2024 indicó que el intento ocurrió mediante vishing (voice phishing), es decir, una llamada en la que el estafador busca que la víctima entregue información personal; fue la modalidad más reportada. Así, cada vez que una persona contesta una llamada de un número desconocido, fragmentos de su voz quedan expuestos a un interlocutor potencialmente malicioso.
 
 Las soluciones disponibles se concentran en identificar, clasificar o bloquear números sospechosos. Estos mecanismos reducen el contacto con llamadas no deseadas, pero dejan de actuar en cuanto la persona contesta: a partir de ese momento, nada protege la voz que se está transmitiendo. Este proyecto busca cubrir justamente ese tramo, con un mecanismo que actúe sobre la voz del usuario durante la conversación.
 
@@ -97,31 +97,29 @@ Para saber si una anonimización protege la identidad, hace falta medir qué tan
 
 Con cualquier umbral, el sistema puede equivocarse de dos maneras. La tasa de falsa aceptación (FAR, False Acceptance Rate) es la proporción de comparaciones entre personas distintas que el sistema acepta como la misma persona, y la tasa de falso rechazo (FRR, False Rejection Rate) es la proporción de comparaciones de una misma persona que el sistema rechaza. Al subir el umbral, la FAR baja y la FRR sube; al bajarlo, ocurre lo contrario. La EER es el valor en el que ambas tasas son iguales (Ecuación~\ref{eq:eer}):
 
-\begin{equation}
-\mathrm{FAR}(\tau) = \mathrm{FRR}(\tau)
-\label{eq:eer}
+\begin{equation}\label{eq:eer}
+\mathrm{FAR} = \mathrm{FRR}
 \end{equation}
 
-donde $\tau$ es el umbral de decisión. Una EER cercana a 0\,\% indica que el sistema reconoce bien a los hablantes, mientras que una EER cercana a 50\,\% indica que acierta como si decidiera al azar.
+\noindent Una EER cercana a 0 \% indica que el sistema reconoce bien a los hablantes, mientras que una EER cercana a 50 \% indica que acierta como si decidiera al azar.
 
-Cuando el ASV recibe grabaciones anonimizadas, cumple el papel de un atacante que intenta reconocer al hablante. Si la EER es alta, ese atacante se equivoca con frecuencia; por eso, al evaluar una anonimización, una EER más alta significa más privacidad. En este trabajo ese papel lo cumple el modelo preentrenado ECAPA-TDNN (Emphasized Channel Attention, Propagation and Aggregation in Time Delay Neural Network), propuesto por \textcite{desplanques2020}, que se usa sin modificaciones.
+Cuando el ASV recibe grabaciones anonimizadas, cumple el papel de un atacante que intenta reconocer al hablante. Si la EER es alta, ese atacante se equivoca con frecuencia; por eso, al evaluar una anonimización, una EER más alta significa más privacidad. En este trabajo ese papel lo cumple el modelo preentrenado ECAPA-TDNN (Emphasized Channel Attention, Propagation and Aggregation in Time Delay Neural Network) que se usa sin modificaciones.
 
 \subsection{Reconocimiento automático de habla (ASR) y WER}\label{sec:2.4}
 
 Proteger la identidad es solo la mitad del problema, porque la voz anonimizada también debe seguir entendiéndose. Para medirlo se usa un sistema de reconocimiento automático de habla (ASR), que transcribe el contenido de una grabación sin importar quién habla. Siguiendo la definición que usan \textcite{deng2023}, la inteligibilidad se evalúa con la tasa de error de palabras (WER) (Ecuación~\ref{eq:wer}):
 
-\begin{equation}
+\begin{equation}\label{eq:wer}
 \mathrm{WER} = \frac{N_{\mathrm{sust}} + N_{\mathrm{elim}} + N_{\mathrm{ins}}}{N_{\mathrm{ref}}}
-\label{eq:wer}
 \end{equation}
 
-donde $N_{\mathrm{sust}}$, $N_{\mathrm{elim}}$ y $N_{\mathrm{ins}}$ son el número de palabras sustituidas, eliminadas e insertadas respecto a la transcripción de referencia, y $N_{\mathrm{ref}}$ es el número de palabras de esa referencia. Una WER más baja indica que el contenido se conserva mejor. Como las inserciones también cuentan como errores, la WER puede superar el 100\,\% cuando el ASR agrega muchas palabras que no se dijeron.
+\noindent donde N\_sust, N\_elim y N\_ins son el número de palabras sustituidas, eliminadas e insertadas respecto a la transcripción de referencia, y N\_ref es el número de palabras de esa referencia. Una WER más baja indica que el contenido se conserva mejor. Como las inserciones también cuentan como errores, la WER puede superar el 100 \% cuando el ASR agrega muchas palabras que no se dijeron.
 
 Al comparar la WER de las grabaciones originales con la de las anonimizadas se puede saber cuánto contenido se pierde con la anonimización: si la WER aumenta poco, el mensaje se conserva. Para transcribir se usa el modelo preentrenado Whisper, en su versión turbo también sin modificaciones.
 
 \subsection{Modelos de atacante}\label{sec:2.5}
 
-El resultado de una evaluación de anonimización depende de lo que se supone que sabe el atacante. Por eso el VPC evalúa los sistemas bajo varios escenarios \parencite{patino2021,tomashenko2024}, que se nombran con dos letras: la primera indica cómo están las grabaciones de inscripción y la segunda cómo están las de prueba, con \guillemotleft{}o\guillemotright{} para original y \guillemotleft{}a\guillemotright{} para anonimizada.
+El resultado de una evaluación de anonimización depende de lo que se supone que sabe el atacante. Por eso el VPC evalúa los sistemas bajo varios escenarios \parencite{patino2021,tomashenko2024}, que se nombran con dos letras: la primera indica cómo están las grabaciones de inscripción y la segunda cómo están las de prueba, con ``o'' para original y ``a'' para anonimizada.
 
 En el escenario o--a (original--anonimizado), el atacante es ignorante: no sabe que el audio fue anonimizado, así que inscribe al hablante con grabaciones originales y las compara con grabaciones anonimizadas. En el contexto de una llamada, representa a alguien que graba la conversación y la compara con grabaciones reales de la víctima. En el escenario a--a (anonimizado--anonimizado), el atacante es semi-informado: conoce el sistema de anonimización, pero no la configuración exacta usada en las grabaciones de prueba, así que anonimiza también sus grabaciones de inscripción y compara audio anonimizado con audio anonimizado. Representa a alguien que conoce el sistema y lo aplica a sus propias grabaciones de la víctima para que la comparación sea más justa.
 
@@ -143,20 +141,19 @@ Al pasar por el tracto vocal, la excitación se transforma: el tubo refuerza alg
 
 \subsubsection{Codificación predictiva lineal (LPC)}\label{sec:2.6.3}
 
-Para modificar los formantes sin tocar la excitación, primero hay que separarlos, y para eso se usa la codificación predictiva lineal (LPC, Linear Predictive Coding). La idea de la LPC es que cada muestra de una señal de voz se puede predecir bastante bien como una combinación de las p muestras anteriores: $\hat{s}[n]=\sum_{k=1}^{p}a_k s[n-k]$. Los pesos $a_1,\ldots,a_p$ se llaman coeficientes LPC y se eligen para que el error de predicción sea el menor posible. Esos coeficientes describen el filtro, es decir, la forma del tracto vocal, mientras que lo que la predicción no logra explicar, el error $s[n]-\hat{s}[n]$, se llama residuo de predicción y corresponde a la excitación.
+Para modificar los formantes sin tocar la excitación, primero hay que separarlos, y para eso se usa la codificación predictiva lineal (LPC, Linear Predictive Coding). La idea de la LPC es que cada muestra de una señal de voz se puede predecir bastante bien como una combinación de las p muestras anteriores: $\hat{s}[n] = a_1 s[n-1] + a_2 s[n-2] + \cdots + a_p s[n-p]$. Los pesos $a_1,\ldots,a_p$ se llaman coeficientes LPC y se eligen para que el error de predicción sea el menor posible. Esos coeficientes describen el filtro, es decir, la forma del tracto vocal, mientras que lo que la predicción no logra explicar, el error $s[n]-\hat{s}[n]$, se llama residuo de predicción y corresponde a la excitación.
 
-Dicho de forma más técnica, la LPC representa el tracto vocal como un filtro todo-polo de orden p, es decir, un filtro que solo puede reforzar frecuencias, formando picos, y no tiene componentes que las anulen. Los polos son las raíces del polinomio que forman los coeficientes. Los polos complejos aparecen en pares, y cada par cercano al círculo unitario corresponde a un formante: el ángulo del polo indica la frecuencia del formante y el radio indica qué tan marcado es. Gracias a esta relación, mover el ángulo de los polos equivale a mover los formantes.
+La LPC representa el tracto vocal como un filtro todo-polo de orden p, es decir, un filtro que solo puede reforzar frecuencias, formando picos, y no tiene componentes que las anulen. Los polos son las raíces del polinomio que forman los coeficientes. Los polos complejos aparecen en pares, y cada par cercano al círculo unitario corresponde a un formante: el ángulo del polo indica la frecuencia del formante y el radio indica qué tan marcado es. Gracias a esta relación, mover el ángulo de los polos equivale a mover los formantes.
 
-Como la forma de la boca cambia todo el tiempo al hablar, la LPC no se calcula una sola vez sobre toda la grabación, sino sobre fragmentos cortos de audio, llamados tramas, en los que el tracto vocal casi no cambia. En cada trama, el orden p fija cuántos coeficientes, y por tanto cuántos polos, describen el filtro. Una heurística comúnmente atribuida a \textcite{markel1976} define el orden como (Ecuación~\ref{eq:lpc}):
+Como la forma de la boca cambia todo el tiempo al hablar, la LPC no se calcula una sola vez sobre toda la grabación, sino sobre fragmentos cortos de audio, llamados tramas, en los que el tracto vocal casi no cambia. En cada trama, el orden p fija cuántos coeficientes, y por tanto cuántos polos, describen el filtro. Una heurística comúnmente atribuida a \textcite{markel1976} define el orden como (Ecuación~\ref{eq:lpcorder}):
 
-\begin{equation}
+\begin{equation}\label{eq:lpcorder}
 p = f_s + 4
-\label{eq:lpc}
 \end{equation}
 
-donde f\_s es la frecuencia de muestreo expresada en kHz. Para una señal de 16 kHz, esta heurística produce p = 20.
+\noindent donde $f_s$ es la frecuencia de muestreo expresada en kHz. Para una señal de 16 kHz, esta heurística produce p = 20.
 
-La lógica de esta heurística es que cada formante necesita un par de polos, y en el habla aparece aproximadamente un formante por cada kHz del rango de frecuencias de la señal, que llega hasta f\_s/2. Se necesitan entonces f\_s polos para los formantes, más 4 para la forma general del espectro de la fuente. Elegir bien p es importante: si es muy pequeño, algunos formantes quedan sin representar y se mezclan con la excitación; si es muy grande, el filtro empieza a describir detalles que no son formantes, como los armónicos de la voz. En ambos casos, la separación entre formantes y excitación deja de ser correcta.
+La lógica de esta heurística es que cada formante necesita un par de polos, y en el habla aparece aproximadamente un formante por cada kHz del rango de frecuencias de la señal, que llega hasta $f_s$/2. Se necesitan entonces $f_s$ polos para los formantes, más 4 para la forma general del espectro de la fuente. Elegir bien p es importante: si es muy pequeño, algunos formantes quedan sin representar y se mezclan con la excitación; si es muy grande, el filtro empieza a describir detalles que no son formantes, como los armónicos de la voz. En ambos casos, la separación entre formantes y excitación deja de ser correcta.
 
 En resumen, al calcular la LPC en cada trama se obtienen por separado el filtro, representado por sus polos, y la excitación. Si se modifica solo el ángulo de los polos y luego se pasa la excitación original por el filtro modificado, los formantes se desplazan: cambian los rasgos del tracto vocal del hablante y se conserva lo que se dice. El coeficiente de McAdams es la forma concreta de hacer ese cambio.
 
@@ -164,49 +161,45 @@ En resumen, al calcular la LPC en cada trama se obtienen por separado el filtro,
 
 \textcite{patino2021} usan el coeficiente de McAdams para desplazar los formantes de la voz sin entrenar ningún modelo. El método aprovecha la relación descrita en la sección anterior: como el ángulo de cada polo indica la frecuencia de un formante, basta con cambiar el ángulo para mover el formante.
 
-Un polo complejo se expresa como (Ecuación~\ref{eq:polo}):
+Un polo complejo se expresa como (Ecuación~\ref{eq:pole}):
 
-\begin{equation}
+\begin{equation}\label{eq:pole}
 z_i = r_i \, e^{j\phi_i}
-\label{eq:polo}
 \end{equation}
 
-donde r\_i es el radio y $\phi_i$ la posición angular, medida en radianes entre 0 y $\pi$. El ángulo se relaciona con la frecuencia del formante mediante f\_i = $\phi_i$ · f\_s / (2$\pi$). La transformación de McAdams eleva el ángulo de cada polo complejo a la potencia $\alpha$ y deja su radio sin cambios (Ecuación~\ref{eq:mcadams}):
+\noindent donde $r_i$ es el radio y $\phi_i$ la posición angular, medida en radianes entre 0 y $\pi$. El ángulo se relaciona con la frecuencia del formante mediante $f_i$ = $\phi_i$ $\cdot$ $f_s$ / (2$\pi$). La transformación de McAdams eleva el ángulo de cada polo complejo a la potencia $\alpha$ y deja su radio sin cambios (Ecuación~\ref{eq:mcadams}):
 
-\begin{equation}
+\begin{equation}\label{eq:mcadams}
 z_i' = r_i \, e^{j\phi_i^{\alpha}}
-\label{eq:mcadams}
 \end{equation}
 
-En la práctica, el procedimiento se aplica trama por trama. Primero se obtienen los polos con la LPC. Luego se cambia el ángulo de cada polo complejo por su ángulo elevado a $\alpha$, y a su polo conjugado se le aplica el mismo cambio en sentido opuesto, para que el filtro siga siendo válido; los polos reales, que no corresponden a formantes, se dejan igual. Por último, la trama se reconstruye pasando la excitación original por el filtro con los polos nuevos.
+\noindent En la práctica, el procedimiento se aplica trama por trama. Primero se obtienen los polos con la LPC. Luego se cambia el ángulo de cada polo complejo por su ángulo elevado a $\alpha$, y a su polo conjugado se le aplica el mismo cambio en sentido opuesto, para que el filtro siga siendo válido; los polos reales, que no corresponden a formantes, se dejan igual. Por último, la trama se reconstruye pasando la excitación original por el filtro con los polos nuevos.
 
 El efecto sobre la voz se entiende con una observación sencilla. Como los ángulos están entre 0 y $\pi$, elevarlos a una potencia $\alpha$ menor que 1 no los mueve a todos en la misma dirección: los ángulos pequeños aumentan y los grandes disminuyen. A 16 kHz, el punto que no cambia está alrededor de 2.5 kHz \parencite{patino2021}. Por eso, con $\alpha$ < 1, los formantes graves suben de frecuencia, los agudos bajan, y el espectro de la voz se comprime hacia esa frecuencia. Por ejemplo, con $\alpha$ = 0.8, un formante en 700 Hz sube a unos 900 Hz. Cuanto más se aleja $\alpha$ de 1, más se desplazan los formantes y más cambia la voz; con $\alpha$ = 1, la voz queda igual.
 
-La línea base B2 del VPC aplica esta transformación con un valor fijo, $\alpha$ = 0.8. \textcite{patino2021} señalan que con un valor fijo la transformación es fácil de revertir, y proponen sortear $\alpha$ al azar dentro de un intervalo, de modo que un adversario necesitaría conocer el valor exacto usado para deshacer el cambio. El sorteo sigue una distribución uniforme (Ecuación~\ref{eq:uniforme}):
+La línea base B2 del VPC aplica esta transformación con un valor fijo, $\alpha$ = 0.8. \textcite{patino2021} señalan que con un valor fijo la transformación es fácil de revertir, y proponen elegir $\alpha$ aleatoriamente dentro de un intervalo, de modo que un adversario necesitaría conocer el valor exacto usado para deshacer el cambio. La elección aleatoria sigue una distribución uniforme (Ecuación~\ref{eq:uniform}):
 
-\begin{equation}
+\begin{equation}\label{eq:uniform}
 \alpha \sim \mathcal{U}(\alpha_{\min}, \alpha_{\max})
-\label{eq:uniforme}
 \end{equation}
 
-lo que significa que cualquier valor entre $\alpha_{\min}$ y $\alpha_{\max}$ tiene la misma probabilidad de ser elegido. El intervalo determina el equilibrio entre privacidad e inteligibilidad: según \textcite{patino2021}, los valores más bajos de $\alpha$ protegen más la identidad, pero también deterioran más el contenido.
+\noindent lo que significa que cualquier valor entre $\alpha_{\min}$ y $\alpha_{\max}$ tiene la misma probabilidad de ser elegido. El intervalo determina el equilibrio entre privacidad e inteligibilidad: según \textcite{patino2021}, los valores más bajos de $\alpha$ protegen más la identidad, pero también deterioran más el contenido.
 
-En el sistema propuesto, $\alpha$ se sortea una vez por llamada y se mantiene fijo durante toda la llamada; en la evaluación sobre un corpus de grabaciones, se sortea un $\alpha$ por grabación. Como el intervalo afecta tanto la privacidad como la inteligibilidad, se trata como un parámetro de diseño que se evalúa experimentalmente y no como un valor fijado de antemano.
+En el sistema propuesto, $\alpha$ se elige aleatoriamente una vez por llamada y se mantiene fijo durante toda la llamada; en la evaluación sobre un corpus de grabaciones, se elige aleatoriamente un valor de $\alpha$ por grabación. Como el intervalo afecta tanto la privacidad como la inteligibilidad, se trata como un parámetro de diseño que se evalúa experimentalmente y no como un valor fijado de antemano.
 
 \subsubsection{ZEBRA: evaluación de evidencia biométrica}\label{sec:2.7.1}
 
-ZEBRA (Zero Evidence Biometric Recognition Assessment) es un marco de evaluación que mide cuánta evidencia sobre la identidad del hablante permanece en las grabaciones anonimizadas y la resume en categorías, donde la categoría \guillemotleft{}0\guillemotright{} corresponde a evidencia nula, es decir, a privacidad perfecta. Aunque ZEBRA no se calcula en este trabajo, su uso en el estudio de \textcite{patino2021} ayuda a dimensionar lo que se puede esperar del método: ninguna de sus configuraciones basadas en el coeficiente de McAdams alcanza la categoría \guillemotleft{}0\guillemotright{}. Esto confirma que la técnica reduce la información del hablante, pero no logra una anonimización perfecta.
+ZEBRA (Zero Evidence Biometric Recognition Assessment) es un marco de evaluación que mide cuánta evidencia sobre la identidad del hablante permanece en las grabaciones anonimizadas y la resume en categorías, donde la categoría ``0'' corresponde a evidencia nula, es decir, a privacidad perfecta. Aunque ZEBRA no se calcula en este trabajo, su uso en el estudio de \textcite{patino2021} ayuda a dimensionar lo que se puede esperar del método: ninguna de sus configuraciones basadas en el coeficiente de McAdams alcanza la categoría ``0''. Esto confirma que la técnica reduce la información del hablante, pero no logra una anonimización perfecta.
 
 \subsection{Tiempo real: latencia y factor de tiempo real (RTF)}\label{sec:2.8}
 
 Además de proteger la voz y conservar el mensaje, el sistema debe ser lo bastante rápido para funcionar durante una conversación. El factor de tiempo real (RTF) mide esa rapidez como la razón entre el tiempo que tarda el sistema en procesar un audio y la duración de ese audio (Ecuación~\ref{eq:rtf}):
 
-\begin{equation}
+\begin{equation}\label{eq:rtf}
 \mathrm{RTF} = \frac{T_{\mathrm{procesamiento}}}{T_{\mathrm{audio}}}
-\label{eq:rtf}
 \end{equation}
 
-Un RTF menor que 1 indica que el sistema procesa más rápido de lo que dura el audio; por ejemplo, un RTF de 0.1 significa que procesar 10 s de voz toma 1 s. \textcite{deng2023} usan la misma definición con el nombre de coeficiente de tiempo real (RTC, Real-Time Coefficient).
+\noindent Un RTF menor que 1 indica que el sistema procesa más rápido de lo que dura el audio; por ejemplo, un RTF de 0.1 significa que procesar 10 s de voz toma 1 s. \textcite{deng2023} usan la misma definición con el nombre de coeficiente de tiempo real (RTC, Real-Time Coefficient).
 
 El RTF no es lo mismo que la latencia. La latencia es el retardo entre el momento en que se habla y el momento en que sale la voz transformada, y depende tanto del tiempo de cómputo como del tamaño de los fragmentos de audio que se procesan. Un sistema puede tener un RTF bajo y aun así una latencia perceptible si espera a acumular fragmentos grandes, por lo que en este trabajo se reportan ambas medidas.
 
@@ -231,11 +224,11 @@ Aunque el prototipo se ejecuta en un computador, el sistema está pensado para f
 Con este propósito, se definieron cinco criterios que el método de anonimización debía cumplir, cada uno ligado a una restricción concreta:
 
 \begin{itemize}
-    \item Bajo costo computacional y operación en tiempo real en CPU. El sistema debe transformar la voz mientras la persona habla, sin depender de una GPU y con un costo lo bastante bajo para poder ejecutarse en un dispositivo con recursos restringidos, como un celular.
-    \item No requerir entrenamiento con corpus grandes. Entrenar un modelo de voz exige grandes volúmenes de datos y varias GPU durante días, recursos y tiempo que no están al alcance del proyecto. Además, los métodos que dependen de redes neuronales grandes suelen requerir, también al ejecutarse, más memoria y cómputo de los que ofrece un celular.
-    \item Ser implementable dentro del tiempo y la complejidad de un proyecto de grado.
-    \item Contar con evidencia publicada bajo las métricas del VPC, para tener una referencia del comportamiento esperado.
-    \item Contar con una implementación de referencia pública, para poder verificar la implementación propia.
+\item Bajo costo computacional y operación en tiempo real en CPU. El sistema debe transformar la voz mientras la persona habla, sin depender de una GPU y con un costo lo bastante bajo para poder ejecutarse en un dispositivo con recursos restringidos, como un celular.
+\item No requerir entrenamiento con corpus grandes. Entrenar un modelo de voz exige grandes volúmenes de datos y varias GPU durante días, recursos y tiempo que no están al alcance del proyecto. Además, los métodos que dependen de redes neuronales grandes suelen requerir, también al ejecutarse, más memoria y cómputo de los que ofrece un celular.
+\item Ser implementable dentro del tiempo y la complejidad de un proyecto de grado.
+\item Contar con evidencia publicada bajo las métricas del VPC, para tener una referencia del comportamiento esperado.
+\item Contar con una implementación de referencia pública, para poder verificar la implementación propia.
 \end{itemize}
 
 Vale la pena aclarar que el desarrollo y todas las pruebas del sistema se realizaron sobre la CPU de un computador portátil, no en un teléfono móvil. Por lo tanto, los resultados muestran que el procesamiento tiene un costo computacional bajo en ese equipo y sugieren que habría margen para ejecutarlo en dispositivos de menor capacidad, pero no demuestran su funcionamiento en un teléfono. Esa verificación queda como trabajo futuro.
@@ -245,10 +238,10 @@ Vale la pena aclarar que el desarrollo y todas las pruebas del sistema se realiz
 Con estos criterios definidos, se compararon cuatro enfoques de anonimización:
 
 \begin{itemize}
-    \item El coeficiente de McAdams estocástico \parencite{patino2021}, que desplaza los formantes modificando los polos LPC, sin entrenamiento.
-    \item V-Cloak \parencite{deng2023}, que añade a la voz perturbaciones adversariales generadas por una red neuronal para engañar a los sistemas ASV.
-    \item El modelo de streaming end-to-end de \textcite{quamer2024}, una red neuronal que reemplaza la identidad del hablante con baja latencia.
-    \item Stream-Voice-Anon \parencite{kuzmin2026}, que combina un códec neuronal de audio con un modelo de lenguaje para generar una voz anonimizada.
+\item El coeficiente de McAdams estocástico \parencite{patino2021}, que desplaza los formantes modificando los polos LPC, sin entrenamiento.
+\item V-Cloak \parencite{deng2023}, que añade a la voz perturbaciones adversariales generadas por una red neuronal para engañar a los sistemas ASV.
+\item El modelo de streaming end-to-end de \textcite{quamer2024}, una red neuronal que reemplaza la identidad del hablante con baja latencia.
+\item Stream-Voice-Anon \parencite{kuzmin2026}, que combina un códec neuronal de audio con un modelo de lenguaje para generar una voz anonimizada.
 \end{itemize}
 
 La Tabla~\ref{tab:alternativas} resume las características y el desempeño que reporta cada trabajo: entrenamiento y hardware, tiempo real, privacidad, utilidad e idioma evaluado. Con esta información se revisa cada enfoque frente a los cinco criterios de viabilidad. La EER y la WER se presentan según el escenario de atacante que considera cada trabajo.
@@ -264,24 +257,24 @@ La Tabla~\ref{tab:alternativas} resume las características y el desempeño que 
 \toprule
 \textbf{Enfoque} & \textbf{Entrenamiento / hardware} & \textbf{Tiempo real reportado} & \textbf{Privacidad y utilidad reportadas} & \textbf{Idioma evaluado} \\
 \midrule
-McAdams estocástico \parencite{patino2021} & Ninguno & RTC 0.030, medido por \textcite{deng2023} con $\alpha$ = 0.8 & EER 33.8\,\% en escenario semi-informado para $\mathcal{U}(0.7,0.9)$; WER 13.7\,\% para $\mathcal{U}(0.8,0.9)$ & Inglés \\
+McAdams estocástico \parencite{patino2021} & Ninguno & RTC 0.030, medido por \textcite{deng2023} con $\alpha$ = 0.8 & EER 33.8 \% en escenario semi-informado para $\mathcal{U}(0.7,0.9)$; WER 13.7 \% para $\mathcal{U}(0.8,0.9)$ & Inglés \\
 \addlinespace[2pt]
-Streaming end-to-end \parencite{quamer2024} & LibriTTS, 2 GPU V100 & Latencia de 230 ms en versión base y 66 ms en versión lite sobre CPU & EER a--a de 39.2--42.0\,\%; WER de 5.1--6.5\,\% & Inglés \\
+Streaming end-to-end \parencite{quamer2024} & LibriTTS, 2 GPU V100 & Latencia de 230 ms en versión base y 66 ms en versión lite sobre CPU & EER a--a de 39.2--42.0 \%; WER de 5.1--6.5 \% & Inglés \\
 \addlinespace[2pt]
-Códec neuronal y modelo de lenguaje \parencite{kuzmin2026} & 8 GPU H100 & 180 ms y RTF 0.93 en GPU portátil; sin tiempo real en CPU & EER 46.5--47.7\,\% en lazy-informed y 18.6--19.0\,\% en semi-informado; WER 4.7--6.6\,\% & Inglés \\
+Códec neuronal y modelo de lenguaje \parencite{kuzmin2026} & 8 GPU H100 & 180 ms y RTF 0.93 en GPU portátil; sin tiempo real en CPU & EER 46.5--47.7 \% en lazy-informed y 18.6--19.0 \% en semi-informado; WER 4.7--6.6 \% & Inglés \\
 \addlinespace[2pt]
-Ejemplos adversariales \parencite{deng2023} & VoxCeleb1, 2 GPU RTX 3090 & RTC 0.011 & EER 46.10\,\% en escenario ignorante; WER 7.65\,\% & ASV: inglés y chino. ASR: inglés, chino, francés e italiano \\
+Ejemplos adversariales \parencite{deng2023} & VoxCeleb1, 2 GPU RTX 3090 & RTC 0.011 & EER 46.10 \% en escenario ignorante; WER 7.65 \% & ASV: inglés y chino. ASR: inglés, chino, francés e italiano \\
 \bottomrule
 \end{tabularx}
 \end{table*}
 
-U(a, b): $\alpha$ se elige al azar entre a y b, con la misma probabilidad para cualquier valor del intervalo.
+$\mathcal{U}(a,b)$: $\alpha$ se elige al azar entre a y b, con la misma probabilidad para cualquier valor del intervalo.
 
 Un primer resultado de la comparación es que ninguno de los cuatro enfoques fue evaluado en español sobre audio de telefonía, y ninguno mide resistencia a la clonación de voz: todas las evaluaciones se hacen frente a sistemas ASV. Además, las cifras de la Tabla~\ref{tab:alternativas} no son directamente comparables entre sí, por tres razones principales.
 
-La primera es que cambia el modelo de atacante usado en cada evaluación. La EER se reporta frente a un atacante ignorante en el trabajo de \textcite{deng2023}, frente a uno semi-informado en los de \textcite{patino2021} y \textcite{kuzmin2026}, y en el escenario anonimizado--anonimizado (a--a) en el de \textcite{quamer2024}. Para un mismo sistema, el resultado puede variar mucho según este supuesto: \textcite{kuzmin2026} reportan una EER de 46.5--47.7\,\% frente a un atacante lazy-informed, que anonimiza las grabaciones de inscripción y de prueba con hablantes objetivo distintos, pero de 18.6--19.0\,\% frente a uno semi-informado.
+La primera es que cambia el modelo de atacante usado en cada evaluación. La EER se reporta frente a un atacante ignorante en el trabajo de \textcite{deng2023}, frente a uno semi-informado en los de \textcite{patino2021} y \textcite{kuzmin2026}, y en el escenario anonimizado--anonimizado (a--a) en el de \textcite{quamer2024}. Para un mismo sistema, el resultado puede variar mucho según este supuesto: \textcite{kuzmin2026} reportan una EER de 46.5--47.7 \% frente a un atacante lazy-informed, que anonimiza las grabaciones de inscripción y de prueba con hablantes objetivo distintos, pero de 18.6--19.0 \% frente a uno semi-informado.
 
-La segunda es que cambian los sistemas de verificación de locutor, los modelos ASR, los datos usados para entrenarlos y los corpus de evaluación. \textcite{patino2021} muestran que entrenar los modelos con audio anonimizado puede modificar de manera importante los resultados. En su configuración $\mathcal{U}(0.5,0.9)$, en la que $\alpha$ se elige al azar entre 0.5 y 0.9 con la misma probabilidad para cualquier valor, la WER disminuye de aproximadamente 45\,\% a 9.6\,\% cuando se usa un sistema ASR adaptado al audio anonimizado. Del mismo modo, el método de McAdams obtiene una WER de 26.54\,\% cuando se evalúa con los sistemas ASR de \textcite{deng2023}, frente a 13.7\,\% en la configuración experimental de \textcite{patino2021}.
+La segunda es que cambian los sistemas de verificación de locutor, los modelos ASR, los datos usados para entrenarlos y los corpus de evaluación. \textcite{patino2021} muestran que entrenar los modelos con audio anonimizado puede modificar de manera importante los resultados. En su configuración $\mathcal{U}(0.5,0.9)$, en la que $\alpha$ se elige al azar entre 0.5 y 0.9 con la misma probabilidad para cualquier valor, la WER disminuye de aproximadamente 45 \% a 9.6 \% cuando se usa un sistema ASR adaptado al audio anonimizado. Del mismo modo, el método de McAdams obtiene una WER de 26.54 \% cuando se evalúa con los sistemas ASR de \textcite{deng2023}, frente a 13.7 \% en la configuración experimental de \textcite{patino2021}.
 
 La tercera es que el desempeño temporal se mide con definiciones y plataformas de hardware diferentes. \textcite{deng2023} usan el cociente entre el tiempo de procesamiento y la duración del audio, que denominan RTC; \textcite{quamer2024} reportan la latencia como la suma del tamaño del fragmento y el tiempo de cómputo sobre CPU; y \textcite{kuzmin2026} informan tanto la latencia como el RTF sobre una GPU portátil.
 
@@ -294,13 +287,13 @@ Al revisar los cuatro enfoques frente a los criterios de viabilidad, el coeficie
 Los otros tres enfoques no cumplen al menos uno de los criterios:
 
 \begin{itemize}
-    \item Los tres requieren entrenar redes neuronales, lo que incumple el criterio de no requerir entrenamiento con corpus grandes.
-    \item Stream-Voice-Anon no opera en tiempo real solo con CPU, según \textcite{kuzmin2026}, lo que incumple el criterio de operación en tiempo real sobre CPU.
-    \item En el caso de \textcite{quamer2024}, no se encontró código público, lo que incumple el criterio de contar con una implementación de referencia.
-    \item En el caso de V-Cloak \parencite{deng2023}, el repositorio no ofrecía el modelo preentrenado al momento de la revisión, lo que también incumple el criterio de contar con una implementación de referencia. Además, V-Cloak está diseñado para engañar al sistema de verificación de locutor (ASV) conservando el timbre de la voz, es decir, la persona sigue sonando como ella misma para quien la escucha \parencite{deng2023}. Ese propósito no coincide con el de este proyecto, que busca que la voz deje de sonar como la del hablante original para dificultar que pueda ser reconocida o suplantada.
+\item Los tres requieren entrenar redes neuronales, lo que incumple el criterio de no requerir entrenamiento con corpus grandes.
+\item Stream-Voice-Anon no opera en tiempo real solo con CPU, según reportan sus propios autores \parencite{kuzmin2026}, lo que incumple el criterio de operación en tiempo real sobre CPU.
+\item En el caso de \textcite{quamer2024}, no se encontró código público, lo que incumple el criterio de contar con una implementación de referencia.
+\item En el caso de V-Cloak \parencite{deng2023}, el repositorio no ofrecía el modelo preentrenado al momento de la revisión, lo que también incumple el criterio de contar con una implementación de referencia. Además, V-Cloak está diseñado para engañar al sistema de verificación de locutor (ASV) conservando el timbre de la voz, es decir, la persona sigue sonando como ella misma para quien la escucha \parencite{deng2023}. Ese propósito no coincide con el de este proyecto, que busca que la voz deje de sonar como la del hablante original para dificultar que pueda ser reconocida o suplantada.
 \end{itemize}
 
-Una vez seleccionado el método, quedaba por definir cómo usar el coeficiente $\alpha$. Se decidió sortearlo una vez por sesión, es decir, por llamada, de modo que se mantiene fijo durante toda la sesión y cambia entre sesiones. El intervalo de $\alpha$, por su parte, se trata como un parámetro de diseño que se elige empíricamente durante la experimentación. El punto de partida es $\mathcal{U}(0.7,0.9)$, uno de los intervalos explorados por \textcite{patino2021}, que indica que $\alpha$ se elige al azar entre 0.7 y 0.9 con la misma probabilidad para cualquier valor de ese intervalo.
+Una vez seleccionado el método, quedaba por definir cómo usar el coeficiente $\alpha$. Se decidió elegirlo aleatoriamente una vez por sesión, es decir, por llamada, de modo que se mantiene fijo durante toda la sesión y cambia entre sesiones. El intervalo de $\alpha$, por su parte, se trata como un parámetro de diseño que se elige empíricamente durante la experimentación. El punto de partida es $\mathcal{U}(0.7,0.9)$, uno de los intervalos explorados por \textcite{patino2021}, que indica que $\alpha$ se elige aleatoriamente entre 0.7 y 0.9 con la misma probabilidad para cualquier valor de ese intervalo.
 
 \subsection{Estrategia de implementación}\label{sec:3.5}
 
@@ -316,13 +309,13 @@ Con el sistema implementado, el siguiente paso fue definir cómo evaluarlo: sobr
 
 \subsubsection{Datos y muestreo}\label{sec:3.6.1}
 
-La evaluación usa Mozilla Common Voice 26.0 en español \parencite{ardila2020}, y solo los clips del archivo \texttt{validated.tsv}, es decir, grabaciones que la comunidad revisó y aceptó. Los términos de uso del corpus piden no intentar determinar la identidad de los hablantes; en este trabajo, la reidentificación ocurre solo dentro del corpus, ya que se comparan grabaciones entre sí para medir la anonimización, sin vincularlas con identidades reales.
+La evaluación utiliza grabaciones en español del corpus público Mozilla Common Voice. Para construir el conjunto de evaluación se seleccionaron únicamente los clips incluidos en el archivo \texttt{validated.tsv}, es decir, grabaciones revisadas y aceptadas por la comunidad. Los términos de uso del corpus solicitan no intentar determinar la identidad real de los hablantes; en este trabajo, las comparaciones se realizan únicamente entre grabaciones del propio corpus para medir el efecto de la anonimización, sin vincularlas con identidades reales.
 
 Sobre el corpus se aplicaron dos filtros: cada clip debía durar al menos 3000 ms y cada hablante debía tener al menos 5 clips. Luego se hizo un muestreo estratificado por acento autorreportado, con semilla 42, K = 134 hablantes por estrato y N = 5 clips por hablante. El valor de K está limitado por el estrato más pequeño, de modo que todos los grupos de acento tengan el mismo peso. La muestra final tiene 1 340 hablantes y 6 700 clips; de los cinco clips de cada hablante, tres se usan para la inscripción del ASV y dos para las pruebas.
 
 Los clips originales, en formato MP3, se convierten a WAV y se remuestrean a 16 kHz. Se eligió esta frecuencia porque corresponde a la telefonía de banda ancha y porque es la frecuencia con la que trabajan los dos modelos de evaluación \parencite{openaiwhisper2025,speechbrainModel}. En consecuencia, la evaluación no simula la telefonía de banda angosta, a 8 kHz, ni los efectos de los códecs de las redes celulares.
 
-Una limitación del corpus para el contexto de este proyecto es que Common Voice no tiene un estrato colombiano aislable: las voces colombianas quedan dentro de las categorías \guillemotleft{}andino-pacífico\guillemotright{} y \guillemotleft{}caribe\guillemotright{}.
+Una limitación del corpus para el contexto de este proyecto es que Common Voice no tiene un estrato colombiano aislable: las voces colombianas quedan dentro de las categorías ``andino-pacífico'' y ``caribe''.
 
 \subsubsection{Métricas y criterios de evaluación}\label{sec:3.6.2}
 
@@ -339,9 +332,9 @@ Cada métrica responde a una parte de la pregunta de investigación: la EER a la
 \toprule
 \textbf{Métrica} & \textbf{Qué mide} & \textbf{Cómo se obtiene} & \textbf{Para qué se usa} & \textbf{Meta} \\
 \midrule
-EER (privacidad) & Qué tan bien reconoce un atacante al hablante después de anonimizar & ASV ECAPA-TDNN preentrenado, en los escenarios o--o, o--a y a--a & Determinar si la anonimización protege la identidad vocal & EER > 30\,\% en el escenario o--a \\
+EER (privacidad) & Qué tan bien reconoce un atacante al hablante después de anonimizar & ASV ECAPA-TDNN preentrenado, en los escenarios o--o, o--a y a--a & Determinar si la anonimización protege la identidad vocal & EER > 30 \% en el escenario o--a \\
 \addlinespace[2pt]
-WER (inteligibilidad) & Cuánto contenido se pierde al anonimizar & ASR Whisper turbo preentrenado, sobre las grabaciones originales y anonimizadas & Determinar si la conversación se sigue entendiendo & WER < 15\,\% \\
+WER (inteligibilidad) & Cuánto contenido se pierde al anonimizar & ASR Whisper turbo preentrenado, sobre las grabaciones originales y anonimizadas & Determinar si la conversación se sigue entendiendo & WER < 15 \% \\
 \addlinespace[2pt]
 RTF (tiempo real) & Cuánto tarda el procesamiento frente a la duración del audio & Tiempo de procesamiento del core dividido por la duración del audio & Determinar si el sistema puede operar durante una llamada & RTF < 0.1 \\
 \bottomrule
@@ -350,9 +343,9 @@ RTF (tiempo real) & Cuánto tarda el procesamiento frente a la duración del aud
 
 Los tres umbrales no son estándares oficiales ni exigencias que el sistema deba cumplir, sino metas propias del proyecto, fijadas con la literatura revisada como referencia. Su papel es servir de punto de comparación: indican qué tan cerca llega el coeficiente de McAdams a un nivel deseable de privacidad, inteligibilidad y rapidez, y ayudan a ubicar los límites del método. Aunque las cifras de la Tabla~\ref{tab:alternativas} no permiten clasificar los métodos, sí indican qué niveles de desempeño son alcanzables, y por eso sirven para fijar metas razonables.
 
-La meta de EER de 30\,\% corresponde a una de las cuatro condiciones de privacidad mínima que el VPC 2024 usa para comparar sistemas, que exigen una EER de al menos 10, 20, 30 o 40\,\% \parencite{tomashenko2024}. Además, en el estudio de \textcite{patino2021}, el coeficiente de McAdams con $\mathcal{U}(0.7,0.9)$ alcanza una EER de 33.8\,\% frente a un atacante semi-informado, lo que indica que el método puede llegar a ese nivel en las condiciones de ese estudio. En este trabajo, la meta se evalúa en el escenario o--a, porque representa la amenaza principal del problema planteado: alguien que graba la llamada y la compara con grabaciones reales de la víctima. La EER del escenario a--a se reporta como complemento.
+La meta de EER de 30 \% corresponde a una de las cuatro condiciones de privacidad mínima que el VPC 2024 usa para comparar sistemas, que exigen una EER de al menos 10, 20, 30 o 40 \% \parencite{tomashenko2024}. Además, en el estudio de \textcite{patino2021}, el coeficiente de McAdams con $\mathcal{U}(0.7,0.9)$ alcanza una EER de 33.8 \% frente a un atacante semi-informado, lo que indica que el método puede llegar a ese nivel en las condiciones de ese estudio. En este trabajo, la meta se evalúa en el escenario o--a, porque representa la amenaza principal del problema planteado: alguien que graba la llamada y la compara con grabaciones reales de la víctima. La EER del escenario a--a se reporta como complemento.
 
-La meta de WER de 15\,\% toma como referencia el mismo estudio, en el que la WER pasa de 8.45\,\% sin anonimizar a 13.7\,\% en la mejor configuración de McAdams \parencite{patino2021}. Un límite de 15\,\% queda ligeramente por encima de ese valor y representa una degradación moderada del contenido. Como la WER del audio original depende del ASR y del corpus, además del valor absoluto se reporta el aumento de la WER respecto al audio original.
+La meta de WER de 15 \% toma como referencia el mismo estudio, en el que la WER pasa de 8.45 \% sin anonimizar a 13.7 \% en la mejor configuración de McAdams \parencite{patino2021}. Un límite de 15 \% queda ligeramente por encima de ese valor y representa una degradación moderada del contenido. Como la WER del audio original depende del ASR y del corpus, además del valor absoluto se reporta el aumento de la WER respecto al audio original.
 
 La meta de RTF de 0.1 se relaciona con el objetivo de llevar el sistema a un celular. \textcite{deng2023} midieron un RTC de 0.030 para el método de McAdams en su equipo, lo que muestra que su costo es bajo. Un RTF menor que 0.1 significa que procesar 1 s de voz toma como máximo 0.1 s, lo que deja un margen de unas diez veces para ejecutar el sistema en dispositivos menos potentes que el computador de desarrollo. Como el RTF se mide en un computador portátil y no en un teléfono, alcanzar esta meta permite esperar un buen desempeño en un celular, pero no lo demuestra.
 
@@ -362,7 +355,7 @@ En conjunto, una configuración alcanzaría todas las metas del proyecto solo si
 
 Los experimentos no buscan un único valor ideal del coeficiente $\alpha$. Lo que interesa es entender cómo responde el sistema cuando $\alpha$ cambia: qué intervalos mantienen un buen equilibrio entre privacidad e inteligibilidad y desde qué punto la voz empieza a volverse difícil de entender. Es muy posible que varios intervalos funcionen de manera parecida, y por eso el análisis apunta a identificarlos, más que a quedarse con uno solo. Con ese fin, el trabajo experimental se hizo en tres etapas.
 
-La primera fue un barrido con $\alpha$ fijo. Aquí todas las grabaciones se anonimizaron con el mismo valor de $\alpha$, probando valores de 0.2 a 0.9 en pasos de 0.1. También se incluyó $\alpha$ = 1.0 como control, porque con ese valor la transformación no cambia la voz y los resultados deberían coincidir con los del audio original. Esta etapa muestra el efecto de la intensidad de la transformación por sí sola, sin la variación que introduce el sorteo aleatorio, y permite ubicar los límites del sistema: con $\alpha$ muy bajo la voz deja de entenderse, y con $\alpha$ muy alto casi no hay protección. Como en este caso las grabaciones de inscripción y de prueba quedan transformadas exactamente igual, el escenario a--a no refleja cómo funcionaría el sistema en la práctica, así que el análisis de esta etapa se centra en el escenario o--a.
+La primera fue un barrido con $\alpha$ fijo. Aquí todas las grabaciones se anonimizaron con el mismo valor de $\alpha$, probando valores de 0.2 a 0.9 en pasos de 0.1. También se incluyó $\alpha$ = 1.0 como control, porque con ese valor la transformación no cambia la voz y los resultados deberían coincidir con los del audio original. Esta etapa muestra el efecto de la intensidad de la transformación por sí sola, sin la variación que introduce la elección aleatoria, y permite ubicar los límites del sistema: con $\alpha$ muy bajo la voz deja de entenderse, y con $\alpha$ muy alto casi no hay protección. Como en este caso las grabaciones de inscripción y de prueba quedan transformadas exactamente igual, el escenario a--a no refleja cómo funcionaría el sistema en la práctica, así que el análisis de esta etapa se centra en el escenario o--a.
 
 La segunda etapa fue un barrido más fino, también con $\alpha$ fijo. Una vez ubicada la zona donde la privacidad y la inteligibilidad cambian con más fuerza, se evaluaron valores entre 0.65 y 0.875 en pasos de 0.025, para ver con más detalle qué ocurre en esa zona.
 
@@ -372,7 +365,7 @@ El ancho del intervalo tiene una razón de ser. Para deshacer la transformación
 
 En las tres etapas se miden la EER, como indicador de privacidad, y la WER, como indicador de inteligibilidad. Además, los resultados se comparan por acento y por género, para revisar si la protección es pareja entre los distintos grupos de hablantes.
 
-Todas las configuraciones se evaluaron sobre las mismas grabaciones. En el caso de los intervalos, el $\alpha$ de cada grabación se genera de forma determinista a partir de su identificador, de modo que un mismo clip recibe siempre el mismo sorteo. Gracias a esto, las configuraciones se pueden comparar de forma pareada, sobre exactamente los mismos datos.
+Todas las configuraciones se evaluaron sobre las mismas grabaciones. En el caso de los intervalos, el $\alpha$ de cada grabación se genera de forma determinista a partir de su identificador, de modo que un mismo clip recibe siempre el mismo valor de $\alpha$ elegido aleatoriamente. Gracias a esto, las configuraciones se pueden comparar de forma pareada, sobre exactamente los mismos datos.
 
 La incertidumbre de cada resultado se estima con intervalos de confianza calculados por bootstrap. Para comparar configuraciones vecinas se usa un bootstrap pareado de la diferencia entre ellas, que indica si el cambio de una a otra es real o podría explicarse por el azar del muestreo. Una parte del análisis es también cualitativa: se observa cómo evolucionan las métricas a medida que cambia $\alpha$ y se escuchan las grabaciones anonimizadas.
 
@@ -380,62 +373,45 @@ Finalmente, el intervalo que se usó en el prototipo fue $\mathcal{U}(0.685,0.86
 
 \subsection{Prototipo en tiempo real}\label{sec:3.7}
 
-Las etapas anteriores evalúan la anonimización sobre grabaciones; el prototipo permite comprobar que el mismo core funciona con voz en vivo. Para ello reutiliza el core de procesamiento en modo streaming: un adaptador le entrega el audio en bloques de tamaño fijo, y se verificó que su salida es equivalente a la del pipeline por lotes.
+Las etapas anteriores evalúan la anonimización sobre grabaciones; el prototipo permite comprobar que el mismo core funciona con voz en vivo. Para ello reutiliza el core de procesamiento en modo streaming: un adaptador recibe el audio en bloques de tamaño fijo y devuelve bloques del mismo tamaño, y se verificó que su salida es la del pipeline por lotes, retrasada un número fijo de muestras.
 
-El montaje usa la interfaz de audio MME de Windows a 16 kHz, con el búfer por defecto, un micrófono y audífonos. El procedimiento consiste en tres ensayos de 60 s de habla continua. En cada ensayo se mide:
+El montaje usa la interfaz de audio MME de Windows a 16 kHz, un micrófono y audífonos, con bloques de 160 muestras (10 ms) y la latencia ``low'' que \texttt{sounddevice} solicita al dispositivo. El procedimiento consiste en tres ensayos de 60 s de habla continua. En cada ensayo se mide:
 
 \begin{itemize}
-    \item El RTF, como el tiempo de procesamiento de cada bloque dividido por la duración del bloque, promediado sobre el ensayo.
-    \item La latencia estimada, como la suma del retardo del búfer y el retardo algorítmico del procesamiento por tramas.
-    \item Los cortes de audio durante el ensayo.
+\item El RTF, como el tiempo total de procesamiento de los bloques dividido por la duración total del audio del ensayo. Se registran además la mediana, el percentil 99 y el máximo del tiempo de procesamiento por bloque.
+\item La latencia estimada, como la suma de las latencias de entrada y de salida que reporta el dispositivo de audio, la duración de un bloque y el retraso del adaptador.
+\item Los cortes de audio, contados como las veces que el dispositivo reporta que se perdió o faltó audio en la entrada o en la salida.
 \end{itemize}
 
-Como marco de referencia para evaluar la latencia se utiliza la Recomendación G.114 de la \textcite{ituG114}, que establece orientaciones sobre el retardo unidireccional en comunicaciones de voz. Según esta recomendación, cuando el retardo total de extremo a extremo es inferior a 150 ms, la mayoría de las aplicaciones presentan una interactividad prácticamente transparente; asimismo, se establece un límite superior recomendado de 400 ms para la planificación general de redes.
+Como marco de referencia para evaluar la latencia se utiliza la Recomendación UIT-T G.114 \parencite{ituG114}, que establece orientaciones sobre el retardo unidireccional en comunicaciones de voz. Según esta recomendación, cuando el retardo total de extremo a extremo es inferior a 150 ms, la mayoría de las aplicaciones presentan una interactividad prácticamente transparente; asimismo, se establece un límite superior recomendado de 400 ms para la planificación general de redes.
 
 En este trabajo, el valor de 150 ms se usa como referencia para interpretar la latencia estimada del prototipo. Sin embargo, esta medición no representa el retardo total de una llamada telefónica, puesto que no incluye los retardos asociados con la transmisión por la red celular.
 
 \subsection{Consideraciones éticas}\label{sec:3.8}
 
-Como la voz permite identificar a una persona, su tratamiento está protegido por la ley colombiana. La Ley 1581 de 2012 incluye los datos biométricos entre los datos sensibles (artículo 5) y prohíbe tratarlos, salvo excepciones, sin la autorización explícita de su titular (artículo 6) \parencite{ley1581}. Por eso el proyecto se diseñó para no recolectar voces de terceros: la evaluación usa únicamente un corpus público y, en las pruebas del prototipo, solo se usa la voz de la autora. El Protocolo de Datos clasificó el manejo de los datos como \guillemotleft{}Anónimo\guillemotright{}, y el proyecto se clasificó como \guillemotleft{}Sin riesgo\guillemotright{} según el diagrama de autoclasificación del Comité de Ética de la Facultad de Ingeniería.
+Como la voz permite identificar a una persona, su tratamiento está protegido por la ley colombiana. La Ley 1581 de 2012 incluye los datos biométricos entre los datos sensibles (artículo 5) y prohíbe tratarlos, salvo excepciones, sin la autorización explícita de su titular (artículo 6) \parencite{ley1581}. Por eso el proyecto se diseñó para no recolectar voces de terceros: la evaluación usa únicamente un corpus público y, en las pruebas del prototipo, solo se usa la voz de la autora. El Protocolo de Datos clasificó el manejo de los datos como ``Anónimo'', y el proyecto se clasificó como ``Sin riesgo'' según el diagrama de autoclasificación del Comité de Ética de la Facultad de Ingeniería.
 
 En un uso real, el sistema procesaría únicamente la voz del propio usuario, en su dispositivo y mientras habla, sin almacenarla ni enviarla a un servidor externo, y la voz de la otra persona en la llamada no se modificaría. Como el usuario es el titular de su voz y quien decide usar la protección, el tratamiento ocurriría con su autorización. Extender las pruebas a otras personas, en cambio, exigiría su consentimiento informado y una actualización del Protocolo de Datos aprobado.
 
-El diseño también incluye decisiones para proteger al propio sistema. El valor de $\alpha$ de cada sesión no se registra junto al identificador de la sesión, porque si ambos se guardaran juntos, quien accediera a ese registro podría recuperar el coeficiente y usarlo para revertir la transformación.
+El diseño también incluye decisiones para proteger al propio sistema. En un uso real, el valor de $\alpha$ de cada sesión no se registraría junto al identificador de la sesión, porque quien accediera a ese registro podría recuperar el coeficiente y usarlo para revertir la transformación. En este trabajo sí se registran, pero solo en dos casos controlados: en el manifiesto de la evaluación, que corresponde a un corpus público, y en los resultados de las pruebas del prototipo, que usan solo la voz de la autora.
 
 \section{Implementación}\label{sec:4}
 
-\subsection{Entorno, dependencias y organización del software}\label{sec:4.1}
+\subsection{Arquitectura y entorno de ejecución}\label{sec:4.1}
 
-El sistema se implementó en el lenguaje Python, versión 3.12.10, sobre un computador con sistema operativo Windows 11, procesador AMD Ryzen AI 9 HX 370 (2,0 GHz) y 32 GB de memoria RAM. Todo el procesamiento se ejecutó en la CPU, sin GPU, incluidos los modelos de evaluación. Las implicaciones de esta restricción se discuten en la Sección~\ref{sec:3.2}.
+El sistema se organizó en tres componentes con responsabilidades separadas. El core de anonimización (\texttt{mcadams-core}) concentra todo el procesamiento de la señal: la lectura y escritura de audio, el análisis y la resíntesis de cada trama, la transformación de McAdams, la generación del coeficiente por sesión y el procesamiento incremental. Sobre él se construyen dos componentes que lo usan sin modificarlo. El prototipo de escritorio (\texttt{mcadams-app}) captura la voz del micrófono, la pasa por el core y reproduce el resultado en los audífonos. El pipeline de evaluación prepara el corpus, anonimiza las grabaciones por lotes y calcula la EER y la WER. Como los dos componentes llaman al mismo core, el código que se evaluó sobre el corpus es exactamente el que se ejecuta en tiempo real.
 
-El software se organizó en dos paquetes de Python y un conjunto de scripts, administrados con uv, un gestor de paquetes y entornos virtuales para Python. Se eligió uv por dos razones. Permite manejar los paquetes como parte de un mismo proyecto, de modo que los cambios en el core se reflejan de inmediato en el prototipo y en la evaluación. Además, registra en un archivo de bloqueo la versión exacta de cada dependencia, lo que permite reconstruir el entorno con las mismas versiones usadas para obtener los resultados. Las partes del software son las siguientes:
+El core depende únicamente de NumPy, SciPy y \texttt{soundfile}, y el prototipo agrega \texttt{sounddevice} para acceder al micrófono y a los audífonos. Las librerías de aprendizaje profundo que exige la evaluación (PyTorch, SpeechBrain, para el modelo ECAPA-TDNN, y Whisper) se instalaron en un entorno virtual separado. Esta separación es una decisión de diseño y no solo de organización: garantiza que el sistema de anonimización no dependa de ningún modelo entrenado y que funcione con un conjunto mínimo de dependencias, condición necesaria para llevarlo a un celular. Los dos entornos comparten las mismas versiones de NumPy, SciPy y \texttt{soundfile}, de modo que la anonimización produce resultados idénticos en la evaluación y en el prototipo.
 
-\begin{itemize}
-    \item El core de procesamiento (mcadams-core) contiene la lectura y escritura de audio, el análisis y la resíntesis de cada trama, la transformación de McAdams, la generación del coeficiente por sesión y el procesamiento incremental. Sus únicas dependencias son NumPy, SciPy y soundfile.
-    \item El prototipo de escritorio (mcadams-app) depende del core y de sounddevice, una librería que da acceso a los dispositivos de audio a través de PortAudio.
-    \item Los scripts de evaluación construyen el subconjunto de datos, anonimizan por lotes, extraen las representaciones de hablante, calculan la tasa de error igual (EER) y la tasa de error de palabras (WER), y hacen el análisis estadístico.
-\end{itemize}
+El sistema se implementó en Python 3.12.10 y se ejecutó en un computador portátil con Windows 11, procesador AMD Ryzen AI 9 HX 370 (2,0 GHz) y 32 GB de RAM. Todo el procesamiento, incluidos los modelos de evaluación, se ejecutó en la CPU, sin GPU. El entorno del core y del prototipo se administró con uv, y el de evaluación con pip, a partir de un archivo de requisitos con las versiones fijadas. La Tabla~\ref{tab:versiones} reporta las versiones instaladas en ambos entornos, para que puedan reconstruirse.
 
-La evaluación y el prototipo usan el mismo core. Por eso el código que se evaluó con EER y WER es exactamente el que se ejecuta en tiempo real.
-
-El core se implementó solo con NumPy y SciPy, sin la librería librosa que usa la implementación de referencia del VoicePrivacy Challenge 2024.La razon fue que librosa depende de numba, el cual en tiempo de ejecución fue bloqueado por la política de seguridad del sistema operativo del equipo (Control inteligente de aplicaciones de Windows 11)
-
-Se usaron dos entornos virtuales separados. El primero, para el core y el prototipo, contiene solo las librerías necesarias para anonimizar y reproducir audio. El segundo, para la evaluación, agrega las librerías de aprendizaje profundo necesarias para medir privacidad e inteligibilidad, que el sistema de anonimización no requiere:
-
-\begin{itemize}
-    \item PyTorch
-    \item SpeechBrain, del que se usa el modelo de verificación de hablante ECAPA-TDNN.
-    \item Whisper, un modelo de reconocimiento automático del habla, en su variante turbo (large-v3-turbo), ejecutada en CPU.
-    \item num2words, para convertir números a palabras al normalizar las transcripciones.
-\end{itemize}
-
-Separar los entornos evita que el prototipo dependa de librerías pesadas que solo se usan para evaluar. Los dos entornos comparten las versiones de NumPy, SciPy y soundfile, por lo que la anonimización produce los mismos resultados en la evaluación y en el prototipo. La Tabla~\ref{tab:versiones} reporta las versiones exactas de todas las librerías, de modo que los entornos puedan reconstruirse instalando esas versiones.
+A diferencia de la implementación de referencia del VPC 2024, el core no usa la librería \texttt{librosa}. La decisión se tomó cuando la política de seguridad de Windows 11 del equipo bloqueó \texttt{numba}, una librería de la que depende \texttt{librosa}, y se mantuvo para que el core dependa solo de NumPy, SciPy y \texttt{soundfile}. Este cambio afecta la forma en que se estiman los coeficientes LPC, como se explica más adelante.
 
 \begin{table*}[!t]
 \centering
 \caption{Versiones del software utilizado.}
 \label{tab:versiones}
-\small
+\footnotesize
 \renewcommand{\arraystretch}{1.16}
 \setlength{\tabcolsep}{4pt}
 \begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{3cm}>{\raggedright\arraybackslash}p{3.25cm}>{\raggedright\arraybackslash}X}
@@ -448,410 +424,66 @@ NumPy & 2.5.2 & Operaciones con arreglos, polos y raíces de polinomios \\
 \addlinespace[2pt]
 SciPy & 1.18.1 & Ventanas, filtrado, sistemas de Toeplitz y remuestreo \\
 \addlinespace[2pt]
-soundfile & 0.14.0 & Decodificación de MP3 y lectura de audio \\
+\texttt{soundfile} & 0.14.0 & Decodificación de MP3 y lectura de audio \\
 \addlinespace[2pt]
-sounddevice & 0.5.6 & Captura y reproducción de audio en el prototipo \\
+\texttt{sounddevice} & 0.5.6 & Captura y reproducción de audio en el prototipo \\
 \addlinespace[2pt]
 PyTorch & 2.14.1 (CPU) & Ejecución de los modelos de evaluación \\
 \addlinespace[2pt]
 torchaudio & 2.11.0 & Dependencia de SpeechBrain \\
 \addlinespace[2pt]
-SpeechBrain & 1.1.1 & Modelo ECAPA-TDNN para el cálculo del EER \\
+SpeechBrain & 1.1.1 & Modelo ECAPA-TDNN para el cálculo de la EER \\
 \addlinespace[2pt]
-openai-whisper & 20250625 (modelo turbo) & Transcripción para el cálculo del WER \\
+openai-whisper & 20250625 (modelo turbo) & Transcripción para el cálculo de la WER \\
 \addlinespace[2pt]
 num2words & 0.5.14 & Normalización de números en las transcripciones \\
 \addlinespace[2pt]
-pytest & 9.1.1 & Pruebas automatizadas del software \\
+\texttt{pytest} & 9.1.1 & Pruebas automatizadas del software \\
 \bottomrule
 \end{tabularx}
 \end{table*}
 
-El funcionamiento del software se verificó con pruebas automatizadas escritas con pytest, que se describen en la Sección 4.8.
+\subsection{Preparación y normalización del audio}\label{sec:4.2}
 
-\subsection{Preparación del audio: lectura, conversión y escritura}\label{sec:4.2}
+Las grabaciones de Common Voice llegan en formato MP3, con frecuencias de muestreo y número de canales variables, mientras que el core necesita recibir siempre el audio en una única representación. Por eso, antes de anonimizar, cada clip pasa una sola vez por un procedimiento de normalización: se decodifica con \texttt{soundfile}, se convierte a un canal promediando los canales disponibles, se remuestrea a 16 kHz con la función \texttt{resample\_poly} de SciPy, que cambia la frecuencia por un factor racional exacto e incluye un filtro antisolapamiento, y se guarda como WAV PCM de 16 bits. Se trabaja con un solo canal y a 16 kHz porque una llamada transmite un solo canal de voz y porque ese es el formato con el que trabajan los dos modelos de evaluación \parencite{openaiwhisper2025,speechbrainModel}.
 
-El audio llega al sistema en formas distintas. Los clips de Common Voice vienen en formato MP3 y pueden tener distintas frecuencias de muestreo y número de canales. En el prototipo, el audio llega del micrófono. El core de anonimización, en cambio, necesita recibir siempre el audio de la misma manera, para que su comportamiento no dependa del origen de la grabación. Por eso, antes de anonimizar, se definió un formato único de entrada y una forma única de guardar los resultados. Esto implicó cinco decisiones, que se presentan en el orden en que el audio pasa por ellas.
+Convertir los clips una sola vez y trabajar después sobre los WAV tiene dos ventajas. El audio original y el anonimizado quedan en el mismo formato, de modo que lo único que los diferencia es la anonimización. Además, la evaluación no depende de ffmpeg, el programa que Whisper necesita para abrir archivos MP3 por sí mismo \parencite{openaiwhisper2025}, porque los scripts leen los WAV con \texttt{soundfile} y le entregan a Whisper directamente las muestras.
 
-\medskip\noindent\textbf{Decisión 1: convertir cada clip de MP3 a WAV una sola vez, antes de anonimizar}\par
+Dentro del sistema, las muestras se representan como números de punto flotante de precisión doble (\texttt{float64}) entre -1 y 1, la misma escala que usan \texttt{soundfile}, \texttt{sounddevice} y Whisper. La precisión doble responde a una decisión de precisión numérica: el algoritmo calcula en cada trama las raíces de un polinomio de orden 20, un cálculo sensible a los errores de redondeo. No es necesariamente la opción más eficiente para un dispositivo móvil, donde la precisión simple (\texttt{float32}) reduciría la memoria y el tiempo de cálculo; su efecto sobre los resultados no se evaluó. Al guardar un audio, los valores que se salieron del intervalo [-1, 1] durante el procesamiento se recortan al límite más cercano y se convierten a enteros de 16 bits, de modo que los audios originales y los anonimizados se comparan siempre en el mismo formato.
 
-Se decidió decodificar cada clip de Common Voice una sola vez, guardarlo en formato WAV y hacer todo el trabajo posterior sobre esa versión. La razón principal es la compatibilidad con las herramientas que usa el sistema. WAV es un formato que todas las librerías del proyecto pueden leer y escribir sin componentes adicionales: la librería soundfile, con la que se leen los audios, lo lee directamente, y la función de SciPy con la que se guardan solo trabaja con este formato.
+En el prototipo, \texttt{sounddevice} entrega el audio del micrófono en bloques de un canal, a 16 kHz y en precisión simple (\texttt{float32}), con valores entre -1 y 1; antes de iniciar, el prototipo comprueba que el micrófono y los audífonos acepten ese formato. Los bloques no necesitan conversión: el core los pasa a \texttt{float64} al incorporarlos a su búfer.
 
-La evaluación también se ve afectada. Whisper solo puede abrir por sí mismo un archivo de audio si en el equipo está instalado ffmpeg, un programa externo que se encarga de decodificar formatos como MP3 \parencite{openaiwhisper2025}. Al tener los clips en WAV, los scripts de evaluación los leen con soundfile y le entregan a Whisper directamente la lista de muestras, de modo que el sistema no depende de ffmpeg.
+\subsection{Implementación del algoritmo de anonimización}\label{sec:4.3}
 
-Convertir los clips una sola vez tiene además dos ventajas: el audio original y el anonimizado quedan guardados en el mismo formato, de modo que lo único que los diferencia es la anonimización, y no hay que repetir la decodificación del MP3 en cada paso de la evaluación.
+El core aplica trama por trama el método de McAdams descrito en el marco teórico. Cada trama pasa por la misma secuencia de operaciones: ventana, estimación de los coeficientes LPC, cálculo de los polos, transformación de McAdams, extracción de la excitación y resíntesis con el filtro modificado. Después, las tramas se unen para formar la señal anonimizada.
 
-\medskip\noindent\textbf{Decisión 2: representar las muestras como números decimales de precisión doble entre -1 y 1}\par
+La señal se divide en tramas de 20 ms que avanzan 10 ms, es decir, 320 muestras con un avance de 160 a 16 kHz; ambos valores se calculan a partir de la frecuencia de muestreo y coinciden con los de la implementación de referencia del VPC 2024 \parencite{tomashenko2024}. A cada trama se le aplica una ventana de Hann periódica, generada con \texttt{windows.hann} de SciPy. Se usa la versión periódica porque, con un solapamiento del 50 \%, la suma de las ventanas desplazadas es exactamente 1 en todo instante cubierto por dos tramas, lo que permite reconstruir la señal sin ninguna corrección de amplitud. La ventana se aplica una sola vez, antes del análisis.
 
-Una grabación digital es una lista de números, llamados muestras, que indican la posición de la onda sonora en instantes sucesivos. Cada formato guarda esos números en su propia escala: por ejemplo, un WAV de 16 bits usa enteros entre -32 768 y 32 767, y uno de 8 bits, enteros entre 0 y 255. Para que el mismo sonido se represente siempre igual, se decidió convertir todas las muestras a números decimales entre -1 y 1.
+Los coeficientes LPC se estiman con orden p = 20, calculado a partir de la frecuencia de muestreo con la heurística de la Ecuación~\ref{eq:lpcorder}, el mismo orden que usan \textcite{patino2021}. Se usa el método de autocorrelación \parencite{makhoul1975}: se calculan los valores de autocorrelación r[0], \ldots{}, r[p] de la trama con ventana y se resuelve el sistema de Toeplitz resultante con \texttt{solve\_toeplitz} de SciPy, que aplica la recursión de Levinson--Durbin. Esta es la principal diferencia con la implementación de referencia, que obtiene los coeficientes con la función lpc de \texttt{librosa}, basada en el método de Burg. Ambos métodos estiman el mismo filtro, pero sus coeficientes no son idénticos, de modo que no se puede afirmar equivalencia numérica con la referencia; el efecto de esta diferencia sobre la EER y la WER no se cuantificó.
 
-Se usan decimales porque el procesamiento multiplica, filtra y calcula energías, y con enteros habría que redondear en cada paso. La escala está centrada en cero porque el sonido es una vibración alrededor del reposo: así el silencio vale 0 y una trama en silencio tiene energía cero, lo que no ocurriría en una escala de 0 a 1. El límite en 1 corresponde al mayor valor que puede representar cada formato, de modo que el resultado no depende del formato del archivo y la saturación ocurre siempre en el mismo punto. Además, es la escala que usan soundfile y sounddevice, y la misma con la que trabaja Whisper, que al abrir un archivo de 16 bits divide sus muestras entre 32 768 \parencite{openaiwhisper2025}; usar una sola escala evita conversiones entre las partes del sistema. Las muestras se guardan con precisión doble (\texttt{float64}), unas 15 a 16 cifras significativas, porque la anonimización calcula raíces de un polinomio de orden 20 (Sección 4.3), un cálculo en el que pequeños errores de redondeo pueden alterar el resultado.
+Dos condiciones de borde reciben un tratamiento especial en esta etapa. Si la trama es silencio digital, su energía r[0] es prácticamente cero y el sistema de ecuaciones no tiene solución; en ese caso el core devuelve un filtro neutro, que deja la trama sin cambios. En el resto de las tramas, r[0] se multiplica por 1 + $10^{-9}$ antes de resolver el sistema, una corrección mínima que evita que quede mal condicionado. El método de autocorrelación produce, además, un filtro estable, con todos sus polos dentro del círculo unitario.
 
-Los archivos, tanto MP3 como WAV, se leen con la librería soundfile, basada en libsndfile, que identifica el formato de cada archivo y entrega las muestras ya en esta escala y en precisión doble. En este trabajo todos los WAV que se leen son de 16 bits, porque así los escribe el sistema (Decisión 5).
+Los polos se obtienen como las raíces del polinomio de coeficientes, con roots de NumPy. Las raíces reales se dejan sin cambios. A cada raíz compleja con parte imaginaria positiva se le reemplaza el ángulo $\phi$ por $\phi^{\alpha}$, con el $\alpha$ de la sesión, y se conserva su radio (Ecuación~\ref{eq:mcadams}); su raíz conjugada se reemplaza por el conjugado de la raíz transformada, para que el nuevo polinomio tenga coeficientes reales. Como los radios no cambian, los polos siguen dentro del círculo unitario y el filtro modificado también es estable. Los coeficientes modificados se recuperan a partir de las raíces con poly de NumPy, y se descarta la parte imaginaria residual, que solo contiene errores de redondeo.
 
-\medskip\noindent\textbf{Decisión 3: trabajar con un solo canal}\par
+La excitación se obtiene filtrando la trama con el filtro inverso de coeficientes $[1,a_1,\ldots,a_{20}]$, construido con los coeficientes originales. La trama anonimizada se obtiene pasando esa misma excitación por el filtro todo-polo con los coeficientes modificados $[1,a'_1,\ldots,a'_{20}]$. Ambas operaciones se hacen con lfilter de SciPy. Como desplazar los polos cambia la ganancia del filtro, la trama reconstruida puede quedar con más o menos energía que la original, e incluso saturar; por eso, al final, su amplitud se ajusta para que su energía coincida con la de la trama original. Si la energía de alguna de las dos tramas es prácticamente nula ($10^{-12}$ o menos), la trama no se reescala, para no dividir entre cero.
 
-Algunas grabaciones tienen más de un canal; lo más común son dos, izquierdo y derecho. Se decidió que el sistema trabaje siempre con un solo canal (mono). En una llamada telefónica se transmite un solo canal de voz, y el análisis de cada trama que realiza el core (Sección 4.3) se aplica sobre una sola secuencia de muestras. Además, los dos modelos usados en la evaluación trabajan con audio de un canal a 16 kHz: el modelo de verificación de hablante ECAPA-TDNN de SpeechBrain fue entrenado con grabaciones de ese formato \parencite{speechbrainModel}, y Whisper trabaja con audio de un canal a 16 kHz, que es el formato al que convierte cualquier archivo que abre por sí mismo \parencite{openaiwhisper2025}.
+Las tramas anonimizadas se unen mediante overlap-add: cada una se suma a la señal de salida en su posición, de modo que cada instante recibe la contribución de dos tramas. En el interior de la señal, la propiedad de la ventana de Hann periódica garantiza que la amplitud se reconstruye exactamente. En los extremos, en cambio, el primer y el último segmento de 10 ms solo quedan cubiertos por una trama y salen atenuados por la ventana. Si al final de la señal las muestras restantes no completan una trama, se completan con ceros y la salida se recorta después a la longitud original.
 
-Cuando una grabación tiene varios canales, se combinan promediándolos instante por instante: en cada instante, la muestra del canal único es el promedio de las muestras que tienen todos los canales en ese mismo instante. Por ejemplo, si en un instante el canal izquierdo vale 0,4 y el derecho 0,2, el canal único vale (0,4 + 0,2)/2 = 0,3. Con C canales, se suman los C valores y se divide entre C. Se promedia en lugar de conservar un solo canal para no perder la información de los demás, y en lugar de sumar para que el resultado siga entre -1 y 1. Si los canales son iguales, que es lo habitual, el promedio da exactamente la misma señal.
+\subsection{Procesamiento en tiempo real y gestión de sesiones}\label{sec:4.4}
 
-\medskip\noindent\textbf{Decisión 4: trabajar a una frecuencia de muestreo de 16 kHz}\par
+En una llamada, la voz no está disponible completa desde el inicio, sino que llega en bloques sucesivos. Para procesarla de esa forma, el core incluye un procesador incremental que conserva el estado entre un bloque y el siguiente en dos búferes: uno con las muestras que todavía no completan una trama y otro con la parte del overlap-add que aún no puede entregarse, porque le falta la contribución de la trama siguiente. Cada vez que llega un bloque, el procesador forma todas las tramas completas posibles, las anonimiza y entrega las muestras que ya tienen su suma final, en múltiplos del avance de 10 ms. Al terminar la sesión, una operación de cierre completa con ceros el audio pendiente, procesa la última trama y entrega el resto de la señal. Gracias a estos búferes, el resultado no depende del tamaño de los bloques: procesar una grabación completa de una vez o en bloques de cualquier tamaño produce la misma salida.
 
-La frecuencia de muestreo es el número de muestras que se toman por cada segundo de sonido. Se decidió que todo el sistema trabaje a 16 kHz, es decir, 16 000 muestras por segundo. Las razones de este valor se presentan en la Sección~\ref{sec:3.6.1}; además, es la frecuencia con la que trabajan los dos modelos de evaluación, como se indicó en la Decisión 3. Cuando un clip viene grabado con otra frecuencia, se remuestrea como si se hubiera grabado a 16 kHz. Si el clip ya está a 16 kHz, se deja igual.
+Como el procesador debe reunir una trama completa de 20 ms antes de anonimizarla, no entrega audio con cada bloque ni siempre la misma cantidad de muestras. En el prototipo, en cambio, \texttt{sounddevice} exige en cada llamada un bloque de salida del mismo tamaño que el de entrada, de 160 muestras (10 ms). Para cumplirlo, un adaptador guarda la salida del procesador en una cola que empieza con 160 muestras de silencio y entrega siempre un bloque completo a los audífonos. Ese retraso de 10 ms es el mínimo que garantiza que nunca falte audio con bloques de ese tamaño. Sumado a la espera de un bloque, el retardo algorítmico del prototipo es de 20 ms, al que se agregan los búferes de captura y reproducción del dispositivo de audio.
 
-El remuestreo se hace con la función \texttt{resample\_poly} de la librería SciPy. Se eligió porque cambia la frecuencia de muestreo multiplicándola por una fracción exacta y porque incluye el filtrado necesario para que el cambio no introduzca sonidos que no estaban en la grabación. La función recibe tres datos: la señal que se quiere remuestrear (el clip ya convertido a un solo canal), un factor de aumento L y un factor de reducción M. La frecuencia resultante es la original multiplicada por L y dividida entre M.
+Cada sesión tiene un identificador propio, a partir del cual se genera el coeficiente $\alpha$. El identificador se transforma con la función hash \texttt{SHA-256} en un número entero, que se usa como semilla de un generador de números aleatorios (\texttt{PCG64} de NumPy), y con ese generador se elige aleatoriamente $\alpha$ de una distribución uniforme en el intervalo de la sesión. Si los dos extremos del intervalo son iguales, $\alpha$ toma exactamente ese valor, lo que permite evaluar coeficientes fijos con el mismo código. El coeficiente se calcula una sola vez al iniciar la sesión y se mantiene fijo hasta que termina. En el prototipo, cada ejecución representa una llamada: su identificador es un UUID generado aleatoriamente y $\alpha$ se elige aleatoriamente dentro del intervalo por defecto del core, $\mathcal{U}(0.685,0.865)$, de modo que cada llamada recibe un coeficiente distinto. En el pipeline por lotes, el identificador es el nombre del clip, lo que hace que un mismo clip reciba siempre el mismo $\alpha$ y que los experimentos sean reproducibles; el intervalo, o el $\alpha$ fijo, lo define cada configuración del diseño de experimentos. En las pruebas de laboratorio, el identificador y el $\alpha$ se guardan con los resultados para poder analizarlos; un sistema en uso real no los registraría.
 
-En este trabajo se pasa como L la frecuencia deseada, 16 000, y como M la frecuencia original del clip, de modo que el resultado es siempre 16 000 muestras por segundo. Por ejemplo, para un clip grabado a 48 000 muestras por segundo, L = 16 000 y M = 48 000, y la frecuencia resultante es 48 000 × 16 000/48 000 = 16 000. La función simplifica internamente esa fracción antes de remuestrear (en el ejemplo, a 1/3). Los demás parámetros de la función, que controlan el filtrado, se dejaron en sus valores por defecto.
+\subsection{Verificación y pruebas del sistema}\label{sec:4.5}
 
-\medskip\noindent\textbf{Decisión 5: guardar todo el audio como WAV de un canal, 16 bits y 16 kHz}\par
+El software se verificó con pruebas automatizadas escritas con \texttt{pytest}, organizadas por capas según la estrategia de validar cada etapa antes de agregar la siguiente. Las pruebas de identidad comprueban que, con el coeficiente forzado a $\alpha$ = 1.0, cada etapa del core reconstruye la señal de entrada: la división en tramas con su overlap-add, la conversión de coeficientes a polos y de vuelta, la extracción de la excitación con su resíntesis y, finalmente, el procesamiento completo de una grabación. En esta última se descartan los primeros y los últimos 10 ms, donde la ventana atenúa la señal. Como el cálculo de raíces introduce pequeños errores numéricos incluso cuando la transformación no cambia nada, las señales se comparan con una tolerancia de $10^{-6}$.
 
-Se decidió guardar todos los audios del proyecto, tanto los originales convertidos como los anonimizados, en un mismo formato: archivos WAV de un canal, con enteros de 16 bits y a 16 kHz. El formato de 16 bits es el más común para grabaciones de voz, y guardar todo igual garantiza que cualquier comparación entre un audio original y su versión anonimizada se haga en las mismas condiciones.
+Otras pruebas verifican que la ventana de Hann periódica cumple la condición de suma constante con un solapamiento del 50 \%, que una trama de silencio produce el filtro neutro, que el filtro estimado sobre una trama de ruido es estable, que la transformación conserva el radio de los polos y los pares conjugados, y que la salida tiene la misma longitud que la entrada. Para comprobar el procesamiento incremental, su salida con $\alpha$ distinto de 1 se compara con la de una implementación de referencia independiente que procesa toda la señal de una vez; las diferencias deben ser menores que $10^{-10}$, es decir, solo de redondeo. También se verificó que el adaptador del prototipo produce la misma señal que el procesamiento por lotes, retrasada exactamente el número de muestras previsto, incluso con bloques en \texttt{float32} como los que entrega el micrófono. En estas pruebas se comprueba además que la salida sí difiere de la entrada, para descartar que la equivalencia se cumpla porque la anonimización no tuvo efecto. La conversión de MP3 a WAV se verificó con una señal sinusoidal de prueba.
 
-Para guardar un audio se siguen tres pasos. Primero, cualquier valor que se haya salido del intervalo de -1 a 1 durante el procesamiento se recorta al límite más cercano; sin este paso, esos valores se convertirían en ruidos fuertes al guardarse. Segundo, cada muestra se multiplica por 32 767, el mayor valor positivo de un entero de 16 bits, y se redondea al entero más cercano. Tercero, el resultado se escribe con la función de escritura de archivos WAV de SciPy.
-
-\medskip\noindent\textbf{El prototipo en tiempo real}\par
-
-En el prototipo el audio no se lee de archivos: llega del micrófono en bloques pequeños, ya como números decimales entre -1 y 1, de un solo canal y a 16 kHz, es decir, en la misma representación definida en las decisiones 2 a 4. Por eso se procesa directamente, sin conversión. La escritura de archivos solo se usa para guardar la grabación de entrada y la de salida de cada prueba (Sección 4.6).
-
-
-\subsection{Anonimización de una trama}
-\label{sec:4.3}
-
-El core del sistema aplica el método de McAdams siguiendo
-el modelo fuente--filtro descrito en el marco teórico:
-la voz se separa en una excitación, que corresponde a la
-vibración de las cuerdas vocales, y un filtro, que
-corresponde a la forma del tracto vocal. Solo se modifica
-el filtro. Como la voz cambia constantemente, este proceso
-no se aplica a la grabación completa de una vez, sino a
-fragmentos cortos llamados tramas. Para cada trama se
-siguen seis pasos:
-
-\begin{enumerate}
-    \item Extraer la trama.
-    \item Suavizar sus bordes con una ventana.
-    \item Estimar el filtro del tracto vocal.
-    \item Obtener los polos del filtro.
-    \item Desplazar los polos con el coeficiente de McAdams.
-    \item Separar la excitación y reconstruir la trama
-    con el filtro modificado.
-\end{enumerate}
-
-Esta subsección describe las cinco decisiones que definen
-esos pasos. La forma en que las tramas procesadas se unen
-de nuevo en una señal continua se describe en la
-Sección~4.5.
-
-\medskip
-\noindent\textbf{Decisión 1: dividir la señal en tramas
-de 20 ms que avanzan de 10 en 10 ms}
-
-El análisis del tracto vocal supone que, dentro de la trama,
-la voz se mantiene aproximadamente estable, lo que obliga
-a usar fragmentos cortos (véase el marco teórico).
-Se decidió usar tramas de $20\,\mathrm{ms}$ que avanzan
-$10\,\mathrm{ms}$ cada vez, de modo que cada trama comparte
-su segunda mitad con la primera mitad de la siguiente.
-Son los mismos valores de la implementación de referencia
-del método en el VoicePrivacy Challenge 2024
-\parencite{tomashenko2024}, lo que mantiene el sistema
-comparable con ese trabajo.
-
-En número de muestras, la longitud de la trama y su avance
-se calculan como:
-
-\begin{align}
-N &= \operatorname{round}\!\left(
-\frac{f_s\,20}{1000}\right), \\
-H &= \operatorname{round}\!\left(
-\frac{f_s\,10}{1000}\right),
-\end{align}
-
-donde:
-
-\begin{itemize}
-    \item $f_s$ es la frecuencia de muestreo, en muestras
-    por segundo;
-
-    \item $20$ y $10$ son la duración de la trama y su
-    avance, en milisegundos; la división entre $1000$
-    los convierte a segundos;
-
-    \item $N$ es la longitud de la trama, en muestras;
-
-    \item $H$ es el número de muestras que avanza cada
-    trama respecto a la anterior.
-\end{itemize}
-
-A $16\,\mathrm{kHz}$, $N=320$ y $H=160$. Las tramas
-se solapan para que, al unirlas de nuevo (Sección~4.5),
-cada instante de la señal quede cubierto por dos tramas
-y no se produzcan cortes en los límites entre ellas.
-
-\medskip
-\noindent\textbf{Decisión 2: suavizar los bordes de cada
-trama con una ventana de Hann periódica}
-
-Extraer una trama equivale a cortar la señal de forma
-abrupta en sus extremos, y ese corte afectaría la
-estimación del tracto vocal. Para evitarlo, cada muestra
-de la trama se multiplica por una ventana, una curva que
-vale casi cero en los extremos y uno en el centro, de
-modo que la trama empieza y termina suavemente.
-Se usó la ventana de Hann, generada con la función
-\texttt{windows.hann} de SciPy.
-
-Se eligió la versión periódica de la ventana, y no la
-simétrica, porque cuando dos ventanas de Hann periódicas
-se solapan a la mitad, como ocurre con las tramas de la
-Decisión 1, su suma es exactamente $1$ en todos los
-instantes cubiertos por ambas. Gracias a esto, al sumar
-las tramas solapadas se recupera la señal con su amplitud
-original, sin aplicar ninguna corrección adicional en la
-región de solapamiento. Por esa misma razón, la ventana
-se aplica una sola vez, antes del análisis. Esta propiedad
-se verificó con pruebas automatizadas (Sección~4.8).
-
-\medskip
-\noindent\textbf{Decisión 3: estimar el filtro del tracto
-vocal por predicción lineal de orden 20, con el método
-de autocorrelación}
-
-El filtro del tracto vocal se estima con predicción lineal
-(LPC, por sus siglas en inglés), que supone que cada
-muestra de la voz puede aproximarse como una combinación
-de las muestras anteriores. Los pesos de esa combinación,
-llamados coeficientes LPC, describen el filtro.
-El número de muestras anteriores que se usan, llamado
-orden, se calcula con una regla práctica atribuida a
-\textcite{markel1976}:
-
-\begin{equation}
-p = \operatorname{round}\!\left(
-\frac{f_s}{1000}\right)+4,
-\end{equation}
-
-donde:
-
-\begin{itemize}
-    \item $f_s/1000$ es la frecuencia de muestreo
-    expresada en kilohertz;
-
-    \item $p$ es el orden, es decir, el número de muestras
-    anteriores y de coeficientes LPC.
-\end{itemize}
-
-A $16\,\mathrm{kHz}$ da $p=20$, el mismo orden que usan
-\textcite{patino2021} y la implementación de referencia
-del VoicePrivacy Challenge 2024
-\parencite{tomashenko2024}.
-
-Los coeficientes se calculan con el método de
-autocorrelación en dos pasos. Primero se mide qué
-tanto se parece la trama a sí misma cuando se desplaza:
-
-\begin{equation}
-r[k] = \sum_{n=0}^{N-1-k} x[n]x[n+k],
-\quad k=0,1,\ldots,p,
-\end{equation}
-
-donde:
-
-\begin{itemize}
-    \item $x[n]$ es la muestra en la posición $n$ de
-    la trama, ya multiplicada por la ventana;
-
-    \item $k$ es el desplazamiento, en muestras;
-
-    \item la suma recorre todas las posiciones $n$
-    en las que $x[n+k]$ sigue dentro de la trama;
-
-    \item $r[k]$ es la autocorrelación: qué tanto se
-    parece la trama a sí misma desplazada $k$ muestras.
-    El valor $r[0]$ es la energía de la trama.
-\end{itemize}
-
-Después, con los valores $r[0],\ldots,r[p]$ se plantea
-un sistema de $p$ ecuaciones cuya solución son los
-coeficientes. Se resuelve con la función
-\texttt{solve\_toeplitz} de SciPy, que aprovecha la
-estructura particular de este sistema para resolverlo
-de forma directa. El resultado es la lista de coeficientes
-$\mathbf{a}=[1,a_1,\ldots,a_{20}]$.
-
-\medskip
-\noindent\textbf{Decisión 4: modificar solo el ángulo
-de los polos complejos, conservando su radio}
-
-Los polos del filtro, que describen las resonancias
-del tracto vocal (los formantes), son las raíces del
-polinomio que forman los coeficientes LPC. Por eso se
-calculan con la función \texttt{roots} de NumPy, que
-recibe los coeficientes de un polinomio ordenados de
-mayor a menor grado, justamente el orden de los
-coeficientes LPC, y devuelve sus $20$ raíces.
-Cada raíz es un número de la forma $u+vj$, donde $u$
-es su parte real y $v$ su parte imaginaria.
-También puede describirse con dos valores: su ángulo
-$\phi$, entre $0$ y $\pi$ radianes, que indica la
-frecuencia de la resonancia, y su radio $r$, que indica
-qué tan marcada es.
-
-Las raíces se tratan de tres formas:
-
-\begin{itemize}
-    \item \textbf{Reales (parte imaginaria $v=0$).}
-    Su ángulo es $0$ o $\pi$, que corresponde a los
-    extremos del rango de frecuencias y no a una
-    resonancia, por lo que no se modifican.
-
-    \item \textbf{Complejas con parte imaginaria
-    positiva.} A cada una se le cambia el ángulo y
-    se conserva su radio \parencite{patino2021}:
-
-    \begin{equation}
-    \phi' = \phi^{\alpha},
-    \end{equation}
-
-    donde $\phi$ es el ángulo original de la raíz, en
-    radianes; $\alpha$ es el coeficiente de McAdams de
-    la sesión, un número menor que $1$ (Sección~4.4);
-    y $\phi'$ es el nuevo ángulo.
-
-    Como $\alpha<1$, los ángulos menores que $1$ radián
-    aumentan y los mayores disminuyen. La frecuencia
-    que corresponde a $1$ radián es $f_s/(2\pi)$, donde
-    $f_s$ es la frecuencia de muestreo y $2\pi$ es el
-    ángulo de una vuelta completa; a $16\,\mathrm{kHz}$
-    equivale a $16\,000/(2\pi)\approx 2.5\,\mathrm{kHz}$.
-    Así, las resonancias por debajo de esa frecuencia
-    se desplazan hacia arriba y las de encima hacia
-    abajo, como describen \textcite{patino2021}.
-
-    \item \textbf{Complejas con parte imaginaria
-    negativa.} Son los conjugados de las anteriores,
-    su reflejo respecto al eje real. No se les aplica
-    la fórmula: se reconstruyen como el conjugado de
-    la raíz ya transformada, de modo que se desplazan
-    lo mismo en dirección opuesta
-    \parencite{patino2021}. Así el polinomio resultante
-    sigue teniendo coeficientes reales, condición
-    necesaria para que el filtro produzca una señal
-    de audio válida.
-\end{itemize}
-
-Conservar el radio mantiene la estabilidad garantizada
-en la Decisión 3. Finalmente, el nuevo polinomio se
-reconstruye a partir de las raíces transformadas con
-la función \texttt{poly} de NumPy, la operación inversa
-de \texttt{roots}, y se conserva solo su parte real,
-ya que la imaginaria es cero salvo por errores mínimos
-de redondeo. El resultado son los nuevos coeficientes
-$\mathbf{a}'=[1,a'_1,\ldots,a'_{20}]$.
-
-\medskip
-\noindent\textbf{Decisión 5: conservar la excitación
-original y reconstruir la trama con el filtro modificado}
-
-En la predicción lineal, el tracto vocal actúa como un
-filtro que toma la excitación y le agrega las resonancias
-de la voz. Su inverso hace lo contrario: toma la voz y
-le quita esas resonancias, dejando solo la excitación.
-En la práctica, el filtro inverso compara cada muestra
-de la trama con la predicción que se obtiene de las
-$20$ muestras anteriores, y se queda con la diferencia:
-
-\begin{equation}
-\begin{aligned}
-e[n] ={}& x[n]+a_1x[n-1]+a_2x[n-2]\\
-       &+\cdots+a_{20}x[n-20],
-\end{aligned}
-\end{equation}
-
-donde:
-
-\begin{itemize}
-    \item $n$ es la posición de una muestra dentro
-    de la trama, de $0$ a $N-1$;
-
-    \item $x[n]$ es la muestra en la posición $n$ de
-    la trama original, ya multiplicada por la ventana;
-
-    \item $x[n-1],x[n-2],\ldots,x[n-20]$ son las
-    $20$ muestras anteriores a ella;
-
-    \item $a_1,a_2,\ldots,a_{20}$ son los coeficientes
-    LPC de la trama (Decisión 3);
-
-    \item $e[n]$ es el valor de la excitación en la
-    posición $n$.
-\end{itemize}
-
-Lo que el tracto vocal explica, es decir, la parte
-predecible a partir de las muestras anteriores, se
-cancela, y queda lo que no se puede predecir:
-la excitación. Esta no se modifica, porque contiene el
-ritmo y la entonación del habla, que deben conservarse
-para que el mensaje siga siendo inteligible.
-
-Luego se reconstruye la trama pasando esa misma
-excitación por el filtro del tracto vocal, pero con
-los coeficientes modificados:
-
-\begin{equation}
-\begin{aligned}
-y[n] ={}& e[n]-a'_1y[n-1]-a'_2y[n-2]\\
-       &-\cdots-a'_{20}y[n-20],
-\end{aligned}
-\end{equation}
-
-donde:
-
-\begin{itemize}
-    \item $e[n]$ es la excitación obtenida en el
-    paso anterior;
-
-    \item $a'_1,a'_2,\ldots,a'_{20}$ son los
-    coeficientes modificados (Decisión 4);
-
-    \item $y[n]$ es la muestra en la posición $n$
-    de la trama reconstruida, es decir, de la
-    trama anonimizada;
-
-    \item $y[n-1],y[n-2],\ldots,y[n-20]$ son las
-    $20$ muestras reconstruidas anteriores a ella.
-\end{itemize}
-
-Cada muestra reconstruida es la excitación más una
-combinación de las muestras ya reconstruidas, que es
-como el tracto vocal hace resonar el sonido.
-Como los coeficientes ahora son $\mathbf{a}'$, las
-resonancias son las del tracto vocal modificado.
-El resultado es la trama con la entonación original,
-pero con las resonancias de un tracto vocal distinto.
-
-Las dos operaciones se hacen con la función
-\texttt{lfilter} de SciPy, que aplica un filtro a
-una señal y recibe tres datos:
-
-\begin{itemize}
-    \item los pesos que se aplican a las muestras
-    de entrada (el numerador);
-
-    \item los pesos que se aplican a las muestras
-    de salida ya calculadas (el denominador);
-
-    \item la señal.
-\end{itemize}
-
-Para obtener la excitación, el numerador es
-$[1,a_1,\ldots,a_{20}]$ y el denominador es $[1]$,
-de modo que solo intervienen muestras de entrada,
-como en la primera ecuación. Para reconstruir,
-el numerador es $[1]$ y el denominador es
-$[1,a'_1,\ldots,a'_{20}]$, de modo que intervienen
-las muestras ya reconstruidas, como en la segunda
-ecuación.
+En el pipeline por lotes, cada clip se procesa por separado: si un archivo no se puede decodificar, el error se registra y la ejecución continúa. El resultado de cada clip, con su identificador, su $\alpha$ y si se procesó o falló, queda registrado en un manifiesto. El prototipo se probó primero con un stream de audio simulado, que verifica la configuración que recibe el dispositivo y los mensajes ante dispositivos inválidos, y después con los ensayos de habla en vivo descritos en la metodología. En cada ensayo se guardan la entrada y la salida, el tiempo de procesamiento de cada bloque y el número de cortes que reporta el dispositivo de audio.
 
 \section{Resultados}\label{sec:5}
 
@@ -859,13 +491,13 @@ ecuación.
 
 \section*{Tabla de acrónimos}
 
-\begin{table*}[!t]
+\begin{center}
+\begin{minipage}{\columnwidth}
 \centering
-\label{tab:acronimos}
-\small
+\footnotesize
 \renewcommand{\arraystretch}{1.16}
 \setlength{\tabcolsep}{4pt}
-\begin{tabularx}{\textwidth}{>{\raggedright\arraybackslash}p{3.0cm}>{\raggedright\arraybackslash}X}
+\begin{tabularx}{\columnwidth}{>{\raggedright\arraybackslash}p{2.1cm}>{\raggedright\arraybackslash}X}
 \toprule
 \textbf{Acrónimo} & \textbf{Significado} \\
 \midrule
@@ -904,7 +536,8 @@ WER & Tasa de error de palabras (Word Error Rate) \\
 ZEBRA & Zero Evidence Biometric Recognition Assessment \\
 \bottomrule
 \end{tabularx}
-\end{table*}
+\end{minipage}
+\end{center}
 
 \begin{thebibliography}{99}
 \bibitem[Patino et~al.(2021)]{patino2021}
@@ -925,12 +558,6 @@ N. Kuzmin, S. Liu, K. A. Lee, and E. S. Chng, "Stream-Voice-Anon: Enhancing util
 \bibitem[Markel y Gray(1976)]{markel1976}
 J. D. Markel and A. H. Gray Jr., Linear Prediction of Speech. Berlin, Heidelberg: Springer, 1976. doi: 10.1007/978-3-642-66286-7.
 
-\bibitem[Tayebi Arasteh et~al.(2024)]{tayebi2024}
-S. Tayebi Arasteh, T. Arias-Vergara, P. A. Pérez-Toro, T. Weise, K. Packhäuser, M. Schuster, E. Nöth, A. Maier, and S. H. Yang, "Addressing challenges in speaker anonymization to maintain utility while ensuring privacy of pathological speech," Communications Medicine, vol. 4, Art. 182, 2024. doi: 10.1038/s43856-024-00609-5.
-
-\bibitem[Ardila et~al.(2020)]{ardila2020}
-R. Ardila, M. Branson, K. Davis, M. Kohler, J. Meyer, M. Henretty, R. Morais, L. Saunders, F. Tyers, and G. Weber, "Common Voice: A massively-multilingual speech corpus," Proceedings of the Twelfth Language Resources and Evaluation Conference, pp. 4218--4222, 2020. \url{https://aclanthology.org/2020.lrec-1.520/}
-
 \bibitem[ACIS(2026)]{acis2026}
 ACIS, "Colombianos recibieron más de 16.630 millones de llamadas spam durante 2025," 9 de febrero de 2026. \url{https://www.acis.org.co/blog/noticias-2/colombianos-recibieron-mas-de-16-630-millones-de-llamadas-spam-durante-2025-6036}
 
@@ -943,12 +570,6 @@ Group-IB, The Voice of Fraud: Deepfake Vishing and the New Age of Social Enginee
 \bibitem[TransUnion Colombia(2025)]{transunion2025}
 TransUnion Colombia, "27\,\% de los intentos de fraude digital en Colombia son a través de llamadas telefónicas," 22 de abril de 2025. \url{https://noticias.transunion.co/27-de-los-intentos-de-fraude-digital-en-colombia-son-a-traves-de-llamadas-telefonicas/}
 
-\bibitem[Desplanques et~al.(2020)]{desplanques2020}
-B. Desplanques, J. Thienpondt, and K. Demuynck, "ECAPA-TDNN: Emphasized channel attention, propagation and aggregation in TDNN based speaker verification," Proceedings of Interspeech 2020, pp. 3830--3834, 2020. doi: 10.21437/Interspeech.2020-2650.
-
-\bibitem[Radford et~al.(2023)]{radford2023}
-A. Radford, J. W. Kim, T. Xu, G. Brockman, C. McLeavey, and I. Sutskever, "Robust speech recognition via large-scale weak supervision," Proceedings of the 40th International Conference on Machine Learning, PMLR, vol. 202, pp. 28492--28518, 2023. \url{https://proceedings.mlr.press/v202/radford23a.html}
-
 \bibitem[Unión Internacional de Telecomunicaciones(2003)]{ituG114}
 Unión Internacional de Telecomunicaciones, Tiempo de transmisión en un sentido, Recomendación UIT-T G.114 (05/2003). Ginebra, Suiza: UIT, 2003. \url{https://www.itu.int/rec/T-REC-G.114/es}
 
@@ -960,6 +581,9 @@ SpeechBrain, speechbrain/spkrec-ecapa-voxceleb [Model card]. Hugging Face, s. f.
 
 \bibitem[Congreso de la República de Colombia(2012)]{ley1581}
 Congreso de la República de Colombia, Ley Estatutaria 1581 de 2012, por la cual se dictan disposiciones generales para la protección de datos personales. Diario Oficial No. 48.587, 18 de octubre de 2012.
+
+\bibitem[Makhoul(1975)]{makhoul1975}
+J. Makhoul, "Linear prediction: A tutorial review," \textit{Proceedings of the IEEE}, vol. 63, no. 4, pp. 561--580, 1975. doi: 10.1109/PROC.1975.9792.
 
 \end{thebibliography}
 \end{document}
