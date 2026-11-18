@@ -141,7 +141,11 @@ Al pasar por el tracto vocal, la excitación se transforma: el tubo refuerza alg
 
 \subsubsection{Codificación predictiva lineal (LPC)}\label{sec:2.6.3}
 
-Para modificar los formantes sin tocar la excitación, primero hay que separarlos, y para eso se usa la codificación predictiva lineal (LPC, Linear Predictive Coding). La idea de la LPC es que cada muestra de una señal de voz se puede predecir bastante bien como una combinación de las p muestras anteriores: $\hat{s}[n] = a_1 s[n-1] + a_2 s[n-2] + \cdots + a_p s[n-p]$. Los pesos $a_1,\ldots,a_p$ se llaman coeficientes LPC y se eligen para que el error de predicción sea el menor posible. Esos coeficientes describen el filtro, es decir, la forma del tracto vocal, mientras que lo que la predicción no logra explicar, el error $s[n]-\hat{s}[n]$, se llama residuo de predicción y corresponde a la excitación.
+Para modificar los formantes sin tocar la excitación, primero hay que separarlos, y para eso se usa la codificación predictiva lineal (LPC, Linear Predictive Coding). La idea de la LPC es que cada muestra de una señal de voz se puede predecir bastante bien como una combinación lineal de las p muestras anteriores \parencite{makhoul1975}:
+\[
+\hat{s}[n] = -\left(a_1 s[n-1] + a_2 s[n-2] + \cdots + a_p s[n-p]\right).
+\]
+con ella, el filtro inverso tiene coeficientes $[1, a_1, \ldots, a_p]$. Los pesos $a_1,\ldots,a_p$ se llaman coeficientes LPC y se eligen para que el error de predicción sea el menor posible. Esos coeficientes describen el filtro, es decir, la forma del tracto vocal, mientras que lo que la predicción no logra explicar, el error $s[n]-\hat{s}[n]$, se llama residuo de predicción y corresponde a la excitación.
 
 La LPC representa el tracto vocal como un filtro todo-polo de orden p, es decir, un filtro que solo puede reforzar frecuencias, formando picos, y no tiene componentes que las anulen. Los polos son las raíces del polinomio que forman los coeficientes. Los polos complejos aparecen en pares, y cada par cercano al círculo unitario corresponde a un formante: el ángulo del polo indica la frecuencia del formante y el radio indica qué tan marcado es. Gracias a esta relación, mover el ángulo de los polos equivale a mover los formantes.
 
@@ -309,7 +313,7 @@ Con el sistema implementado, el siguiente paso fue definir cómo evaluarlo: sobr
 
 \subsubsection{Datos y muestreo}\label{sec:3.6.1}
 
-La evaluación utiliza grabaciones en español del corpus público Mozilla Common Voice. Para construir el conjunto de evaluación se seleccionaron únicamente los clips incluidos en el archivo \texttt{validated.tsv}, es decir, grabaciones revisadas y aceptadas por la comunidad. Los términos de uso del corpus solicitan no intentar determinar la identidad real de los hablantes; en este trabajo, las comparaciones se realizan únicamente entre grabaciones del propio corpus para medir el efecto de la anonimización, sin vincularlas con identidades reales.
+La evaluación utiliza grabaciones en español del corpus público Mozilla Common Voice 26.0. Para construir el conjunto de evaluación se seleccionaron únicamente los clips incluidos en el archivo \texttt{validated.tsv}, es decir, grabaciones revisadas y aceptadas por la comunidad. Los términos de uso del corpus solicitan no intentar determinar la identidad real de los hablantes; en este trabajo, las comparaciones se realizan únicamente entre grabaciones del propio corpus para medir el efecto de la anonimización, sin vincularlas con identidades reales.
 
 Sobre el corpus se aplicaron dos filtros: cada clip debía durar al menos 3000 ms y cada hablante debía tener al menos 5 clips. Luego se hizo un muestreo estratificado por acento autorreportado, con semilla 42, K = 134 hablantes por estrato y N = 5 clips por hablante. El valor de K está limitado por el estrato más pequeño, de modo que todos los grupos de acento tengan el mismo peso. La muestra final tiene 1 340 hablantes y 6 700 clips; de los cinco clips de cada hablante, tres se usan para la inscripción del ASV y dos para las pruebas.
 
