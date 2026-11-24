@@ -247,7 +247,7 @@ Opciones:
   barrido.
 
 **Análisis.** Estos scripts solo leen resultados ya generados. Todos aceptan
-`[--data-dir ..\Datos]`. Los tres primeros aceptan además los parámetros de
+`[--data-dir ..\Datos]`. Los cuatro primeros aceptan además los parámetros de
 bootstrap de los pasos anteriores (`--seed`, `--n-enroll`, `--n-trial`,
 `--n-boot`, `--boot-seed`, `--level`); `group_analysis.py` y
 `alpha_differences.py` también aceptan `--max-far`.
@@ -256,6 +256,8 @@ bootstrap de los pasos anteriores (`--seed`, `--n-enroll`, `--n-trial`,
 |---|---|---|
 | `range_comparison.py` | `& $py scripts\range_comparison.py` | Compara los 9 rangos uniformes con U(0.7, 0.9). Escribe en `<data-dir>\rangos` y `<data-dir>\figuras\rangos`. Opciones: `--output-dir`, `--figures-dir`, `--tags`, `--reference u07_09`. |
 | `group_analysis.py` | `& $py scripts\group_analysis.py --group-by stratum` | `--group-by` es `stratum`, `gender` o `all`. Escribe en `<data-dir>\por_grupo` y `<data-dir>\figuras\por_grupo`. Opciones: `--only-gender`, `--configs`, `--n-perm 5000`, `--perm-seed 2026`, `--figures-only`. |
+| `group_results.py` | `& $py scripts\group_results.py` | EER o-o/o-a/a-a y WER por acento y por género de un intervalo (`--tag`, por defecto `u0685_0865`): IC por bootstrap estratificado por acento (las réplicas de `eer_bootstrap.py`), diferencia masculino − femenino y permutación por acento (máximo − mínimo entre los 9 acentos). Escribe `resumen_grupos.csv`, `pruebas_grupos.csv` y `replicas_grupos.npz` en `<data-dir>\por_grupo_<tag>`, y `res_grupos.pdf`/`.png` (EER o-a y WER anonimizada, para `figure*`; con el rombo de América Central si existe `sensibilidad_wer.csv`) más su bloque en `figuras_resultados.tex`, en `<data-dir>\figuras\resultados`. Después de correr `figuras_resultados.py`, que reescribe ese `.tex`, hay que volver a correr este script con `--figures-only`. Opciones: `--n-perm 1000`, `--perm-seed 2026`, `--validated`, `--figures-only`. |
+| `wer_sensitivity.py` | `& $py scripts\wer_sensitivity.py` | WER por acento con y sin las transcripciones anonimizadas con más del doble de palabras que su referencia, con las mismas semillas que `group_results.py`. Escribe `<data-dir>\por_grupo_<tag>\sensibilidad_wer.csv`. |
 | `alpha_differences.py` | `& $py scripts\alpha_differences.py` | Diferencias pareadas entre α vecinos del barrido. Escribe `<data-dir>\barrido_alfa_diferencias.tsv`. Opciones: `--output`, `--tags`. |
 | `plot_alpha_sweep.py` | `& $py scripts\plot_alpha_sweep.py` | Escribe `<data-dir>\barrido_alfa_resumen.tsv`, `<data-dir>\figuras\barrido_alfa.pdf` y `barrido_alfa_zoom.pdf`. Opciones: `--tags`, `--anon-root`, `--output-dir`, `--dataset-tag k134`, `--whisper-model turbo`, `--summary`, `--figure`, `--zoom-figure`. |
 

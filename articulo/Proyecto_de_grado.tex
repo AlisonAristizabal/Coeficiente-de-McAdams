@@ -3,32 +3,99 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[spanish,es-noshorthands]{babel}
-\addto\captionsspanish{\renewcommand{\tablename}{Tabla}}
-\addto\captionsspanish{\renewcommand{\refname}{Referencias}}
+\spanishplainpercent
+
+\addto\captionsspanish{
+    \renewcommand{\tablename}{Tabla}
+}
+\addto\captionsspanish{
+    \renewcommand{\refname}{Referencias}
+}
+
+% Tipografía y matemáticas
 \usepackage{newtxtext,newtxmath}
 \usepackage{amsmath}
-\usepackage{graphicx}
 \usepackage{microtype}
-\usepackage[letterpaper,margin=2.1cm,columnsep=0.8cm]{geometry}
+
+% Imágenes y control de ubicación
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{placeins}
+\usepackage{dblfloatfix}
+% Permite agrupar tablas y figuras de dos columnas sin páginas vacías.
+\setcounter{dbltopnumber}{3}
+\renewcommand{\dbltopfraction}{0.98}
+\renewcommand{\dblfloatpagefraction}{0.8}
+\renewcommand{\textfraction}{0.05}
+\renewcommand{\topfraction}{0.94}
+\renewcommand{\floatpagefraction}{0.8}
+
+% Página y columnas
+\usepackage[
+    letterpaper,
+    margin=2.1cm,
+    columnsep=0.8cm
+]{geometry}
+
+% Títulos y tablas
 \usepackage{titlesec}
 \usepackage{booktabs,tabularx,array}
 \usepackage{enumitem}
+
+% Referencias bibliográficas
 \usepackage{xurl}
 \usepackage[authoryear,round]{natbib}
 \newcommand{\textcite}[1]{\citet{#1}}
 \newcommand{\parencite}[1]{\citep{#1}}
-\usepackage[hidelinks]{hyperref}
-\setlist[itemize]{leftmargin=1.3em,itemsep=2pt,topsep=3pt}
+
+% Hipervínculos
+\usepackage[hidelinks,bookmarks=false]{hyperref}
+
+% Formato de párrafos
+\setlist[itemize]{
+    leftmargin=1.3em,
+    itemsep=2pt,
+    topsep=3pt
+}
+
 \setlength{\parindent}{1.2em}
 \setlength{\parskip}{0pt}
 \emergencystretch=2em
 \raggedbottom
-\titleformat{\section}{\Large\bfseries}{\thesection}{0.6em}{}
-\titleformat{\subsection}{\large\bfseries\itshape}{\thesubsection}{0.6em}{}
-\titleformat{\subsubsection}{\normalsize\bfseries}{\thesubsubsection}{0.6em}{}
-\titlespacing*{\section}{0pt}{1.5ex plus .5ex}{0.9ex}
-\titlespacing*{\subsection}{0pt}{1.3ex plus .4ex}{0.75ex}
-\titlespacing*{\subsubsection}{0pt}{1.1ex plus .3ex}{0.5ex}
+% Permitir que el texto continúe mientras las figuras se colocan en espacios disponibles
+\renewcommand{\topfraction}{0.92}
+\renewcommand{\bottomfraction}{0.85}
+\renewcommand{\textfraction}{0.05}
+\renewcommand{\floatpagefraction}{0.65}
+\renewcommand{\dbltopfraction}{0.90}
+\renewcommand{\dblfloatpagefraction}{0.65}
+\setlength{\textfloatsep}{9pt plus 2pt minus 2pt}
+\setlength{\floatsep}{8pt plus 2pt minus 2pt}
+\setlength{\dbltextfloatsep}{10pt plus 2pt minus 2pt}
+
+
+% Formato de títulos
+\titleformat{\section}
+    {\Large\bfseries}
+    {\thesection}{0.6em}{}
+
+\titleformat{\subsection}
+    {\large\bfseries\itshape}
+    {\thesubsection}{0.6em}{}
+
+\titleformat{\subsubsection}
+    {\normalsize\bfseries}
+    {\thesubsubsection}{0.6em}{}
+
+\titlespacing*{\section}
+    {0pt}{1.5ex plus .5ex}{0.9ex}
+
+\titlespacing*{\subsection}
+    {0pt}{1.3ex plus .4ex}{0.75ex}
+
+\titlespacing*{\subsubsection}
+    {0pt}{1.1ex plus .3ex}{0.5ex}
+
 
 \begin{document}
 \twocolumn[
@@ -43,10 +110,26 @@
 {\small $^{1}$ Departamento de Ingeniería Industrial, Universidad de los Andes\par
 $^{2}$ Departamento de Ingeniería de Sistemas y Computación, Universidad de los Andes\par}
 \vspace{8pt}\rule{\textwidth}{0.4pt}\vspace{5pt}
+
+
 \noindent\textbf{Abstract}\par
-\vspace{6pt}\noindent\textbf{Index Terms:}\par
-\vspace{9pt}\noindent\textbf{Resumen}\par
-\vspace{6pt}\noindent\textbf{Palabras clave:}\par
+\vspace{4pt}
+
+\noindent Answering a call from an unknown number can expose fragments of a person's voice that could later be used to identify or impersonate them. This work designed and evaluated a prototype that anonymizes the voice in real time with the McAdams coefficient, a transformation that shifts the formants using a linear predictive coding model and needs no training. Audio is processed in $10\,\mathrm{ms}$ blocks, and the coefficient $\alpha$ is drawn at random from an interval for each session. The evaluation used 1,340 speakers from the Spanish Common Voice corpus, stratified by accent: privacy was measured with the EER of an ECAPA-TDNN speaker verification system, intelligibility with the WER of Whisper, and real-time performance with the RTF. Fixed values of $\alpha$ and nine uniform intervals were tested. With the selected interval, $\mathcal{U}(0.685,0.865)$, the EER against an attacker who compares the anonymized voice with original recordings rose from $1.72\,\%$ to $17.24\,\%$; when the attacker also anonymizes their own recordings, it was $9.33\,\%$. The WER was $12.04\,\%$, the RTF ranged from $0.067$ to $0.069$, and the system adds $20\,\mathrm{ms}$ of the $140\,\mathrm{ms}$ estimated latency. Results were consistent across accents and genders. The system meets the intelligibility and real-time targets, but not the privacy target ($\mathrm{EER}\geq 30\,\%$). Below $\alpha=0.65$ the content can no longer be understood, and above $0.875$ the voice is barely protected. The McAdams coefficient is therefore a lightweight first barrier, but it is not enough against an attacker who knows the system.
+
+\vspace{5pt}
+\noindent\textbf{Index Terms:} voice anonymization, McAdams coefficient, voice privacy, real-time processing, automatic speaker verification, vishing.\par
+
+\vspace{10pt}
+\noindent\textbf{Resumen}\par
+\vspace{4pt}
+
+\noindent Al contestar una llamada de un número desconocido, una persona puede exponer fragmentos de su voz que después podrían usarse para identificarla o suplantarla. Este trabajo diseñó y evaluó un prototipo que anonimiza la voz en tiempo real con el coeficiente de McAdams, una transformación que desplaza los formantes a partir de un modelo de codificación predictiva lineal y no necesita entrenamiento. El audio se procesa en bloques de $10\,\mathrm{ms}$, y en cada sesión el coeficiente $\alpha$ se elige aleatoriamente dentro de un intervalo. Para evaluarlo se usaron 1\,340 hablantes de Common Voice en español, estratificados por acento: la privacidad se midió con la EER de un verificador ECAPA-TDNN, la inteligibilidad con la WER de Whisper y el tiempo real con el RTF. Se probaron valores fijos de $\alpha$ y nueve intervalos uniformes. Con el intervalo elegido, $\mathcal{U}(0.685,0.865)$, la EER frente a un atacante que compara la voz anonimizada con grabaciones originales subió de $1.72\,\%$ a $17.24\,\%$; si el atacante también anonimiza sus grabaciones, fue de $9.33\,\%$. La WER fue de $12.04\,\%$ y el RTF, de $0.067$ a $0.069$, y el sistema aporta $20\,\mathrm{ms}$ de los $140\,\mathrm{ms}$ de latencia estimada. Los resultados fueron parejos entre acentos y géneros. El sistema cumple las metas de inteligibilidad y de tiempo real, pero no la de privacidad ($\mathrm{EER}\geq 30\,\%$). Por debajo de $\alpha=0.65$ el contenido deja de entenderse, y por encima de $0.875$ la voz casi no se protege. El coeficiente de McAdams es, entonces, una primera barrera liviana, pero no basta frente a un atacante que conozca el sistema.
+
+\vspace{5pt}
+\noindent\textbf{Palabras clave:} anonimización de voz, coeficiente de McAdams, privacidad de la voz, procesamiento en tiempo real, verificación automática de locutor, vishing.\par
+
+
 \vspace{6pt}\rule{\textwidth}{0.4pt}\vspace{8pt}
 \end{@twocolumnfalse}
 ]
@@ -63,9 +146,9 @@ Para ello, se diseña y evalúa un sistema de anonimización de voz en tiempo re
 
 El sistema se desarrolló en dos componentes que comparten el mismo core de anonimización. El primero es un pipeline por lotes, es decir, una secuencia de pasos automatizados que toma todas las grabaciones de un corpus, las anonimiza y calcula las métricas de evaluación. El segundo es un prototipo en tiempo real, una aplicación de escritorio que anonimiza la voz captada por el micrófono mientras la persona habla. Este prototipo representa el componente que, dentro de un teléfono, transformaría la voz antes de enviarla en la llamada. Sin embargo, el sistema no se llevó a un teléfono: funciona en un computador portátil, y su costo en tiempo y recursos se midió en ese equipo, con valores que permiten esperar un buen desempeño también en un celular.
 
-Para saber si el sistema cumple su propósito se usan tres métricas, cada una ligada a una parte del problema. La privacidad se mide con la tasa de error (EER, Equal Error Rate) de un sistema de verificación automática de locutor (ASV, Automatic Speaker Verification), que hace el papel de un atacante que intenta reconocer al hablante. La inteligibilidad se mide con la tasa de error de palabras (WER, Word Error Rate) de un sistema de reconocimiento automático de habla (ASR, Automatic Speech Recognition), que comprueba si el contenido se sigue entendiendo. Por último, el factor de tiempo real (RTF, Real-Time Factor) indica si el procesamiento es lo bastante rápido para una conversación.
+Para saber si el sistema cumple su propósito se usan tres métricas, cada una ligada a una parte del problema. La privacidad se mide con la tasa de error igual (EER, Equal Error Rate) de un sistema de verificación automática de locutor (ASV, Automatic Speaker Verification), que hace el papel de un atacante que intenta reconocer al hablante. La inteligibilidad se mide con la tasa de error de palabras (WER, Word Error Rate) de un sistema de reconocimiento automático de habla (ASR, Automatic Speech Recognition), que comprueba si el contenido se sigue entendiendo. Por último, el factor de tiempo real (RTF, Real-Time Factor) indica si el procesamiento es lo suficientemente rápido para una conversación.
 
-Con estas métricas, el trabajo es principalmente una evaluación del coeficiente de McAdams y de sus límites. Se busca establecer hasta qué valor del coeficiente la voz se sigue entendiendo y mantiene su privacidad, a partir de qué punto se pierde alguna de las dos, y qué intervalos del coeficiente ofrecen un buen equilibrio entre ambas.
+Con estas métricas, este trabajo evalúa el coeficiente de McAdams y de sus límites. Se busca establecer hasta qué valor del coeficiente la voz se sigue entendiendo y mantiene su privacidad, a partir de qué punto se pierde alguna de las dos, y qué intervalos del coeficiente ofrecen un buen equilibrio entre ambas.
 
 Con estos elementos, la pregunta de investigación que orienta el trabajo es: ¿en qué medida un sistema de anonimización de voz en tiempo real, activado automáticamente ante llamadas de números desconocidos, protege la identidad vocal de usuarios de telefonía móvil en Colombia sin comprometer la inteligibilidad de la comunicación?
 
@@ -75,7 +158,7 @@ El proyecto responde a un riesgo concreto: la exposición de la identidad vocal 
 
 El valor agregado del proyecto está en atender el problema en el momento en que ocurre la exposición. En lugar de limitarse a identificar números potencialmente fraudulentos, se estudia si es viable transformar la voz antes de que llegue al interlocutor, de modo que se reduzca la información sobre la identidad del hablante y se conserve el contenido de la conversación. Esto plantea un problema de ingeniería en el que hay que equilibrar al mismo tiempo la privacidad, la inteligibilidad y el desempeño computacional.
 
-Además, el proyecto aporta evidencia sobre anonimización de voz en español. Los trabajos más cercanos se evaluaron en inglés o en escenarios distintos al de este proyecto, de modo que este trabajo ofrece datos sobre cómo se comporta una técnica de procesamiento de señal de bajo costo computacional en un contexto de interés para los usuarios de telefonía móvil en Colombia.
+Además, el proyecto aporta evidencia sobre anonimización de voz en español. Los trabajos más cercanos se evaluaron en inglés o en escenarios distintos al de este proyecto, de modo que este trabajo ofrece información sobre cómo se comporta una técnica de procesamiento de señal de bajo costo computacional en un contexto de interés para los usuarios de telefonía móvil en Colombia.
 
 \section{Marco teórico}\label{sec:2}
 
@@ -95,7 +178,7 @@ Anonimizar la voz consiste en modificar una señal de habla para reducir la capa
 
 Para saber si una anonimización protege la identidad, hace falta medir qué tan fácil es reconocer al hablante después de aplicarla. Esa medición se hace con un sistema de verificación automática de locutor (ASV), que decide si dos grabaciones pertenecen a la misma persona. Como explican \textcite{deng2023}, el proceso tiene dos etapas. En la inscripción (enrollment), el sistema recibe grabaciones de un hablante y construye una representación de su voz. En la prueba (trial), recibe una grabación nueva, la compara con esa representación y obtiene una puntuación de similitud; si la puntuación supera un umbral, el sistema acepta que se trata de la misma persona.
 
-Con cualquier umbral, el sistema puede equivocarse de dos maneras. La tasa de falsa aceptación (FAR, False Acceptance Rate) es la proporción de comparaciones entre personas distintas que el sistema acepta como la misma persona, y la tasa de falso rechazo (FRR, False Rejection Rate) es la proporción de comparaciones de una misma persona que el sistema rechaza. Al subir el umbral, la FAR baja y la FRR sube; al bajarlo, ocurre lo contrario. La EER es el valor en el que ambas tasas son iguales (Ecuación~\ref{eq:eer}):
+Con cualquier umbral, el sistema puede equivocarse de dos maneras. La tasa de falsa aceptación (FAR, False Acceptance Rate) es la proporción de comparaciones entre personas distintas que el sistema acepta como la misma persona, y la tasa de falso rechazo (FRR, False Rejection Rate) es la proporción de comparaciones de una misma persona que el sistema rechaza. Al subir el umbral, la FAR baja y la FRR sube; al bajarlo, ocurre lo contrario. La tasa de error igual (EER, Equal Error Rate) es el valor que toman la FAR y la FRR en el umbral en el que ambas coinciden
 
 \begin{equation}\label{eq:eer}
 \mathrm{FAR} = \mathrm{FRR}
@@ -103,19 +186,19 @@ Con cualquier umbral, el sistema puede equivocarse de dos maneras. La tasa de fa
 
 \noindent Una EER cercana a 0 \% indica que el sistema reconoce bien a los hablantes, mientras que una EER cercana a 50 \% indica que acierta como si decidiera al azar.
 
-Cuando el ASV recibe grabaciones anonimizadas, cumple el papel de un atacante que intenta reconocer al hablante. Si la EER es alta, ese atacante se equivoca con frecuencia; por eso, al evaluar una anonimización, una EER más alta significa más privacidad. En este trabajo ese papel lo cumple el modelo preentrenado ECAPA-TDNN (Emphasized Channel Attention, Propagation and Aggregation in Time Delay Neural Network) que se usa sin modificaciones.
+Cuando el ASV recibe grabaciones anonimizadas, cumple el papel de un atacante que intenta reconocer al hablante. Si la EER es alta, ese atacante se equivoca con frecuencia; por eso, al evaluar una anonimización, una EER más alta significa más privacidad. En este trabajo ese papel lo cumple el modelo preentrenado ECAPA-TDNN (Emphasized Channel Attention, Propagation and Aggregation in Time Delay Neural Network; \citealp{desplanques2020,speechbrainModel}), que se usa sin modificaciones.
 
 \subsection{Reconocimiento automático de habla (ASR) y WER}\label{sec:2.4}
 
-Proteger la identidad es solo la mitad del problema, porque la voz anonimizada también debe seguir entendiéndose. Para medirlo se usa un sistema de reconocimiento automático de habla (ASR), que transcribe el contenido de una grabación sin importar quién habla. Siguiendo la definición que usan \textcite{deng2023}, la inteligibilidad se evalúa con la tasa de error de palabras (WER) (Ecuación~\ref{eq:wer}):
+Proteger la identidad es solo la mitad del problema, porque la voz anonimizada también debe seguir entendiéndose. Para medirlo se usa un sistema de reconocimiento automático de habla (ASR), que transcribe el contenido de una grabación sin importar quién habla. Siguiendo la definición que usan \textcite{deng2023}, la inteligibilidad se evalúa con la tasa de error de palabras (WER)
 
 \begin{equation}\label{eq:wer}
-\mathrm{WER} = \frac{N_{\mathrm{sust}} + N_{\mathrm{elim}} + N_{\mathrm{ins}}}{N_{\mathrm{ref}}}
+\mathrm{WER} = \frac{N_{\mathrm{sust}} + N_{\mathrm{elim}} + N_{\mathrm{ins}}}{N_{\mathrm{ref}}},
 \end{equation}
 
 \noindent donde N\_sust, N\_elim y N\_ins son el número de palabras sustituidas, eliminadas e insertadas respecto a la transcripción de referencia, y N\_ref es el número de palabras de esa referencia. Una WER más baja indica que el contenido se conserva mejor. Como las inserciones también cuentan como errores, la WER puede superar el 100 \% cuando el ASR agrega muchas palabras que no se dijeron.
 
-Al comparar la WER de las grabaciones originales con la de las anonimizadas se puede saber cuánto contenido se pierde con la anonimización: si la WER aumenta poco, el mensaje se conserva. Para transcribir se usa el modelo preentrenado Whisper, en su versión turbo también sin modificaciones.
+Al comparar la WER de las grabaciones originales con la de las anonimizadas se puede saber cuánto contenido se pierde con la anonimización: si la WER aumenta poco, el mensaje se conserva. Para transcribir se usa el modelo preentrenado Whisper \parencite{radford2023,openaiwhisper2025}, en su versión turbo, también sin modificaciones.
 
 \subsection{Modelos de atacante}\label{sec:2.5}
 
@@ -129,7 +212,7 @@ A estos escenarios se suma el o--o (original--original), en el que no hay anonim
 
 \subsection{Modelo fuente--filtro y codificación predictiva lineal (LPC)}\label{sec:2.6}
 
-Para entender cómo se puede cambiar la identidad de una voz sin cambiar su contenido, conviene saber cómo se produce la voz. El modelo fuente--filtro lo describe con una comparación sencilla, la de una trompeta, el músico hace vibrar los labios contra la boquilla y produce un zumbido, y el tubo de metal transforma ese zumbido en el sonido de la trompeta. En la voz, la fuente es el sonido que se produce en la garganta y el filtro es el tracto vocal, formado por la garganta, la boca y la nariz. Este modelo separa la voz en dos componentes: la excitación, que corresponde a la fuente, y los formantes, que dependen de la forma del filtro.
+Para entender cómo se puede cambiar la identidad de una voz sin cambiar su contenido, conviene saber cómo se produce la voz. El modelo fuente--filtro \parencite{fant1971} lo describe con una comparación sencilla, la de una trompeta: el músico hace vibrar los labios contra la boquilla y produce un zumbido, y el tubo de metal transforma ese zumbido en el sonido de la trompeta. En la voz, la fuente es el sonido que se produce en la garganta y el filtro es el tracto vocal, formado por la garganta, la boca y la nariz. Este modelo separa la voz en dos componentes: la excitación, que corresponde a la fuente, y los formantes, que dependen de la forma del filtro.
 
 \subsubsection{Excitación}\label{sec:2.6.1}
 
@@ -141,15 +224,15 @@ Al pasar por el tracto vocal, la excitación se transforma: el tubo refuerza alg
 
 \subsubsection{Codificación predictiva lineal (LPC)}\label{sec:2.6.3}
 
-Para modificar los formantes sin tocar la excitación, primero hay que separarlos, y para eso se usa la codificación predictiva lineal (LPC, Linear Predictive Coding). La idea de la LPC es que cada muestra de una señal de voz se puede predecir bastante bien como una combinación lineal de las p muestras anteriores \parencite{makhoul1975}:
+Para modificar los formantes sin tocar la excitación, primero hay que separarlos, y para eso se usa la codificación predictiva lineal (LPC, Linear Predictive Coding; \citealp{makhoul1975,markel1976}). La idea de la LPC es que cada muestra de una señal de voz se puede predecir bastante bien como una combinación lineal de las $p$ muestras anteriores:
 \[
 \hat{s}[n] = -\left(a_1 s[n-1] + a_2 s[n-2] + \cdots + a_p s[n-p]\right).
 \]
-con ella, el filtro inverso tiene coeficientes $[1, a_1, \ldots, a_p]$. Los pesos $a_1,\ldots,a_p$ se llaman coeficientes LPC y se eligen para que el error de predicción sea el menor posible. Esos coeficientes describen el filtro, es decir, la forma del tracto vocal, mientras que lo que la predicción no logra explicar, el error $s[n]-\hat{s}[n]$, se llama residuo de predicción y corresponde a la excitación.
+\noindent donde $s[n]$ es la muestra de la señal de voz en el instante $n$ y $\hat{s}[n]$ es su predicción a partir de las $p$ muestras anteriores. Por el signo negativo de la ecuación, el filtro inverso, que calcula el error $s[n]-\hat{s}[n]$, tiene coeficientes $[1,a_1,\ldots,a_p]$. Los pesos $a_1,\ldots,a_p$ se llaman coeficientes LPC y se eligen para que el error de predicción sea el menor posible. Esos coeficientes describen el filtro, es decir, la forma del tracto vocal, mientras que lo que la predicción no logra explicar, el error $s[n]-\hat{s}[n]$, se llama residuo de predicción y corresponde a la excitación.
 
 La LPC representa el tracto vocal como un filtro todo-polo de orden p, es decir, un filtro que solo puede reforzar frecuencias, formando picos, y no tiene componentes que las anulen. Los polos son las raíces del polinomio que forman los coeficientes. Los polos complejos aparecen en pares, y cada par cercano al círculo unitario corresponde a un formante: el ángulo del polo indica la frecuencia del formante y el radio indica qué tan marcado es. Gracias a esta relación, mover el ángulo de los polos equivale a mover los formantes.
 
-Como la forma de la boca cambia todo el tiempo al hablar, la LPC no se calcula una sola vez sobre toda la grabación, sino sobre fragmentos cortos de audio, llamados tramas, en los que el tracto vocal casi no cambia. En cada trama, el orden p fija cuántos coeficientes, y por tanto cuántos polos, describen el filtro. Una heurística comúnmente atribuida a \textcite{markel1976} define el orden como (Ecuación~\ref{eq:lpcorder}):
+Como la forma de la boca cambia todo el tiempo al hablar, la LPC no se calcula una sola vez sobre toda la grabación, sino sobre fragmentos cortos de audio, llamados tramas, en los que el tracto vocal casi no cambia. En cada trama, el orden p fija cuántos coeficientes, y por tanto cuántos polos, describen el filtro. Una heurística comúnmente atribuida a \textcite{markel1976} define el orden como
 
 \begin{equation}\label{eq:lpcorder}
 p = f_s + 4
@@ -165,13 +248,13 @@ En resumen, al calcular la LPC en cada trama se obtienen por separado el filtro,
 
 \textcite{patino2021} usan el coeficiente de McAdams para desplazar los formantes de la voz sin entrenar ningún modelo. El método aprovecha la relación descrita en la sección anterior: como el ángulo de cada polo indica la frecuencia de un formante, basta con cambiar el ángulo para mover el formante.
 
-Un polo complejo se expresa como (Ecuación~\ref{eq:pole}):
+Un polo complejo se expresa como
 
 \begin{equation}\label{eq:pole}
-z_i = r_i \, e^{j\phi_i}
+z_i = r_i \, e^{j\phi_i},
 \end{equation}
 
-\noindent donde $r_i$ es el radio y $\phi_i$ la posición angular, medida en radianes entre 0 y $\pi$. El ángulo se relaciona con la frecuencia del formante mediante $f_i$ = $\phi_i$ $\cdot$ $f_s$ / (2$\pi$). La transformación de McAdams eleva el ángulo de cada polo complejo a la potencia $\alpha$ y deja su radio sin cambios (Ecuación~\ref{eq:mcadams}):
+\noindent donde $r_i$ es el radio y $\phi_i$ la posición angular, medida en radianes entre 0 y $\pi$. El ángulo se relaciona con la frecuencia del formante mediante $f_i$ = $\phi_i$ $\cdot$ $f_s$ / (2$\pi$). La transformación de McAdams eleva el ángulo de cada polo complejo a la potencia $\alpha$ y deja su radio sin cambios
 
 \begin{equation}\label{eq:mcadams}
 z_i' = r_i \, e^{j\phi_i^{\alpha}}
@@ -181,23 +264,23 @@ z_i' = r_i \, e^{j\phi_i^{\alpha}}
 
 El efecto sobre la voz se entiende con una observación sencilla. Como los ángulos están entre 0 y $\pi$, elevarlos a una potencia $\alpha$ menor que 1 no los mueve a todos en la misma dirección: los ángulos pequeños aumentan y los grandes disminuyen. A 16 kHz, el punto que no cambia está alrededor de 2.5 kHz \parencite{patino2021}. Por eso, con $\alpha$ < 1, los formantes graves suben de frecuencia, los agudos bajan, y el espectro de la voz se comprime hacia esa frecuencia. Por ejemplo, con $\alpha$ = 0.8, un formante en 700 Hz sube a unos 900 Hz. Cuanto más se aleja $\alpha$ de 1, más se desplazan los formantes y más cambia la voz; con $\alpha$ = 1, la voz queda igual.
 
-La línea base B2 del VPC aplica esta transformación con un valor fijo, $\alpha$ = 0.8. \textcite{patino2021} señalan que con un valor fijo la transformación es fácil de revertir, y proponen elegir $\alpha$ aleatoriamente dentro de un intervalo, de modo que un adversario necesitaría conocer el valor exacto usado para deshacer el cambio. La elección aleatoria sigue una distribución uniforme (Ecuación~\ref{eq:uniform}):
+La línea base B2 del VPC aplica esta transformación con un valor fijo, $\alpha$ = 0.8. \textcite{patino2021} señalan que con un valor fijo la transformación es fácil de revertir, y proponen elegir $\alpha$ aleatoriamente dentro de un intervalo, de modo que un adversario necesitaría conocer el valor exacto usado para deshacer el cambio. La elección aleatoria sigue una distribución uniforme:
 
 \begin{equation}\label{eq:uniform}
 \alpha \sim \mathcal{U}(\alpha_{\min}, \alpha_{\max})
 \end{equation}
 
-\noindent lo que significa que cualquier valor entre $\alpha_{\min}$ y $\alpha_{\max}$ tiene la misma probabilidad de ser elegido. El intervalo determina el equilibrio entre privacidad e inteligibilidad: según \textcite{patino2021}, los valores más bajos de $\alpha$ protegen más la identidad, pero también deterioran más el contenido.
+\noindent donde $\mathcal{U}(\alpha_{\min},\alpha_{\max})$ indica que $\alpha$ se elige al azar entre $\alpha_{\min}$ y $\alpha_{\max}$, con la misma probabilidad para cualquier valor del intervalo. El intervalo determina el equilibrio entre privacidad e inteligibilidad: según \textcite{patino2021}, los valores más bajos de $\alpha$ protegen más la identidad, pero también deterioran más el contenido.
 
 En el sistema propuesto, $\alpha$ se elige aleatoriamente una vez por llamada y se mantiene fijo durante toda la llamada; en la evaluación sobre un corpus de grabaciones, se elige aleatoriamente un valor de $\alpha$ por grabación. Como el intervalo afecta tanto la privacidad como la inteligibilidad, se trata como un parámetro de diseño que se evalúa experimentalmente y no como un valor fijado de antemano.
 
 \subsubsection{ZEBRA: evaluación de evidencia biométrica}\label{sec:2.7.1}
 
-ZEBRA (Zero Evidence Biometric Recognition Assessment) es un marco de evaluación que mide cuánta evidencia sobre la identidad del hablante permanece en las grabaciones anonimizadas y la resume en categorías, donde la categoría ``0'' corresponde a evidencia nula, es decir, a privacidad perfecta. Aunque ZEBRA no se calcula en este trabajo, su uso en el estudio de \textcite{patino2021} ayuda a dimensionar lo que se puede esperar del método: ninguna de sus configuraciones basadas en el coeficiente de McAdams alcanza la categoría ``0''. Esto confirma que la técnica reduce la información del hablante, pero no logra una anonimización perfecta.
+ZEBRA (Zero Evidence Biometric Recognition Assessment; \citealp{nautsch2020}) es un marco de evaluación que mide cuánta evidencia sobre la identidad del hablante permanece en las grabaciones anonimizadas y la resume en categorías, donde la categoría ``0'' corresponde a evidencia nula, es decir, a privacidad perfecta. Aunque ZEBRA no se calcula en este trabajo, su uso en el estudio de \textcite{patino2021} ayuda a dimensionar lo que se puede esperar del método: ninguna de sus configuraciones basadas en el coeficiente de McAdams alcanza la categoría ``0''. Esto confirma que la técnica reduce la información del hablante, pero no logra una anonimización perfecta.
 
 \subsection{Tiempo real: latencia y factor de tiempo real (RTF)}\label{sec:2.8}
 
-Además de proteger la voz y conservar el mensaje, el sistema debe ser lo bastante rápido para funcionar durante una conversación. El factor de tiempo real (RTF) mide esa rapidez como la razón entre el tiempo que tarda el sistema en procesar un audio y la duración de ese audio (Ecuación~\ref{eq:rtf}):
+Además de proteger la voz y conservar el mensaje, el sistema debe ser suficientemente rápido para funcionar durante una conversación. El factor de tiempo real (RTF) mide esa rapidez como la razón entre el tiempo que tarda el sistema en procesar un audio y la duración de ese audio:
 
 \begin{equation}\label{eq:rtf}
 \mathrm{RTF} = \frac{T_{\mathrm{procesamiento}}}{T_{\mathrm{audio}}}
@@ -217,7 +300,7 @@ El problema se formula así: durante una llamada, un tercero puede obtener fragm
 
 A partir de este problema, la pregunta de investigación es: ¿en qué medida un sistema de anonimización de voz en tiempo real, activado automáticamente ante llamadas de números desconocidos, protege la identidad vocal de usuarios de telefonía móvil en Colombia sin comprometer la inteligibilidad de la comunicación? En línea con ella, el objetivo general es diseñar y evaluar un prototipo de sistema de anonimización de voz en tiempo real para la protección de la identidad vocal de usuarios de telefonía móvil en Colombia ante llamadas de números desconocidos, mediante técnicas de procesamiento de señal y métricas estandarizadas de privacidad e inteligibilidad.
 
-Tanto la pregunta como el objetivo parten del escenario de una llamada telefónica, por lo que conviene precisar cómo se relaciona con él el sistema desarrollado. En un teléfono, la voz que capta el micrófono pasa por varias etapas antes de llegar al otro extremo de la llamada: se digitaliza, se codifica para reducir su tamaño y se envía por la red. El sistema de anonimización se ubicaría entre el micrófono y la codificación, de modo que lo que se transmita sea ya la voz anonimizada. El prototipo reproduce precisamente ese tramo en un computador portátil: toma la voz del micrófono, la anonimiza en tiempo real y la entrega a la salida de audio, que en una llamada real sería la entrada de la aplicación de llamadas.
+Tanto la pregunta como el objetivo parten del escenario de una llamada telefónica, por lo que conviene precisar cómo se relaciona con el sistema desarrollado. En un teléfono, la voz que capta el micrófono pasa por varias etapas antes de llegar al otro extremo de la llamada: se digitaliza, se codifica para reducir su tamaño y se envía por la red. El sistema de anonimización se ubicaría entre el micrófono y la codificación, de modo que lo que se transmita sea ya la voz anonimizada. El prototipo reproduce precisamente ese tramo en un computador portátil: toma la voz del micrófono, la anonimiza en tiempo real y la entrega a la salida de audio, que en una llamada real sería la entrada de la aplicación de llamadas.
 
 Conectar esa salida con una llamada real requiere acceder al audio de la llamada desde el sistema operativo del teléfono, o integrar el sistema con una aplicación de llamadas por internet. Ambas tareas, al igual que decidir automáticamente cuándo activar la anonimización ante un número desconocido, dependen de la plataforma en la que se instale el sistema y exceden el alcance de este trabajo. Por eso el proyecto se centra en el componente que realiza la anonimización, que es el mismo que funcionaría dentro de una llamada, y deja su integración como trabajo futuro. Dentro de ese componente, el foco está en evaluar los límites del coeficiente de McAdams, es decir, hasta dónde se puede transformar la voz manteniendo a la vez la privacidad y la inteligibilidad.
 
@@ -252,7 +335,7 @@ La Tabla~\ref{tab:alternativas} resume las características y el desempeño que 
 
 \begin{table*}[!t]
 \centering
-\caption{Alternativas evaluadas. Las cifras corresponden a los valores reportados por cada trabajo y no son comparables entre sí.}
+\caption{Alternativas evaluadas. Las cifras corresponden a los valores reportados por cada trabajo y no son comparables entre sí. $\mathcal{U}(a,b)$ se define como en la Ecuación~\ref{eq:uniform}.}
 \label{tab:alternativas}
 \footnotesize
 \renewcommand{\arraystretch}{1.16}
@@ -272,7 +355,6 @@ Ejemplos adversariales \parencite{deng2023} & VoxCeleb1, 2 GPU RTX 3090 & RTC 0.
 \end{tabularx}
 \end{table*}
 
-$\mathcal{U}(a,b)$: $\alpha$ se elige al azar entre a y b, con la misma probabilidad para cualquier valor del intervalo.
 
 Un primer resultado de la comparación es que ninguno de los cuatro enfoques fue evaluado en español sobre audio de telefonía, y ninguno mide resistencia a la clonación de voz: todas las evaluaciones se hacen frente a sistemas ASV. Además, las cifras de la Tabla~\ref{tab:alternativas} no son directamente comparables entre sí, por tres razones principales.
 
@@ -305,7 +387,7 @@ El sistema se construyó por partes, comprobando que cada una funcionara bien an
 
 Después se adaptó el core para procesar el audio por fragmentos, como ocurre durante una llamada, en la que la voz llega poco a poco y no está completa desde el inicio. Para verificarlo, se comparó el resultado de procesar una grabación completa de una sola vez con el de procesarla en fragmentos de distintos tamaños, y ambos resultados debían ser iguales. Por último, se construyó el pipeline por lotes, que aplica el sistema sobre todas las grabaciones del corpus de evaluación.
 
-Un aspecto importante de este diseño es que el pipeline por lotes y el prototipo en tiempo real usan el mismo core de procesamiento. Así, lo que se mide sobre el corpus corresponde exactamente a lo que se ejecuta en tiempo real, y no a una versión distinta del sistema. En cada etapa se escribieron pruebas unitarias, y solo se pasaba a la siguiente cuando todas eran exitosas.
+Un aspecto importante de este diseño es que el pipeline por lotes y el prototipo en tiempo real usan el mismo core de procesamiento. Así, lo que se mide sobre el corpus corresponde exactamente a lo que se ejecuta en tiempo real, y no a una versión distinta del sistema. En cada etapa se desarrollaron pruebas unitarias, y solo se pasaba a la siguiente cuando todas eran exitosas.
 
 \subsection{Protocolo de evaluación}\label{sec:3.6}
 
@@ -313,7 +395,7 @@ Con el sistema implementado, el siguiente paso fue definir cómo evaluarlo: sobr
 
 \subsubsection{Datos y muestreo}\label{sec:3.6.1}
 
-La evaluación utiliza grabaciones en español del corpus público Mozilla Common Voice 26.0. Para construir el conjunto de evaluación se seleccionaron únicamente los clips incluidos en el archivo \texttt{validated.tsv}, es decir, grabaciones revisadas y aceptadas por la comunidad. Los términos de uso del corpus solicitan no intentar determinar la identidad real de los hablantes; en este trabajo, las comparaciones se realizan únicamente entre grabaciones del propio corpus para medir el efecto de la anonimización, sin vincularlas con identidades reales.
+La evaluación utiliza grabaciones en español del corpus público Mozilla Common Voice 26.0 \parencite{ardila2020}. Para construir el conjunto de evaluación se seleccionaron únicamente los clips incluidos en el archivo \texttt{validated.tsv}, es decir, grabaciones revisadas y aceptadas por la comunidad. Los términos de uso del corpus solicitan no intentar determinar la identidad real de los hablantes; en este trabajo, las comparaciones se realizan únicamente entre grabaciones del propio corpus para medir el efecto de la anonimización, sin vincularlas con identidades reales.
 
 Sobre el corpus se aplicaron dos filtros: cada clip debía durar al menos 3000 ms y cada hablante debía tener al menos 5 clips. Luego se hizo un muestreo estratificado por acento autorreportado, con semilla 42, K = 134 hablantes por estrato y N = 5 clips por hablante. El valor de K está limitado por el estrato más pequeño, de modo que todos los grupos de acento tengan el mismo peso. La muestra final tiene 1 340 hablantes y 6 700 clips; de los cinco clips de cada hablante, tres se usan para la inscripción del ASV y dos para las pruebas.
 
@@ -336,11 +418,11 @@ Cada métrica responde a una parte de la pregunta de investigación: la EER a la
 \toprule
 \textbf{Métrica} & \textbf{Qué mide} & \textbf{Cómo se obtiene} & \textbf{Para qué se usa} & \textbf{Meta} \\
 \midrule
-EER (privacidad) & Qué tan bien reconoce un atacante al hablante después de anonimizar & ASV ECAPA-TDNN preentrenado, en los escenarios o--o, o--a y a--a & Determinar si la anonimización protege la identidad vocal & EER > 30 \% en el escenario o--a \\
+EER (privacidad) & Qué tan bien reconoce un atacante al hablante después de anonimizar & ASV ECAPA-TDNN preentrenado, en los escenarios o--o, o--a y a--a & Determinar si la anonimización protege la identidad vocal & EER$$\ge30\%$$  en el escenario o--a \\
 \addlinespace[2pt]
-WER (inteligibilidad) & Cuánto contenido se pierde al anonimizar & ASR Whisper turbo preentrenado, sobre las grabaciones originales y anonimizadas & Determinar si la conversación se sigue entendiendo & WER < 15 \% \\
+WER (inteligibilidad) & Cuánto contenido se pierde al anonimizar & ASR Whisper turbo preentrenado, sobre las grabaciones originales y anonimizadas & Determinar si la conversación se sigue entendiendo & WER $$\leq 15 \% $$\\
 \addlinespace[2pt]
-RTF (tiempo real) & Cuánto tarda el procesamiento frente a la duración del audio & Tiempo de procesamiento del core dividido por la duración del audio & Determinar si el sistema puede operar durante una llamada & RTF < 0.1 \\
+RTF (tiempo real) & Cuánto tarda el procesamiento frente a la duración del audio & Tiempo de procesamiento del core dividido por la duración del audio & Determinar si el sistema puede operar durante una llamada & RTF $$< 0.1$$ \\
 \bottomrule
 \end{tabularx}
 \end{table*}
@@ -357,7 +439,7 @@ En conjunto, una configuración alcanzaría todas las metas del proyecto solo si
 
 \subsubsection{Diseño de experimentos}\label{sec:3.6.3}
 
-Los experimentos no buscan un único valor ideal del coeficiente $\alpha$. Lo que interesa es entender cómo responde el sistema cuando $\alpha$ cambia: qué intervalos mantienen un buen equilibrio entre privacidad e inteligibilidad y desde qué punto la voz empieza a volverse difícil de entender. Es muy posible que varios intervalos funcionen de manera parecida, y por eso el análisis apunta a identificarlos, más que a quedarse con uno solo. Con ese fin, el trabajo experimental se hizo en tres etapas.
+Los experimentos no buscan un único valor ideal del coeficiente $\alpha$. Lo que interesa es entender cómo responde el sistema cuando $\alpha$ cambia: qué intervalos mantienen un buen equilibrio entre privacidad e inteligibilidad y desde qué punto la voz empieza a volverse difícil de entender. Es posible que varios intervalos funcionen de manera parecida, y por eso el análisis apunta a identificarlos, más que a quedarse con uno solo. Con ese fin, el trabajo experimental se hizo en tres etapas.
 
 La primera fue un barrido con $\alpha$ fijo. Aquí todas las grabaciones se anonimizaron con el mismo valor de $\alpha$, probando valores de 0.2 a 0.9 en pasos de 0.1. También se incluyó $\alpha$ = 1.0 como control, porque con ese valor la transformación no cambia la voz y los resultados deberían coincidir con los del audio original. Esta etapa muestra el efecto de la intensidad de la transformación por sí sola, sin la variación que introduce la elección aleatoria, y permite ubicar los límites del sistema: con $\alpha$ muy bajo la voz deja de entenderse, y con $\alpha$ muy alto casi no hay protección. Como en este caso las grabaciones de inscripción y de prueba quedan transformadas exactamente igual, el escenario a--a no refleja cómo funcionaría el sistema en la práctica, así que el análisis de esta etapa se centra en el escenario o--a.
 
@@ -365,9 +447,9 @@ La segunda etapa fue un barrido más fino, también con $\alpha$ fijo. Una vez u
 
 La tercera etapa evaluó intervalos uniformes de $\alpha$, que es como funciona el sistema en su uso real: cada grabación recibe un $\alpha$ elegido al azar dentro del intervalo. Se probaron nueve intervalos, que resultan de combinar tres puntos medios (0.725, 0.75 y 0.775) con tres anchos (0.18, 0.15 y 0.12). En esta etapa sí se analizan los dos escenarios, o--a y a--a.
 
-El ancho del intervalo tiene una razón de ser. Para deshacer la transformación y recuperar la voz original, un atacante tendría que conocer el valor exacto de $\alpha$ que se usó en cada grabación \parencite{patino2021}. Mientras más ancho es el intervalo, más valores puede tomar $\alpha$ y mayor es su entropía, es decir, más incierto resulta su valor y más difícil es adivinarlo. Pero el intervalo no se puede ensanchar indefinidamente, porque los valores bajos de $\alpha$ dañan la inteligibilidad y los altos protegen poco. Por eso los anchos que se probaron están acotados por los límites que mostró el barrido con $\alpha$ fijo.
+El ancho del intervalo juega un papel importante en la protección de los audios. Para deshacer la transformación y recuperar la voz original, un atacante tendría que conocer el valor exacto de $\alpha$ que se usó en cada grabación \parencite{patino2021}. Mientras más ancho es el intervalo, más valores puede tomar $\alpha$ y mayor es su entropía, es decir, más incierto resulta su valor y más difícil es adivinarlo. Pero el intervalo no se puede ensanchar indefinidamente, porque los valores bajos de $\alpha$ dañan la inteligibilidad y los altos protegen poco. Por eso los anchos que se probaron están acotados por los límites que mostró el barrido con $\alpha$ fijo.
 
-En las tres etapas se miden la EER, como indicador de privacidad, y la WER, como indicador de inteligibilidad. Además, los resultados se comparan por acento y por género, para revisar si la protección es pareja entre los distintos grupos de hablantes.
+En las tres etapas se miden la EER, como indicador de privacidad, y la WER, como indicador de inteligibilidad. Además, los resultados se comparan por acento y por género, para evaluar si la protección es pareja entre los distintos grupos de hablantes.
 
 Todas las configuraciones se evaluaron sobre las mismas grabaciones. En el caso de los intervalos, el $\alpha$ de cada grabación se genera de forma determinista a partir de su identificador, de modo que un mismo clip recibe siempre el mismo valor de $\alpha$ elegido aleatoriamente. Gracias a esto, las configuraciones se pueden comparar de forma pareada, sobre exactamente los mismos datos.
 
@@ -379,7 +461,7 @@ Finalmente, el intervalo que se usó en el prototipo fue $\mathcal{U}(0.685,0.86
 
 Las etapas anteriores evalúan la anonimización sobre grabaciones; el prototipo permite comprobar que el mismo core funciona con voz en vivo. Para ello reutiliza el core de procesamiento en modo streaming: un adaptador recibe el audio en bloques de tamaño fijo y devuelve bloques del mismo tamaño, y se verificó que su salida es la del pipeline por lotes, retrasada un número fijo de muestras.
 
-El montaje usa la interfaz de audio MME de Windows a 16 kHz, un micrófono y audífonos, con bloques de 160 muestras (10 ms) y la latencia ``low'' que \texttt{sounddevice} solicita al dispositivo. El procedimiento consiste en tres ensayos de 60 s de habla continua. En cada ensayo se mide:
+El montaje usa la interfaz de audio MME de Windows a 16 kHz, un micrófono y audífonos, con bloques de 160 muestras (10 ms) y la latencia ``low'' que \texttt{sounddevice} solicita al dispositivo. El procedimiento consiste en cinco ensayos de 60 s de habla continua. En cada ensayo se mide:
 
 \begin{itemize}
 \item El RTF, como el tiempo total de procesamiento de los bloques dividido por la duración total del audio del ensayo. Se registran además la mediana, el percentil 99 y el máximo del tiempo de procesamiento por bloque.
@@ -401,7 +483,7 @@ El diseño también incluye decisiones para proteger al propio sistema. En un us
 
 \section{Implementación}\label{sec:4}
 
-Esta sección sigue el recorrido del audio por el sistema. La Sección~\ref{sec:4.1} presenta los componentes del software y el equipo en que se ejecutaron, y la Sección~\ref{sec:4.2} explica cómo se lleva todo audio a un formato común. La parte central es la Sección~\ref{sec:4.3}, que describe el algoritmo: la voz se divide en tramas, en cada trama se separa el filtro de la excitación, se desplazan los formantes y se reconstruye la señal. La Sección~\ref{sec:4.4} muestra cómo ese algoritmo trabaja en tiempo real, con la voz llegando por bloques, y cómo se elige el coeficiente de cada llamada. Las Secciones~\ref{sec:4.5} y~\ref{sec:4.6} cubren la implementación de la evaluación y las pruebas con las que se verificó cada pieza antes de conectarla con la siguiente.
+Para describir la implementación, esta sección sigue el recorrido del audio por el sistema. La Sección~\ref{sec:4.1} presenta los componentes del software y el equipo en que se ejecutaron, y la Sección~\ref{sec:4.2} explica cómo se lleva todo audio a un formato común. La parte central es la Sección~\ref{sec:4.3}, que describe el algoritmo: la voz se divide en tramas, en cada trama se separa el filtro de la excitación, se desplazan los formantes y se reconstruye la señal. La Sección~\ref{sec:4.4} muestra cómo ese algoritmo trabaja en tiempo real, con la voz llegando por bloques, y cómo se elige el coeficiente de cada llamada. Las Secciones~\ref{sec:4.5} y~\ref{sec:4.6} cubren la implementación de la evaluación y las pruebas con las que se verificó cada pieza antes de conectarla con la siguiente.
 
 \subsection{Arquitectura y entorno de ejecución}\label{sec:4.1}
 
@@ -454,7 +536,7 @@ SpeechBrain & 1.1.1 & Modelo ECAPA-TDNN para el cálculo de la EER \\
 
 Antes de llegar al core, todo audio pasa a un mismo formato: un canal, $16\,\mathrm{kHz}$ y muestras entre $-1$ y $1$. Un canal, porque una llamada transmite uno solo; $16\,\mathrm{kHz}$, porque es la frecuencia con la que trabajan los dos modelos de evaluación \parencite{openaiwhisper2025,speechbrainModel}.
 
-Los clips de Common Voice vienen en MP3, con frecuencias de muestreo y número de canales variables, así que cada uno se convierte una vez antes de anonimizarlo. Se decodifica con \texttt{soundfile}, se promedian sus canales, se remuestrea a $16\,\mathrm{kHz}$ con \texttt{resample\_poly} de SciPy y se guarda como WAV PCM de 16 bits. La función \texttt{resample\_poly} cambia la frecuencia por un factor racional exacto y aplica un filtro antisolapamiento. Convertir una sola vez tiene dos ventajas. El original y el anonimizado quedan en el mismo formato, y lo único que los distingue es la anonimización. Además, la evaluación no necesita \texttt{ffmpeg}, el programa con el que Whisper abre archivos MP3 por su cuenta \parencite{openaiwhisper2025}, porque los scripts leen los WAV con \texttt{soundfile} y le pasan las muestras a Whisper directamente.
+Los clips de Common Voice vienen en MP3, con frecuencias de muestreo y número de canales variables, así que cada uno se convierte una vez antes de anonimizarlo. Se decodifica con \texttt{soundfile}, se promedian sus canales, se remuestrea a $16\,\mathrm{kHz}$ con \texttt{resample\_poly} de SciPy y se guarda como WAV PCM de 16 bits. La función \texttt{resample\_poly} cambia la frecuencia por un factor racional exacto y aplica un filtro antisolapamiento. Convertir una sola vez tiene dos ventajas. El audio original y el anonimizado quedan en el mismo formato, y lo único que los distingue es la anonimización. Además, la evaluación no necesita \texttt{ffmpeg}, el programa con el que Whisper abre archivos MP3 por su cuenta \parencite{openaiwhisper2025}, porque los scripts leen los WAV con \texttt{soundfile} y le pasan las muestras a Whisper directamente.
 
 Dentro del sistema, las muestras son números de punto flotante de precisión doble (\texttt{float64}), en la misma escala que usan \texttt{soundfile}, \texttt{sounddevice} y Whisper. La precisión doble se eligió porque en cada trama se calculan las raíces de un polinomio de orden 20, un cálculo sensible al redondeo. Al guardar un audio, los valores que se salieron de $[-1,1]$ se recortan al límite más cercano, se multiplican por $32\,767$, se redondean al entero más cercano y se escriben como enteros de 16 bits.
 
@@ -502,7 +584,7 @@ e_n &= s'_n-\hat{s}_n
 A(z)=1+\sum_{k=1}^{p}a_k\,z^{-k}
 \end{equation}
 
-\noindent El orden es $p=20$. Se calcula a partir de la frecuencia de muestreo con la heurística de la Ecuación~\ref{eq:lpcorder} y coincide con el de \textcite{patino2021}. Los coeficientes se estiman con el método de autocorrelación \parencite{makhoul1975}, que elige los que hacen mínima la energía total del residuo, $\sum_n e_n^2$. Al minimizarla se llega a $p$ ecuaciones lineales, las ecuaciones normales (Ecuación~\ref{eq:lpc_normal}), que dependen solo de la autocorrelación de la trama con ventana (Ecuación~\ref{eq:lpc_autocorr}):
+\noindent El orden es $p=20$. Se calcula a partir de la frecuencia de muestreo con la heurística de la Ecuación~\ref{eq:lpcorder} y coincide con el de \textcite{patino2021}. Los coeficientes se estiman con el método de autocorrelación \parencite{makhoul1975}, que elige los que hacen mínima la energía total del residuo, $\sum_n e_n^2$. Al minimizarla se llega a $p$ ecuaciones lineales, las ecuaciones normales, que dependen solo de la autocorrelación de la trama con ventana:
 
 \begin{equation}\label{eq:lpc_autocorr}
 R(i)=\sum_{n=0}^{N-1-i}s'_n\,s'_{n+i},
@@ -522,7 +604,7 @@ Antes de usar los coeficientes, el core revisa que describan un filtro válido. 
 
 La primera es una trama de silencio digital, con todas sus muestras en cero. Ahí $R(0)$ y las demás autocorrelaciones valen cero, la Ecuación~\ref{eq:lpc_normal} se reduce a $0=0$ y cualquier conjunto de coeficientes la cumple, de modo que el sistema no tiene una solución única. Por eso, cuando $R(0)\le10^{-8}$, el core no resuelve el sistema y devuelve el filtro neutro $[1,0,\ldots,0]$. El 1 es el coeficiente de la muestra actual, y los ceros indican que ninguna muestra anterior participa en la predicción; por lo tanto, $A(z)=1$. Con este filtro la predicción es cero y el residuo es la trama misma ($e_n=s'_n$). El filtro de síntesis lo devuelve sin cambios ($y_n=e_n$), no hay polos que transformar y la trama de silencio sale como entró.
 
-La segunda es un sistema mal condicionado, en el que un cambio muy pequeño en los datos, como un error de redondeo, cambia mucho la solución. Es como buscar dónde se cruzan dos rectas casi paralelas: basta mover un poco una de ellas para que el punto de corte se vaya lejos. Con dos coeficientes, esto ocurre cuando $R(1)$ es casi igual a $R(0)$, o sea, cuando cada muestra se parece mucho a la siguiente. En general, el problema empeora cuanto más predecible es la señal \parencite{makhoul1975}, como en un tono casi puro. Para prevenirlo, en toda trama que no sea silencio $R(0)$ se multiplica por $1+10^{-9}$ antes de resolver el sistema. \textcite{makhoul1975} propone este tipo de corrección para matrices mal condicionadas: subir la diagonal principal en una fracción pequeña de un porcentaje. La del core es mucho menor, una parte en mil millones, y no cambia de manera apreciable los coeficientes de una trama normal. Lo que hace es impedir que, por redondeo, la matriz quede singular o deje de ser definida positiva. Como solo toca $R(0)$, la garantía de estabilidad se mantiene.
+La segunda es un sistema mal condicionado, en el que un cambio muy pequeño en los datos, como un error de redondeo, cambia mucho la solución. Esta situación se asemeja a buscar el punto dónde se cruzan dos rectas casi paralelas: basta mover un poco una de ellas para que el punto de corte se vaya lejos. Con dos coeficientes, esto ocurre cuando $R(1)$ es casi igual a $R(0)$, o sea, cuando cada muestra se parece mucho a la siguiente. En general, el problema empeora cuanto más predecible es la señal \parencite{makhoul1975}, como en un tono casi puro. Para prevenirlo, en toda trama que no sea silencio $R(0)$ se multiplica por $1+10^{-9}$ antes de resolver el sistema. \textcite{makhoul1975} propone este tipo de corrección para matrices mal condicionadas: subir la diagonal principal en una fracción pequeña de un porcentaje. La del core es mucho menor, una parte en mil millones, y no cambia de manera apreciable los coeficientes de una trama normal. Lo que hace es impedir que, por redondeo, la matriz quede singular o deje de ser definida positiva. Como solo modifica $R(0)$, la garantía de estabilidad se mantiene.
 
 \subsubsection{Polos y transformación de McAdams}\label{sec:4.3.4}
 
@@ -562,9 +644,9 @@ La Figura~\ref{fig:onda_espectrograma} muestra el resultado sobre un clip comple
 
 \subsection{Procesamiento en tiempo real y gestión de sesiones}\label{sec:4.4}
 
-La Sección~\ref{sec:4.3} explica qué le pasa a una trama, pero no explica cómo se forman las tramas cuando la voz llega poco a poco, como en una llamada, y de dónde sale el $\alpha$ que usa la transformación de la Sección~\ref{sec:4.3.4}.
+La Sección~\ref{sec:4.3} explica el procesamiento de una trama, pero no explica cómo se forman las tramas cuando la voz llega poco a poco, como en una llamada, ni como se define el $\alpha$ que usa la transformación de la Sección~\ref{sec:4.3.4}.
 
-En una llamada la voz llega en bloques, no completa. Para procesarla así, el core tiene un procesador incremental que guarda su estado de un bloque a otro en dos búferes. En uno quedan las muestras que todavía no completan una trama. En el otro, la parte del \textit{overlap-add} que aún no se puede entregar porque falta la contribución de la trama siguiente. Cada vez que llega un bloque, el procesador arma todas las tramas completas que puede, les aplica los pasos de la Sección~\ref{sec:4.3} y entrega las muestras cuya suma ya es definitiva, siempre en múltiplos de $10\,\mathrm{ms}$. Al cerrar la sesión, completa con ceros el audio pendiente, procesa la última trama y entrega lo que falta. Con estos búferes el resultado no depende del tamaño de los bloques, y una grabación procesada de una vez o por partes da la misma salida. Por eso el pipeline por lotes usa el mismo procesador: le entrega la grabación completa como un único bloque, cierra la sesión y recorta la salida a la longitud original.
+En una llamada la voz llega en bloques, no completa. Para procesarla, el core tiene un procesador incremental que guarda su estado de un bloque a otro en dos búferes. En uno quedan las muestras que todavía no completan una trama. En el otro, la parte del \textit{overlap-add} que aún no se puede entregar porque falta la contribución de la trama siguiente. Cada vez que llega un bloque, el procesador arma todas las tramas completas que puede, les aplica los pasos de la Sección~\ref{sec:4.3} y entrega las muestras cuya suma ya es definitiva, siempre en múltiplos de $10\,\mathrm{ms}$. Al final de la sesión quedan muestras que todavía no se han entregado, porque les falta la suma de la trama siguiente. Para no perderlas, el procesador completa la última trama con ceros, la procesa y entrega esas muestras. Con estos búferes el resultado no depende del tamaño de los bloques, y una grabación procesada de una vez o por partes da la misma salida. Por eso el pipeline por lotes usa el mismo procesador: le entrega la grabación completa como un único bloque, cierra la sesión y recorta la salida a la longitud original.
 
 El procesador necesita reunir $20\,\mathrm{ms}$ de audio antes de anonimizar una trama, así que no devuelve audio con cada bloque, ni siempre la misma cantidad. La librería \texttt{sounddevice}, en cambio, pide en cada llamada un bloque de salida del mismo tamaño que el de entrada, que en el prototipo es de $160$ muestras ($10\,\mathrm{ms}$). Para cumplirlo, un adaptador guarda la salida del procesador en una cola que empieza con $160$ muestras de silencio y le entrega siempre un bloque completo a los audífonos. Con bloques de ese tamaño, $10\,\mathrm{ms}$ es el menor retraso que evita que falte audio. En general, con tramas de $N$ muestras, avance de $H$ y bloques de $B$, el retraso mínimo es $N-\operatorname{mcd}(B,H)$ muestras, donde $\operatorname{mcd}$ es el máximo común divisor. Cuando los bloques miden lo mismo que el avance, como aquí, ese retraso es $N-H=160$ muestras, el menor posible. Si se suma la espera de un bloque, el retardo algorítmico del prototipo es de $20\,\mathrm{ms}$, a lo que se agregan los búferes de captura y reproducción del dispositivo de audio.
 
@@ -576,31 +658,289 @@ La protección tiene dos límites. Depende por completo de que el identificador 
 
 \subsection{Implementación de la evaluación}\label{sec:4.5}
 
-Para la evaluación, el mismo core anonimizó por lotes las grabaciones del corpus. Esta parte explica cómo se implementó el protocolo de la Sección~\ref{sec:3.6}: con qué grabaciones se trabajó, cómo se calculan sobre ellas la EER y la WER y cómo se estiman sus intervalos de confianza. Cada paso guarda su resultado en disco, y lo que no depende de $\alpha$ (la conversión de los clips originales, sus \textit{embeddings} y sus transcripciones) se calcula una sola vez. El pipeline por lotes no mide tiempos; el RTF y la latencia se miden en el prototipo (Sección~\ref{sec:3.7}).
+Para la evaluación, el mismo core anonimizó por lotes las grabaciones del corpus. Esta sección explica cómo se implementó el protocolo de la Sección~\ref{sec:3.6}: con qué grabaciones se trabajó, cómo se calculan sobre ellas la EER y la WER y cómo se estiman sus intervalos de confianza. Cada paso guarda su resultado en disco, y lo que no depende de $\alpha$ (la conversión de los clips originales, sus \textit{embeddings} y sus transcripciones) se calcula una sola vez. El pipeline por lotes no mide tiempos; el RTF y la latencia se miden en el prototipo (Sección~\ref{sec:3.7}).
 
 \subsubsection{Subconjunto de evaluación y partición}\label{sec:4.5.1}
 
-Todo parte de un subconjunto de hablantes y clips que luego comparten la EER y la WER. Se construyó con los archivos \texttt{validated.tsv} y \texttt{clip\_durations.tsv} de Common Voice Scripted Speech 26.0 en español. Primero se descartaron los clips de menos de 3000 ms y los hablantes que quedaron con menos de cinco grabaciones. Después cada hablante se asignó a un estrato según la etiqueta de acento de sus clips. Si no tenía ninguna, fue a ``sin dato''; si tenía una sola y pertenecía a uno de los nueve grupos incluidos (México, andino-pacífico, caribe, rioplatense, chileno, América central y norte, centro-sur y sur de España), fue a ese grupo; en cualquier otro caso quedó por fuera. De cada uno de los diez estratos se tomaron 134 hablantes y, de cada hablante, cinco clips. Las dos listas se ordenan y luego se mezclan con \texttt{random.Random} de Python, sembrado con la semilla 42 y el nombre del estrato o el identificador del hablante, para que la muestra no dependa del orden del archivo. De los cinco clips, tres son de inscripción y dos de prueba. La partición usa la misma semilla y no cambia entre configuraciones.
+Todo parte de un subconjunto de hablantes y clips que luego comparten la EER y la WER. Se construyó con los archivos \texttt{validated.tsv} y \texttt{clip\_durations.tsv} de Common Voice Scripted Speech 26.0 en español. Primero se descartaron los clips de menos de 3000 ms y los hablantes que quedaron con menos de cinco grabaciones. Después cada hablante se asignó a un estrato según la etiqueta de acento de sus clips. Si no tenía ninguna, se asignó a ``sin dato''; si tenía una sola y pertenecía a uno de los nueve grupos incluidos (México, andino-pacífico, caribe, rioplatense, chileno, América central y norte, centro-sur y sur de España), se asignó a ese grupo; en cualquier otro caso quedó por fuera. De cada uno de los diez estratos se tomaron 134 hablantes y, de cada hablante, cinco clips. Las dos listas se ordenan y luego se mezclan con \texttt{random.Random} de Python, sembrado con la semilla 42 y el nombre del estrato o el identificador del hablante, para que la muestra no dependa del orden del archivo. De los cinco clips, tres son de inscripción y dos de prueba. La partición usa la misma semilla y no cambia entre configuraciones.
 
 \subsubsection{Cálculo de la EER}\label{sec:4.5.2}
 
-La EER responde a si un sistema de verificación todavía reconoce al hablante después de anonimizar su voz. Cada grabación completa se resume en un \textit{embedding} de 192 valores, calculado en CPU con el modelo ECAPA-TDNN \texttt{speechbrain/spkrec-ecapa-voxceleb} \parencite{speechbrainModel}. El modelo de cada hablante se arma con sus tres clips de inscripción: es el promedio de sus tres \textit{embeddings}, normalizados antes a longitud 1 para que pesen igual. Cada clip de prueba se compara con el modelo de cada hablante mediante la similitud coseno, que se usa tal cual como puntuación, sin modelos de puntuación entrenados ni normalización. Con $1\,340$ hablantes y dos pruebas por hablante, cada escenario tiene $2\,680$ pares objetivo y $3\,588\,520$ pares impostores. Los escenarios o--o, o--a y a--a comparten esos pares y se diferencian solo en las grabaciones; en a--a cada clip lleva su propio $\alpha$. Para obtener la EER (Ecuación~\ref{eq:eer}) se prueba como umbral cada puntuación observada y se toma aquel en el que la FAR y la FRR quedan más cerca. Se reporta su promedio, y si dos umbrales empatan se usa el menor.
+La EER responde a si un sistema de verificación todavía reconoce al hablante después de anonimizar su voz. Cada grabación completa se resume en un \textit{embedding} de 192 valores, calculado en CPU con el modelo ECAPA-TDNN \texttt{speechbrain/spkrec-ecapa-voxceleb} \parencite{speechbrainModel}. El modelo de cada hablante se arma con sus tres clips de inscripción: es el promedio de sus tres \textit{embeddings}, normalizados antes a longitud 1 para que pesen igual. Cada clip de prueba se compara con el modelo de cada hablante mediante la similitud coseno, que se usa como puntuación, sin modelos de puntuación entrenados ni normalización. Con $1\,340$ hablantes y dos pruebas por hablante, cada escenario tiene $2\,680$ pares objetivo, en los que se comparan grabaciones de una misma persona, y $3\,588\,520$ pares impostores, en los que se comparan grabaciones de personas distintas. Los escenarios o--o, o--a y a--a comparten esos pares y se diferencian solo en las grabaciones; en a--a cada clip lleva su propio $\alpha$. Para obtener la EER (Ecuación~\ref{eq:eer}) se prueba como umbral cada puntuación observada y se toma aquel en el que la FAR y la FRR quedan más cerca. Se reporta su promedio, y si dos umbrales empatan se usa el menor.
 
 \subsubsection{Cálculo de la WER}\label{sec:4.5.3}
 
-La WER responde a la pregunta contraria: si el contenido se sigue entendiendo. Se transcribe un clip por hablante, elegido con la semilla 42, lo que da $1\,340$ clips por configuración. Whisper turbo \parencite{openaiwhisper2025} corre en CPU con el idioma fijado en español, temperatura 0 y sin condicionar cada transcripción en la anterior, y recibe el audio como un arreglo \texttt{float32} a $16\,\mathrm{kHz}$. Antes de contar errores, la referencia y la transcripción se normalizan igual. Se llevan a la forma NFC de Unicode y a minúsculas, los números en cifras se escriben en palabras con \texttt{num2words} y los signos de puntuación se cambian por espacios; las tildes y la ñ se conservan. Los errores se cuentan con la distancia de Levenshtein por palabras. La WER (Ecuación~\ref{eq:wer}) se calcula sobre todo el corpus, sumando los errores de todos los clips y dividiéndolos entre el total de palabras de referencia. Como ayuda para leer valores altos, también se cuenta cuántas transcripciones anonimizadas tienen más del doble de palabras que su referencia, señal de que Whisper escribió texto que no estaba en el audio.
+La WER responde a si el contenido se sigue entendiendo. Se transcribe un clip por hablante, elegido con la semilla 42, lo que da $1\,340$ clips por configuración. Whisper turbo \parencite{openaiwhisper2025} corre en CPU con el idioma fijado en español, temperatura 0 y sin condicionar cada transcripción en la anterior, y recibe el audio como un arreglo \texttt{float32} a $16\,\mathrm{kHz}$. Antes de contar errores, la referencia y la transcripción se normalizan igual. Se llevan a la forma NFC de Unicode y a minúsculas, los números en cifras se escriben en palabras con \texttt{num2words} y los signos de puntuación se cambian por espacios; las tildes y la ñ se conservan. Los errores se cuentan con la distancia de Levenshtein por palabras. La WER (Ecuación~\ref{eq:wer}) se calcula sobre todo el corpus, sumando los errores de todos los clips y dividiéndolos entre el total de palabras de referencia. Como ayuda para leer valores altos, también se cuenta cuántas transcripciones anonimizadas tienen más del doble de palabras que su referencia, señal de que Whisper escribió texto que no estaba en el audio.
 
 \subsubsection{Intervalos de confianza y comparaciones}\label{sec:4.5.4}
 
-La EER y la WER salen de una muestra de hablantes, y con otra muestra darían valores algo distintos. Los intervalos de confianza del 95 \% indican cuánto. Se obtienen con $1\,000$ réplicas \textit{bootstrap}. En cada réplica se eligen aleatoriamente hablantes con reemplazo dentro de cada estrato, cada uno con todos sus clips, y se recalculan la EER y la WER; las comparaciones entre copias de un mismo hablante no cuentan como pares impostores. El intervalo va del percentil 2.5 al 97.5, y el valor que se reporta es el que se obtiene con todos los datos. Las réplicas son las mismas para todos los escenarios y configuraciones, así que la diferencia entre dos configuraciones tiene su propio intervalo (\textit{bootstrap} pareado).
+La EER y la WER salen de una muestra de hablantes, y con otra muestra sus resultados serían algo distintos. Los intervalos de confianza del 95 \% indican cuánto y se obtienen con $1\,000$ réplicas \textit{bootstrap}. En cada réplica se eligen aleatoriamente hablantes con reemplazo dentro de cada estrato, cada uno con todos sus clips, y se recalculan la EER y la WER. Como el muestreo es con reemplazo, un mismo hablante puede quedar elegido dos o más veces en una réplica. Para calcular la EER, el sistema compara grabaciones de personas distintas y cuenta cuántas veces se equivoca y dice que son la misma persona. Si las copias de un mismo hablante se trataran como personas distintas, el sistema estaría comparando a una persona consigo misma y diría, con razón, que es la misma, pero eso se contaría como un error. Por eso, las comparaciones entre copias de un mismo hablante no se incluyen en ese cálculo. El intervalo va del percentil 2.5 al 97.5, y el valor que se reporta es el que se obtiene con todos los datos. Las réplicas son las mismas para todos los escenarios y configuraciones, así que la diferencia entre dos configuraciones tiene su propio intervalo (\textit{bootstrap} pareado).
 
 \subsection{Verificación del software}\label{sec:4.6}
 
-La implementación se verificó con pruebas automatizadas en \texttt{pytest}. Con $\alpha=1$, el core devuelve la señal de entrada con diferencias menores que $10^{-6}$, tanto en cada etapa (polos, excitación y resíntesis) como en una grabación completa, sin contar los primeros y últimos $10\,\mathrm{ms}$. Con $\alpha\ne1$, la salida del procesador incremental coincide con la de una implementación de referencia no incremental salvo errores de redondeo (menos de $10^{-10}$). El adaptador del prototipo produce la misma señal que el procesamiento por lotes, retrasada $160$ muestras. Esto respalda que los resultados obtenidos por lotes sobre el corpus corresponden al sistema que funciona en tiempo real. Los cálculos de la EER, la WER y el \textit{bootstrap} se compararon con implementaciones de referencia y con casos de resultado conocido.
+La implementación se verificó con pruebas automatizadas en \texttt{pytest}. Con $\alpha=1$, el core devuelve la señal de entrada con diferencias menores a $10^{-6}$, tanto en cada etapa (polos, excitación y resíntesis) como en una grabación completa, sin contar los primeros y últimos $10\,\mathrm{ms}$. Con $\alpha\ne1$, la salida del procesador incremental coincide con la de una implementación de referencia no incremental salvo errores de redondeo (menos de $10^{-10}$). El adaptador del prototipo produce la misma señal que el procesamiento por lotes, retrasada $160$ muestras. Esto respalda que los resultados obtenidos por lotes sobre el corpus corresponden al sistema que funciona en tiempo real. Los cálculos de la EER, la WER y el \textit{bootstrap} se compararon con implementaciones de referencia y con casos de resultado conocido.
 
 \section{Resultados}\label{sec:5}
 
+Esta sección presenta los resultados en el mismo orden en que se hicieron los experimentos. Primero se evalúa el intervalo de partida, $\mathcal{U}(0.7, 0.9)$ (Sección~\ref{sec:5.1}). Luego vienen tres etapas, el barrido con $\alpha$ fijo (Sección~\ref{sec:5.2}), el barrido fino (Sección~\ref{sec:5.3}) y los intervalos uniformes, donde se define el intervalo del prototipo (Sección~\ref{sec:5.4}).
+
+Después se revisa si los resultados son similares entre acentos y géneros (Sección~\ref{sec:5.5}) y cómo funciona el sistema en tiempo real (Sección~\ref{sec:5.6}). La Sección~\ref{sec:5.7} compara los resultados con las metas y con la literatura. En toda la sección, los valores entre corchetes son intervalos de confianza del 95 \% y las diferencias se expresan en puntos porcentuales (pp).
+
+
+\subsection{Punto de partida: $\mathcal{U}(0.7, 0.9)$}\label{sec:5.1}
+
+El primer experimento evaluó el intervalo $\mathcal{U}(0.7, 0.9)$, que se tomó como punto de partida porque es uno de los que exploraron \textcite{patino2021}. Antes de buscar otros valores de $\alpha$, este resultado muestra qué tan lejos está el método de las metas con una configuración ya usada en la literatura. Se evaluaron los 1 340 hablantes del subconjunto, con 2 680 pares objetivo (grabaciones de una misma persona) y 3 588 520 pares impostores (grabaciones de personas distintas) en cada escenario, y la WER se calculó sobre 1 340 clips. La Tabla~\ref{tab:resultados_inicio} resume los resultados.
+
+\begin{table}[!htbp]
+\centering
+\caption{Resultados del punto de partida, $\mathcal{U}(0.7, 0.9)$. Las metas son EER $\geq$ 30 \% en el escenario o--a y WER $<$ 15 \%.}
+\label{tab:resultados_inicio}
+\footnotesize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.12}
+\begin{tabularx}{\columnwidth}{@{}l>{\raggedright\arraybackslash}Xr>{\raggedright\arraybackslash}p{1.65cm}@{}}
+\toprule
+\textbf{Métrica} & \textbf{Escenario o versión} & \textbf{Valor (\%)} & \textbf{IC 95 \%} \\
+\midrule
+EER & o--o (sin anonimizar) & 1.72 & [1.38, 2.20] \\
+EER & o--a (atacante ignorante) & 14.85 & [14.24, 15.61] \\
+EER & a--a (atacante semi-informado) & 9.18 & [8.48, 9.77] \\
+WER & Audio original & 3.84 & [3.45, 4.24] \\
+WER & Audio anonimizado & 9.86 & [8.36, 11.87] \\
+\bottomrule
+\end{tabularx}
+\end{table}
+
+Con este intervalo, el sistema cumple la meta de inteligibilidad, pero queda lejos de la de privacidad. Sin anonimizar (o--o), el sistema de verificación casi siempre reconoce al hablante, con una EER de 1.72 \%. Cuando se anonimizan las grabaciones de prueba (o--a), la EER sube 13.13 pp [12.46, 13.92], hasta 14.85 \%: la mitad de la meta.
+
+Si el atacante también anonimiza sus grabaciones de inscripción (a--a), compara grabaciones que pasaron por la misma transformación, aunque con valores de $\alpha$ distintos, y recupera parte de su capacidad de reconocer al hablante. En ese escenario, la EER baja a 9.18 \%, 5.67 pp [4.95, 6.57] menos que en o--a, aunque sigue 7.46 pp [6.75, 8.06] por encima del audio original. Este valor queda muy por debajo del 33.8 \% que reportan \textcite{patino2021} para el mismo intervalo frente a un atacante semi-informado; la Sección~\ref{sec:5.7} discute las posibles razones.
+
+La inteligibilidad, en cambio, se mantiene dentro de la meta. La anonimización agrega 6.03 pp [4.63, 7.99] a la WER, que pasa de 3.84 \% a 9.86 \%, e incluso el límite superior de su intervalo queda por debajo del 15 \%.
+
+La escucha de las grabaciones anonimizadas señaló un problema que la EER global no muestra por sí sola. En una escucha informal, los clips que recibieron valores de $\alpha$ cercanos a 0.9 conservaban la voz lo suficiente como para reconocer con facilidad a quien hablaba. Eso va en contra del objetivo del sistema: si un atacante graba la voz anonimizada para suplantar al usuario, las personas que lo conocen no deberían reconocerla como suya. Por esa razón se decidió que el intervalo del sistema no llegaría hasta 0.9. La Sección~\ref{sec:5.2} muestra que el sistema de verificación coincide con esta observación.
+
+Los resultados del punto de partida dieron dos razones para bajar $\alpha$. La WER de 9.86 \% quedó 5.1 pp por debajo de la meta, e incluso el límite superior de su intervalo, 11.87 \%, dejaba 3.1 pp de margen. Como un $\alpha$ más bajo transforma más la voz, se esperaba que bajarlo aumentara la EER a costa de parte de ese margen. Esto, junto con la observación de escucha, llevó a explorar valores de $\alpha$ más bajos que los de $\mathcal{U}(0.7, 0.9)$. Para eso se recorrió primero todo el rango con $\alpha$ fijo (Sección~\ref{sec:5.2}) y se revisó de cerca la zona donde las métricas cambian más (Sección~\ref{sec:5.3}); con lo observado allí se probaron intervalos centrados en valores más bajos (Sección~\ref{sec:5.4}).
+
+
+\subsection{Etapa 1: barrido con $\alpha$ fijo}\label{sec:5.2}
+
+La primera etapa anonimizó todas las grabaciones con un mismo valor de $\alpha$, desde 0.2 hasta 0.9 en pasos de 0.1, e incluyó $\alpha$ = 1 como control. Así se ve el efecto de la intensidad de la transformación por sí sola, sin la variación que agrega elegir $\alpha$ al azar. Como explica la Sección~\ref{sec:3.6.3}, el análisis se centra en el escenario o--a. La Figura~\ref{fig:etapa1} muestra la EER y la WER para cada valor de $\alpha$.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\columnwidth]{figuras/resultados/res_etapa1_barrido_alfa.pdf}
+\caption{Barrido con $\alpha$ fijo entre 0.2 y 1: (a) EER o--a y (b) WER del audio anonimizado.}
+\label{fig:etapa1}
+\end{figure}
+
+El control funcionó como se esperaba. Con $\alpha$ = 1, la EER o--a es de 1.72 \% y la WER de 3.84 \%, los mismos valores del audio original, con los mismos intervalos. Esto confirma que los cambios que aparecen con otros valores de $\alpha$ vienen de la transformación y no del resto del procesamiento.
+
+La privacidad aumenta a medida que $\alpha$ baja. La EER o--a pasa de 3.25 \% [2.80, 3.77] con $\alpha$ = 0.9 a 49.04 \% [48.47, 49.66] con $\alpha$ = 0.2, muy cerca del 50 \% que correspondería a un atacante que responde al azar. El cambio más fuerte ocurre entre 0.8 y 0.6, donde la EER sube de 10.56 \% a 33.84 \%, y la meta del 30 \% solo se alcanza con $\alpha$ $\leq$ 0.6.
+
+El valor con $\alpha$ = 0.9 coincide con lo que se escuchó en el punto de partida (Sección~\ref{sec:5.1}). Con una EER de 3.25 \%, apenas 1.53 pp por encima del audio original, el sistema de verificación reconoce al hablante casi tan bien como sin anonimizar.
+
+La inteligibilidad se comporta al revés. La WER se mantiene por debajo de la meta hasta $\alpha$ = 0.8 (8.94 \%) y sube a 24.22 \% con $\alpha$ = 0.7 y a 69.27 \% con $\alpha$ = 0.6. Con $\alpha$ $\leq$ 0.5 supera el 100 \%, algo posible porque las palabras que Whisper agrega también cuentan como errores: con el audio tan transformado, Whisper incluye frases que no están en la grabación. En esa zona, el contenido prácticamente se pierde.
+
+Ningún valor de $\alpha$ cumple las dos metas a la vez. La meta de privacidad exige $\alpha$ $\leq$ 0.6, donde la WER ya es de 69.27 \%; aun sin contar las 30 transcripciones con alucinaciones, sería de 43.84 \%. La meta de inteligibilidad exige $\alpha$ $\geq$ 0.8, donde la EER es de solo 10.56 \%. Entre 0.6 y 0.8 está la zona en que las dos métricas cambian más rápido, y por eso la segunda etapa la estudia con más detalle.
+
+
+\subsection{Etapa 2: barrido fino entre 0.65 y 0.9}\label{sec:5.3}
+
+La segunda etapa estudió con más detalle la zona de transición que mostró la etapa 1. Se probaron valores fijos de $\alpha$ entre 0.65 y 0.875 en pasos de 0.025, que se analizan junto con el valor 0.9 de la etapa 1. La Figura~\ref{fig:etapa2} muestra la EER o--a y la WER de cada valor, y la Figura~\ref{fig:diferencias_alfa}, la diferencia entre cada par de valores vecinos, calculada con bootstrap pareado.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=0.94\columnwidth]{figuras/resultados/res_etapa2_barrido_fino.pdf}
+\caption{Barrido fino con $\alpha$ fijo entre 0.65 y 0.9: (a) EER o--a y (b) WER del audio anonimizado.}
+\label{fig:etapa2}
+\end{figure}
+
+En este rango, la EER o--a baja de forma continua a medida que $\alpha$ sube: pasa de 29.25 \% [28.36, 30.07] con $\alpha$ = 0.65 a 4.36 \% con $\alpha$ = 0.875. Ningún valor alcanza la meta del 30 \%; el más cercano, $\alpha$ = 0.65, queda 0.75 pp por debajo.
+
+La WER, en cambio, no baja de forma pareja: cae muy rápido en los valores bajos de $\alpha$ y casi se aplana en los altos. Pasa de 38.02 \% con $\alpha$ = 0.65 a 11.62 \% [10.64, 12.67] con $\alpha$ = 0.75, el primer valor que cumple la meta, y desde $\alpha$ = 0.775 se mantiene por debajo del 10 \%. En los valores bajos, la inteligibilidad es muy sensible a $\alpha$: un cambio de solo 0.025, de 0.65 a 0.675, reduce la WER en 13.25 pp [7.68, 20.14], mientras que desde $\alpha$ = 0.75 cada paso la mejora en 2 pp o menos. Por debajo de $\alpha$ = 0.75, entonces, una pequeña diferencia en $\alpha$ puede separar un audio que se entiende de uno que no. La escucha coincide con este salto. Los clips escuchados con $\alpha$ = 0.65 casi no se entendían; con $\alpha$ = 0.675, en cambio, se entendía casi todo, aunque todavía con esfuerzo.
+
+La privacidad cambia de manera más consistente. Según las diferencias entre valores vecinos, cada aumento de 0.025 en $\alpha$ reduce la EER de forma significativa: entre 2.7 y 3.8 pp hasta $\alpha$ = 0.825, y entre 1.1 y 1.9 pp después. A diferencia de la WER, la EER no tiene una zona en la que se estabilice.
+
+La escucha agrega un matiz a este resultado. Con $\alpha$ = 0.875, el valor más alto del barrido fino, el contenido se entiende mucho mejor que con los valores bajos, y la voz anonimizada ya no suena igual a la original ni del todo cercana. Aun así, conserva algunas características de la persona: asociarla con su dueño no es inmediato, pero tampoco exige mucho esfuerzo. El sistema de verificación, en cambio, lo hace con facilidad: con ese valor la EER es de 4.36 \% [3.84, 4.74]. El oído y el sistema automático no perciben la identidad de la misma manera, y una voz que una persona no reconoce de inmediato puede seguir siendo identificable para un atacante que use un sistema de verificación.
+
+\begin{figure}[!htbp]
+\centering
+\includegraphics[width=\columnwidth]{figuras/resultados/res_diferencias_alfa.pdf}
+\caption{Diferencia en la EER o--a (a) y en la WER (b) entre valores vecinos de $\alpha$, con IC 95~\% por \textit{bootstrap} pareado.}
+\label{fig:diferencias_alfa}
+\end{figure}
+
+Con $\alpha$ fijo, entonces, el método no cumple las dos metas a la vez. La WER baja de 15 \% desde $\alpha$ = 0.75 en adelante, pero ahí la EER es de 17.57 \%, y la EER más alta del barrido fino viene con una WER de 38.02 \%. Además, por encima de 0.775 subir $\alpha$ casi no mejora la inteligibilidad y sí sigue reduciendo la privacidad, mientras que por debajo de 0.75 la WER crece rápido y supera la meta. Por eso los intervalos de la etapa 3 se centraron entre 0.725 y 0.775.
+
+
+\subsection{Etapa 3: intervalos uniformes de $\alpha$}\label{sec:5.4}
+
+La tercera etapa evaluó el sistema como funciona en su uso real: cada grabación recibe un $\alpha$ elegido al azar dentro de un intervalo. Se probaron nueve intervalos uniformes, que combinan tres puntos medios escogidos a partir de la etapa 2 (0.725, 0.75 y 0.775) con tres anchos (0.12, 0.15 y 0.18). Todos quedan por debajo de 0.9, como se decidió a partir de la etapa 1 (Sección~\ref{sec:5.1}). En esta etapa se analizan los escenarios o--a y a--a. La Figura~\ref{fig:intervalos} muestra los resultados y la Tabla~\ref{tab:resultados_intervalos} reúne sus valores con los intervalos de confianza.
+
+\begin{figure*}[!tbp]
+\centering
+\includegraphics[width=0.85\textwidth]{figuras/resultados/res_etapa3_intervalos.pdf}
+\caption{Resultados de los nueve intervalos uniformes de $\alpha$, agrupados por punto medio: (a) EER o--a, (b) EER a--a y (c) WER del audio anonimizado.}
+\label{fig:intervalos}
+\end{figure*}
+
+\begin{table*}[!tbp]
+\centering
+\caption{Resultados de los nueve intervalos uniformes y del punto de partida, con IC 95 \%. En negrita, los intervalos que se consideraron como opciones para el prototipo.}
+\label{tab:resultados_intervalos}
+\scriptsize
+\setlength{\tabcolsep}{2.2pt}
+\renewcommand{\arraystretch}{1.24}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{2.65cm}>{\centering\arraybackslash}p{1.3cm}>{\centering\arraybackslash}p{0.9cm}>{\centering\arraybackslash}X>{\centering\arraybackslash}X>{\centering\arraybackslash}X>{\raggedright\arraybackslash}p{2.0cm}@{}}
+\toprule
+\textbf{Intervalo} & \textbf{Punto medio} & \textbf{Ancho} & \textbf{EER o--a (\%)} & \textbf{EER a--a (\%)} & \textbf{WER (\%)} & \textbf{¿WER $<$ 15 \% en todo el IC?} \\
+\midrule
+$\mathcal{U}(0.665, 0.785)$ & 0.725 & 0.12 & \shortstack{21.60 \\ {[20.89, 22.39]}} & \shortstack{9.92 \\ {[9.17, 10.63]}} & \shortstack{18.57 \\ {[14.86, 23.37]}} & No \\
+$\mathcal{U}(0.65, 0.80)$ & 0.725 & 0.15 & \shortstack{21.87 \\ {[21.10, 22.73]}} & \shortstack{11.01 \\ {[10.26, 11.64]}} & \shortstack{20.92 \\ {[16.31, 26.29]}} & No \\
+$\mathcal{U}(0.635, 0.815)$ & 0.725 & 0.18 & \shortstack{22.96 \\ {[22.09, 23.82]}} & \shortstack{11.90 \\ {[11.08, 12.58]}} & \shortstack{19.91 \\ {[16.38, 24.18]}} & No \\
+\addlinespace[2pt]
+\textbf{$\mathcal{U}(0.69, 0.81)$} & \textbf{0.75} & \textbf{0.12} & \textbf{\shortstack{18.77 \\ {[17.91, 19.66]}}} & \textbf{\shortstack{8.99 \\ {[8.28, 9.63]}}} & \textbf{\shortstack{14.80 \\ {[11.90, 18.47]}}} & \textbf{No} \\
+\textbf{$\mathcal{U}(0.675, 0.825)$} & \textbf{0.75} & \textbf{0.15} & \textbf{\shortstack{19.36 \\ {[18.58, 20.30]}}} & \textbf{\shortstack{9.70 \\ {[8.95, 10.28]}}} & \textbf{\shortstack{17.52 \\ {[12.96, 23.22]}}} & \textbf{No} \\
+\textbf{$\mathcal{U}(0.66, 0.84)$} & \textbf{0.75} & \textbf{0.18} & \textbf{\shortstack{20.19 \\ {[19.33, 21.08]}}} & \textbf{\shortstack{10.75 \\ {[10.05, 11.34]}}} & \textbf{\shortstack{16.05 \\ {[12.97, 19.92]}}} & \textbf{No} \\
+\addlinespace[2pt]
+$\mathcal{U}(0.715, 0.835)$ & 0.775 & 0.12 & \shortstack{15.41 \\ {[14.66, 16.18]}} & \shortstack{7.80 \\ {[7.13, 8.50]}} & \shortstack{10.22 \\ {[9.16, 11.43]}} & Sí \\
+$\mathcal{U}(0.70, 0.85)$ & 0.775 & 0.15 & \shortstack{16.38 \\ {[15.59, 17.02]}} & \shortstack{8.40 \\ {[7.80, 9.10]}} & \shortstack{11.00 \\ {[9.42, 13.07]}} & Sí \\
+\textbf{$\mathcal{U}(0.685, 0.865)$} & \textbf{0.775} & \textbf{0.18} & \textbf{\shortstack{17.24 \\ {[16.42, 17.99]}}} & \textbf{\shortstack{9.33 \\ {[8.69, 10.15]}}} & \textbf{\shortstack{12.04 \\ {[9.70, 15.32]}}} & \textbf{No (por 0.32)} \\
+\addlinespace[2pt]
+\shortstack[l]{$\mathcal{U}(0.7, 0.9)$ \\ (punto de partida)} & 0.80 & 0.20 & \shortstack{14.85 \\ {[14.24, 15.61]}} & \shortstack{9.18 \\ {[8.48, 9.77]}} & \shortstack{9.86 \\ {[8.36, 11.87]}} & Sí \\
+\bottomrule
+\end{tabularx}
+\end{table*}
+
+El punto medio es el parámetro que más pesa. Con el mismo ancho, bajarlo un paso aumenta la EER o--a entre 2.5 y 3.4 pp y la a--a entre 0.9 y 1.4 pp, siempre con diferencias significativas, pero también empeora la inteligibilidad. Ningún intervalo con punto medio 0.725 cumple la meta de WER, y con 0.75 solo $\mathcal{U}(0.69, 0.81)$ queda por debajo del 15 \%, con 14.80 \%. Con 0.775, los tres la cumplen.
+
+El ancho tiene un efecto menor, pero casi no cuesta inteligibilidad. Pasar de 0.12 a 0.18 sube la EER o--a entre 1.4 y 1.8 pp y la a--a entre 1.5 y 2.0 pp, mientras que la WER, en la mayoría de los casos, no cambia de forma significativa. En el escenario a--a, ensanchar el intervalo en 0.06 aporta tanta privacidad como bajar el punto medio un paso, o más. Esto coincide con lo esperado: con un intervalo más ancho, $\alpha$ es más incierto y al atacante semi-informado le cuesta más reproducir la transformación.
+
+Ningún intervalo alcanza la meta de privacidad. La EER o--a más alta es de 22.96 \%, y la del escenario a--a no pasa de 11.90 \%, y los intervalos con más privacidad son también los de peor inteligibilidad.
+
+Se consideraron como opciones para el prototipo cuatro intervalos, marcados en negrita en la Tabla~\ref{tab:resultados_intervalos}: $\mathcal{U}(0.69, 0.81)$, $\mathcal{U}(0.675, 0.825)$, $\mathcal{U}(0.66, 0.84)$ y $\mathcal{U}(0.685, 0.865)$. Se eligió $\mathcal{U}(0.685, 0.865)$ porque, entre los intervalos de mayor ancho, es el que conserva mejor la inteligibilidad: es el único de ancho 0.18 con una WER por debajo de la meta, 12.04 \%, aunque el límite superior de su intervalo de confianza la supera por 0.32 pp. Con él, la EER o--a es de 17.24 \% y la a--a, de 9.33 \%.
+
+$\mathcal{U}(0.69, 0.81)$ también era una opción, pero su ancho, 0.12, es el menor de los probados, y el intervalo elegido logra resultados parecidos con un ancho mayor: algo menos de EER o--a (17.24 \% frente a 18.77 \%), algo más de EER a--a (9.33 \% frente a 8.99 \%) y una WER más baja (12.04 \% frente a 14.80 \%).
+
+La escucha apoyó la elección. Entre $\mathcal{U}(0.675, 0.825)$ y $\mathcal{U}(0.685, 0.865)$ se nota una diferencia de inteligibilidad, aunque sus límites inferiores apenas difieren en 0.01, y eso coincide con la sensibilidad de la inteligibilidad a los valores bajos de $\alpha$ que se vio en la Sección~\ref{sec:5.3}.
+
+Frente al punto de partida, el intervalo elegido sube la EER o--a 2.39 pp [1.88, 2.73]. Las diferencias en la EER a--a, 0.15 pp [$-$0.15, 0.68], y en la WER, 2.17 pp [$-$0.47, 5.40], no son significativas.
+
+La Tabla~\ref{tab:resultados_intervalos} muestra, además, que no hay un único intervalo correcto. Varios combinan privacidad e inteligibilidad de forma parecida, y la elección final depende de qué se quiera priorizar: un punto medio más bajo da más privacidad y uno más alto, más inteligibilidad. Más que encontrar un valor exacto, estas pruebas buscaban ubicar los límites fuera de los cuales el sistema deja de cumplir su objetivo: con $\alpha$ por debajo de unos 0.65 el contenido deja de entenderse, y por encima de unos 0.875 la voz casi no se protege. Dentro de esa zona, cada intervalo ofrece un equilibrio distinto entre privacidad e inteligibilidad; fuera de ella, el sistema dejaría de cumplir uno de sus dos propósitos.
+
+
+\subsection{Resultados por acento y género}\label{sec:5.5}
+
+Para revisar si la protección es pareja entre grupos de hablantes, los resultados del intervalo elegido se separaron por acento y por género. Cada uno de los diez estratos de acento tiene 134 hablantes. El género es el que declaró cada hablante en Common Voice: hay 869 hombres y 323 mujeres, y los 148 hablantes sin este dato no entran en la comparación. La EER de cada grupo se calculó solo con pares de hablantes del mismo grupo. La media de $\alpha$ es casi la misma en todos los grupos, entre 0.773 y 0.776, así que ninguno recibió una transformación más fuerte que los demás.
+
+Para saber si las diferencias entre grupos son reales o podrían deberse al azar se usaron dos pruebas. En género, se calculó la diferencia entre hombres y mujeres con su intervalo de confianza por bootstrap; si el intervalo incluye el 0, la diferencia no es significativa. En acento, como hay nueve grupos, se usó una sola prueba de permutación: se mezclaron al azar las etiquetas de acento entre los hablantes 1 000 veces y se comparó la diferencia entre el acento con el valor más alto y el de valor más bajo con las que se obtienen al azar. El grupo "sin dato" no entra en esta prueba, porque no corresponde a un acento. La Figura~\ref{fig:grupos} muestra los valores de cada grupo y la Tabla~\ref{tab:resultados_grupos} resume las pruebas.
+
+\begin{table*}[!tbp]
+\centering
+\caption{Pruebas de diferencias entre grupos con el intervalo elegido, $\mathcal{U}(0.685, 0.865)$. En género, la diferencia se muestra con su IC 95 \%; en acento, es la diferencia entre el grupo más alto y el más bajo.}
+\label{tab:resultados_grupos}
+\footnotesize
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.14}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{3.15cm}>{\raggedright\arraybackslash}p{1.7cm}X>{\raggedright\arraybackslash}p{3cm}p{1.9cm}@{}}
+\toprule
+\textbf{Comparación} & \textbf{Métrica} & \textbf{Diferencia} & \textbf{Prueba} & \textbf{¿Significativa?} \\
+\midrule
+Hombres $-$ mujeres & EER o--a & $-$1.20 pp [$-$2.76, 0.67] & IC por bootstrap & No \\
+Hombres $-$ mujeres & WER & 3.28 pp [$-$0.92, 8.27] & IC por bootstrap & No \\
+Entre acentos & EER o--a & 3.01 pp (América Central $-$ rioplatense) & Permutación, p = 0.688 & No \\
+Entre acentos & WER & 21.88 pp (América Central $-$ España norte) & Permutación, p = 0.034 & Sí \\
+Entre acentos, sin 2 transcripciones atípicas & WER & 3.70 pp (España sur $-$ España norte) & Permutación, p = 0.710 & No \\
+\bottomrule
+\end{tabularx}
+\end{table*}
+
+En privacidad, los grupos se comportan de forma similar (Figura~\ref{fig:grupos}a). Entre los nueve acentos, la EER o--a va de 16.42 \% (rioplatense) a 19.43 \% (América Central), y la diferencia entre ellos no es significativa. En hombres y mujeres es de 19.68 \% y 20.88 \%, y la diferencia tampoco es significativa.
+
+En inteligibilidad, la WER de casi todos los acentos está entre 8.08 \% y 11.79 \%, pero la de América Central llega a 29.96 \% (Figura~\ref{fig:grupos}b), y la prueba de permutación marca la diferencia entre acentos como significativa. Como un solo acento se alejaba tanto de los demás, se revisaron las transcripciones de ese grupo para ver qué causaba el valor. El resultado venía de solo dos grabaciones, de 11 palabras cada una, en las que el ASR produjo transcripciones de 112 y 140 palabras; como la WER cuenta cada palabra de más como un error, cada una suma más de cien errores. Son las únicas grabaciones del intervalo cuya transcripción tiene más del doble de palabras que el texto leído. Al repetir la prueba sin ellas, la WER de América Central baja a 9.8 \%, en línea con los demás acentos, y la diferencia deja de ser significativa (p = 0.710). Entre hombres y mujeres, la diferencia de WER tampoco es significativa.
+
+\begin{figure*}[!tbp]
+\centering
+\includegraphics[width=0.85\textwidth]{figuras/resultados/res_grupos.pdf}
+\caption{Resultados por acento y género con el intervalo elegido, $\mathcal{U}(0.685, 0.865)$: (a) EER o--a y (b) WER del audio anonimizado.}
+\label{fig:grupos}
+\end{figure*}
+
+Con el intervalo elegido, entonces, la protección y la inteligibilidad son parejas entre acentos y entre hombres y mujeres. El único resultado que se aparta viene de dos transcripciones, no del grupo de hablantes.
+
+
+\subsection{Desempeño en tiempo real}\label{sec:5.6}
+
+El prototipo se probó en cinco ensayos de habla continua, con bloques de 160 muestras (10 ms) a 16 kHz: el primero de 20 s y los otros cuatro de 60 s. Los cuatro primeros usaron el micrófono y los audífonos integrados del computador portátil, y el quinto, un dispositivo de audio externo conectado por USB. Cada ensayo abrió una sesión nueva, así que cada uno usó un $\alpha$ distinto, entre 0.706 y 0.839, todos dentro del intervalo elegido. La Figura~\ref{fig:tiempo_real} resume los resultados.
+
+\begin{figure*}[!tbp]
+\centering
+\includegraphics[width=0.85\textwidth]{figuras/resultados/res_tiempo_real.pdf}
+\caption{Desempeño del prototipo en tiempo real en los cinco ensayos: (a) RTF, (b) tiempo de procesamiento por bloque y (c) latencia estimada.}
+\label{fig:tiempo_real}
+\end{figure*}
+
+El RTF estuvo entre 0.067 y 0.069 en los cinco ensayos (Figura~\ref{fig:tiempo_real}a), por debajo de la meta de 0.1: procesar 1 s de voz tomó unos 0.07 s. El tiempo de procesamiento de cada bloque también quedó lejos de su límite, que es la duración del bloque, 10 ms (Figura~\ref{fig:tiempo_real}b). La mediana estuvo entre 0.49 y 0.67 ms, y el percentil 99 no pasó de 1.81 ms. El bloque más lento de todos tardó 6.09 ms, en el ensayo con el dispositivo USB; en los demás ensayos ningún bloque pasó de 2.71 ms. Como ningún bloque tardó más de lo que dura, el procesamiento nunca se atrasó frente al audio, y en ningún ensayo el dispositivo reportó cortes.
+
+La latencia estimada fue de 140 ms en todos los ensayos (Figura~\ref{fig:tiempo_real}c), por debajo de la referencia de 150 ms de la Recomendación UIT-T G.114 \parencite{ituG114}. De esos 140 ms, 120 ms corresponden al dispositivo de audio (20 ms de entrada y 100 ms de salida) y solo 20 ms al sistema: 10 ms que tarda en llenarse un bloque y 10 ms de retraso del adaptador. Es decir, casi toda la latencia viene del dispositivo de audio y no del algoritmo. Esos 120 ms son propios del montaje en Windows: en un teléfono se reemplazarían por los de su propia ruta de audio, y lo que el sistema agregaría al retraso que ya tiene una llamada son sus 20 ms, si se mantienen bloques de 10 ms. Por eso, la comparación con los 150 ms de la Recomendación UIT-T G.114 describe el banco de pruebas y no una llamada real, que además incluye el retraso de la red.
+
+Los 100 ms de salida son los que asigna el dispositivo cuando se pide la configuración ``low''. Antes de los ensayos se probaron dos configuraciones con menos latencia. Con 30 ms de salida, la latencia estimada bajó a 60 ms, pero el dispositivo reportó cortes en ensayos de 20 s, uno sin anonimización y dos con ella, y al escuchar el audio se oía eco y no salía fluido. Con 50 ms de salida, la latencia estimada fue de 80 ms y no hubo cortes en dos ensayos de 60 s, pero el RTF subió a 0.105 y 0.108, por encima de la meta, y al escuchar los audios se percibía más eco que con ``low'': a veces una misma palabra se superponía. En este montaje, entonces, bajar la latencia del dispositivo trae como consecuencia un audio menos continuo o un costo de procesamiento mayor, y por eso se eligió la configuración ``low''.
+
+
+\subsection{Discusión}\label{sec:5.7}
+
+La Tabla~\ref{tab:metas_resultados} compara las metas del proyecto con los resultados del intervalo elegido.
+
+\begin{table*}[!tbp]
+\centering
+\caption{Metas del proyecto frente a los resultados del intervalo elegido, $\mathcal{U}(0.685, 0.865)$.}
+\label{tab:metas_resultados}
+\footnotesize
+\setlength{\tabcolsep}{5pt}
+\renewcommand{\arraystretch}{1.16}
+\begin{tabularx}{\textwidth}{@{}>{\raggedright\arraybackslash}p{3.4cm}>{\raggedright\arraybackslash}p{4cm}>{\raggedright\arraybackslash}p{4cm}X@{}}
+\toprule
+\textbf{Criterio} & \textbf{Meta} & \textbf{Resultado} & \textbf{¿Se cumple?} \\
+\midrule
+Privacidad: EER o--a & $\geq$ 30 \% & 17.24 \% [16.42, 17.99] & No \\
+Inteligibilidad: WER & < 15 \% & 12.04 \% [9.70, 15.32] & Sí \\
+Tiempo real: RTF & < 0.1 & 0.067 a 0.069 & Sí \\
+Latencia estimada & 150 ms (referencia UIT-T G.114) & 140 ms (20 ms del sistema) & Sí, en el banco de pruebas y sin incluir la red \\
+\bottomrule
+\end{tabularx}
+\end{table*}
+
+El sistema cumple las metas de inteligibilidad y de tiempo real, pero no la de privacidad. La WER está por debajo de 15 \%, aunque el límite superior de su intervalo de confianza pasa la meta. El RTF no llega a 0.1 en ningún ensayo, y de la latencia estimada solo 20 ms son del sistema; el resto viene del dispositivo de audio. Con la privacidad es distinto. La EER o--a queda lejos de 30 \%, y ninguna configuración evaluada llega a esa meta sin perder la inteligibilidad: con $\alpha$ fijo, la EER o--a alcanza 30 \% solo con $\alpha$ = 0.6 o menos, donde la WER pasa de 69 \%, y entre las configuraciones con una WER por debajo de 15 \%, la más alta es de 18.77 \%, en $\mathcal{U}(0.69, 0.81)$. El intervalo elegido sí mejora la EER o--a en 2.39 pp frente al punto de partida (Sección~\ref{sec:5.4}), pero esa mejora no alcanza para lograr la meta.
+
+Los resultados de privacidad e inteligibilidad no coinciden con los de \textcite{patino2021}, la principal referencia del método. Con $\mathcal{U}(0.7, 0.9)$, ellos reportan una EER de 33.8 \% frente a un atacante semi-informado; aquí, con el mismo intervalo, la EER a--a es de 9.18 \% y la o--a, de 14.85 \%. En inteligibilidad pasa lo contrario: aquí $\mathcal{U}(0.7, 0.9)$ deja la WER en 9.86 \%, por debajo del 13.7 \% que ellos reportan para $\mathcal{U}(0.8, 0.9)$, un intervalo que transforma menos la voz. No se comprobó por qué, pero la explicación más probable son los modelos de evaluación. \textcite{patino2021} usaron el ASV y el ASR del VoicePrivacy 2020, entrenados con la partición train-clean-360 de LibriSpeech; este trabajo usó ECAPA-TDNN, entrenado con VoxCeleb, y Whisper. Si estos modelos son más robustos, reconocen al hablante y entienden el contenido aunque la voz esté transformada, y eso bajaría al mismo tiempo la EER y la WER. El idioma y el corpus también son distintos. De ser así, la meta de 30 \%, que se fijó tomando como referencia el valor de \textcite{patino2021}, suponía un atacante más débil que el de esta evaluación. Para comprobarlo habría que evaluar las mismas grabaciones con los modelos del VoicePrivacy 2020, lo cual queda fuera del alcance de este trabajo.
+
+El método tiene además un punto débil propio: la transformación se puede revertir. McAdams cambia los ángulos de los polos de una forma conocida, así que quien sepa qué $\alpha$ se usó puede aplicar la transformación inversa y recuperar una voz parecida a la original. Por eso \textcite{patino2021} eligen $\alpha$ al azar: así, el atacante tiene que conocer el valor exacto de cada grabación. Pero para acercarse no le haría falta el valor exacto. En principio, si se invierte la transformación con un $\alpha$ parecido al real, lo que queda equivale a aplicar un coeficiente cercano a 1. Un coeficiente así casi no protege la voz: en el barrido con $\alpha$ fijo (Sección~\ref{sec:5.2}), con $\alpha$ = 0.9 el sistema de verificación reconoce al hablante casi tan bien como sin anonimizar (EER o--a de 3.25 \% frente a 1.72 \%). El intervalo elegido tiene un ancho de solo 0.18, de modo que un atacante que conozca el sistema y el intervalo podría probar varios valores dentro de él hasta dar con uno cercano. \textcite{patino2021} dejan este tipo de ataque por fuerza bruta como trabajo pendiente, y aquí tampoco se evaluó.
+
+A esto se suman las limitaciones de la evaluación. La privacidad se midió con un solo ASV preentrenado, sin un atacante que entrene su modelo con audio anonimizado, y \textcite{patino2021} muestran que ese tipo de atacante puede cambiar bastante los resultados. La inteligibilidad la midió un ASR, no personas; las dos transcripciones atípicas de la Sección~\ref{sec:5.5} son un ejemplo de errores del ASR que no reflejan lo que escucharía alguien. Y el corpus es de habla leída a 16 kHz, sin la banda angosta ni los códecs de las redes celulares.
+
+En el diseño de los experimentos hay dos limitaciones más. Cada grabación recibió un solo valor de $\alpha$, por lo que los intervalos de confianza recogen la variación entre hablantes, pero no la que darían otros sorteos de $\alpha$. Y la escucha fue informal: la hizo solo la autora, sin un protocolo de prueba auditiva y con voces de personas que no conoce, así que no refleja si alguien cercano al hablante lo reconocería.
+
+Las pruebas en tiempo real también son limitadas. Los cinco ensayos usaron solo la voz de la autora, un computador portátil y dos dispositivos de audio. La latencia se estimó con los valores que reporta el controlador de audio, sin medirla de extremo a extremo y sin la red telefónica, y el sistema no se probó en un teléfono.
+
+El sistema, entonces, funciona en tiempo real y conserva la inteligibilidad, pero frente a un ASV actual protege solo en parte. Con el intervalo elegido, la EER o--a sube de 1.72 \% sin anonimizar a 17.24 \%: reconocer al hablante se vuelve más difícil, aunque no tanto como buscaba la meta del proyecto.
+
+
+
+\FloatBarrier
+
+
 \section{Conclusiones}\label{sec:6}
+
+La pregunta de investigación que motiva este trabajo es en qué medida un sistema de anonimización de voz en tiempo real protege la identidad vocal sin comprometer la inteligibilidad. Con el coeficiente de McAdams, el sistema la protege solo en parte. En el intervalo elegido, $\mathcal{U}(0.685,0.865)$, la EER frente a un atacante que compara la llamada con grabaciones originales sube de 1.72\,\% a 17.24\,\%, la WER se queda en 12.04\,\%, por debajo de la meta de 15\,\%, y la voz se procesa en tiempo real. Reconocer al hablante se vuelve más difícil, pero la EER queda lejos de la meta de 30\,\%. Y si el atacante anonimiza sus propias grabaciones antes de compararlas, la EER baja a 9.33\,\%.
+
+La evaluación también ubicó los límites del coeficiente. Con $\alpha$ por debajo de aproximadamente 0.65 el contenido deja de entenderse, y por encima de aproximadamente 0.875 la voz casi no se protege. Entre esos dos valores, ganar privacidad cuesta inteligibilidad: ninguna configuración evaluada cumple las dos metas a la vez, y varios intervalos llegan a equilibrios parecidos, así que no hay un único intervalo correcto. En los intervalos uniformes, lo que más mueve ese equilibrio es el punto medio. El ancho pesa menos, pero ensancharlo da privacidad casi sin perder inteligibilidad, sobre todo frente al atacante que anonimiza sus propias grabaciones.
+
+La protección y la inteligibilidad del intervalo elegido fueron parejas entre acentos y entre hombres y mujeres, también en los grupos andino-pacífico y caribe, que es donde se clasifican las voces colombianas del corpus. En los cinco ensayos en tiempo real, el RTF estuvo entre 0.067 y 0.069 y no hubo cortes. De los 140\,ms de latencia estimada, el sistema aporta solo 20\,ms; el resto lo pone el dispositivo de audio del computador. El algoritmo es, por tanto, lo bastante liviano para una llamada, aunque falta medir cómo se comporta en un teléfono.
+
+La distancia frente a la meta de privacidad puede deberse, en parte, a la forma de evaluar. La meta se fijó con los resultados de \textcite{patino2021}, que usaron modelos de evaluación más antiguos, y con ECAPA-TDNN y Whisper la privacidad resulta menor y la inteligibilidad mayor; esta explicación, sin embargo, no se comprobó. A eso se suma un punto débil del método que no se midió: la transformación es reversible y, como el intervalo de $\alpha$ es angosto, un atacante que conozca el sistema podría probar valores hasta acercarse a la voz original. Frente al problema que motivó el trabajo, entonces, el coeficiente de McAdams es una primera barrera, liviana y fácil de ejecutar, que hace más difícil reconocer a una persona a partir de la voz grabada en una llamada. Por sí solo no basta frente a un atacante que conozca el sistema y use modelos de reconocimiento recientes.
+
+Para acercar el sistema a su uso real, el siguiente paso es llevarlo a un teléfono, integrarlo con el audio de una llamada o con una aplicación de llamadas por internet, activarlo de forma automática ante números desconocidos y medir allí de nuevo el RTF y la latencia de extremo a extremo. También hace falta evaluarlo frente a atacantes más fuertes: uno que entrene su modelo con audio anonimizado, otro que intente revertir la transformación probando valores de $\alpha$ y otro que intente clonar la voz a partir del audio anonimizado. Por último, la inteligibilidad debería medirse con personas y en las condiciones de la red celular, con banda angosta y códecs.
+
 
 \section*{Tabla de acrónimos}
 
@@ -624,7 +964,7 @@ CPU & Unidad central de procesamiento (Central Processing Unit) \\
 \addlinespace[2pt]
 ECAPA-TDNN & Emphasized Channel Attention, Propagation and Aggregation in Time Delay Neural Network \\
 \addlinespace[2pt]
-EER & Tasa de error (Equal Error Rate) \\
+EER & Tasa de error igual (Equal Error Rate) \\
 \addlinespace[2pt]
 FAR & Tasa de falsa aceptación (False Acceptance Rate) \\
 \addlinespace[2pt]
@@ -697,6 +1037,21 @@ Congreso de la República de Colombia, Ley Estatutaria 1581 de 2012, por la cual
 
 \bibitem[Makhoul(1975)]{makhoul1975}
 J. Makhoul, "Linear prediction: A tutorial review," \textit{Proceedings of the IEEE}, vol. 63, no. 4, pp. 561--580, 1975. doi: 10.1109/PROC.1975.9792.
+
+\bibitem[Desplanques et~al.(2020)]{desplanques2020}
+B. Desplanques, J. Thienpondt, and K. Demuynck, "ECAPA-TDNN: Emphasized channel attention, propagation and aggregation in TDNN based speaker verification," \textit{Proc. Interspeech 2020}, pp. 3830--3834, 2020. doi: 10.21437/Interspeech.2020-2650.
+
+\bibitem[Radford et~al.(2023)]{radford2023}
+A. Radford, J. W. Kim, T. Xu, G. Brockman, C. McLeavey, and I. Sutskever, "Robust speech recognition via large-scale weak supervision," \textit{Proc. 40th International Conference on Machine Learning (ICML)}, PMLR, vol. 202, pp. 28492--28518, 2023. \url{https://proceedings.mlr.press/v202/radford23a.html}
+
+\bibitem[Fant(1960/1971)]{fant1971}
+G. Fant, \textit{Acoustic Theory of Speech Production: With Calculations Based on X-Ray Studies of Russian Articulations}. De Gruyter Mouton, 1971 (obra original publicada en 1960 por Mouton). doi: 10.1515/9783110873429.
+
+\bibitem[Nautsch et~al.(2020)]{nautsch2020}
+A. Nautsch, J. Patino, N. Tomashenko, J. Yamagishi, P.-G. No\'e, J.-F. Bonastre, M. Todisco, and N. Evans, "The privacy ZEBRA: Zero evidence biometric recognition assessment," \textit{Proc. Interspeech 2020}, 2020. doi: 10.21437/Interspeech.2020-1815.
+
+\bibitem[Ardila et~al.(2020)]{ardila2020}
+R. Ardila, M. Branson, K. Davis, M. Kohler, J. Meyer, M. Henretty, R. Morais, L. Saunders, F. Tyers, and G. Weber, "Common Voice: A massively-multilingual speech corpus," \textit{Proc. 12th Language Resources and Evaluation Conference (LREC)}, pp. 4218--4222, 2020. \url{https://aclanthology.org/2020.lrec-1.520/}
 
 \end{thebibliography}
 \end{document}
